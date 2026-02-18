@@ -1,10 +1,18 @@
 import React from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
+import { ForgotPassword, Login, ResetPassword, Signup } from './pages/auth'
 
 const App = () => {
   return (
-    <div>
-      
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Navigate to="/login" replace />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
+        <Route path='/signup' element={<Signup />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
