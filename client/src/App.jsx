@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
-import { ForgotPassword, Login, ResetPassword, Signup } from './pages/auth'
+import { ForgotPassword, Login, ResetPassword, Signup } from './features/auth/pages'
 
 const App = () => {
   return (

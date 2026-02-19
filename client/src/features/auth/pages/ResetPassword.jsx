@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Input from '../../components/UI/Input';
-import Button from '../../components/UI/Button';
-import AuthLayout from '../../components/Layout/AuthLayout';
+import Input from '../../../common/components/Input';
+import Button from '../../../common/components/Button';
+import AuthLayout from '../components/AuthLayout';
 import { Link } from 'react-router';
 
 const ResetPassword = () => {

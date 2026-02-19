@@ -1,4 +1,4 @@
-import logo from '../../assets/Khodiyar_Enterprise.svg';
+import logo from '../../../assets/Khodiyar_Enterprise.svg';
 
 const AuthLayout = ({ children, title, subtitle }) => {
   return (
