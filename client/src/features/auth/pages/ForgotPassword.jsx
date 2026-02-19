@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import Input from '../../../common/components/Input';
 import Button from '../../../common/components/Button';
 import AuthLayout from '../components/AuthLayout';
@@ -13,36 +14,62 @@ const ForgotPassword = () => {
     navigate('/reset-password');
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.5
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
     <AuthLayout 
-      title="Forgot Password" 
-      subtitle="Enter your email address and we'll send you instruction to reset your password."
+      title="Reset Password" 
+      subtitle="Enter your email to receive a reset link"
     >
-      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
-        <Input
-          id="email"
-          label="Email address"
-          type="email"
-          placeholder="Enter Address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+      <motion.form 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        onSubmit={handleSubmit} 
+        className="w-full flex flex-col gap-6"
+      >
+        <motion.div variants={itemVariants}>
+          <Input
+            id="email"
+            label="Email address"
+            type="email"
+            placeholder="Enter Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </motion.div>
 
-        <Button type="submit" className="mt-2">
-          Submit
-        </Button>
-      </form>
+        <motion.div variants={itemVariants}>
+          <Button type="submit" className="shadow-lg shadow-primary/20">
+            Send Reset Link
+          </Button>
+        </motion.div>
 
-      {/* Footer Section */}
-      <div className="mt-2 text-center text-sm">
-        <p className="text-slate-600">
-          Back to ?{' '}
-          <Link to="/login" className="text-blue-900 font-bold hover:cursor-pointer">
-            Login
-          </Link>
-        </p>
-      </div>
+        {/* Footer Section */}
+        <motion.div variants={itemVariants} className="text-center text-sm">
+          <p className="text-slate-500 font-medium">
+            Remember your password ?{' '}
+            <Link to="/login" className="text-primary font-bold hover:underline decoration-2 underline-offset-4">
+              Login
+            </Link>
+          </p>
+        </motion.div>
+      </motion.form>
     </AuthLayout>
   );
 };

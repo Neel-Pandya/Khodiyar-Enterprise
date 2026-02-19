@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import Input from '../../../common/components/Input';
 import Button from '../../../common/components/Button';
 import AuthLayout from '../components/AuthLayout';
@@ -13,23 +14,47 @@ const Login = () => {
     console.log('Login attempt:', { email, password });
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.5
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
     <AuthLayout 
       title="Welcome Back" 
       subtitle="Log in to your account"
     >
-      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
-        <Input
-          id="email"
-          label="Email address"
-          type="email"
-          placeholder="Enter Address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+      <motion.form 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        onSubmit={handleSubmit} 
+        className="w-full flex flex-col gap-6"
+      >
+        <motion.div variants={itemVariants}>
+          <Input
+            id="email"
+            label="Email address"
+            type="email"
+            placeholder="Enter Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </motion.div>
 
-        <div className="flex flex-col">
+        <motion.div variants={itemVariants} className="flex flex-col">
           <Input
             id="password"
             label="Password"
@@ -41,28 +66,29 @@ const Login = () => {
           />
           <div className="flex justify-end mt-2">
             <Link to="/forgot-password" 
-              type="button" 
-              className="text-xs font-semibold text-blue-900 hover:cursor-pointer"
+              className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
             >
-              Forgot Password ?
+              Forgot Password?
             </Link>
           </div>
-        </div>
+        </motion.div>
 
-        <Button type="submit" className="mt-2">
-          Log In
-        </Button>
-      </form>
+        <motion.div variants={itemVariants}>
+          <Button type="submit" className="shadow-lg shadow-primary/20">
+            Log In
+          </Button>
+        </motion.div>
 
-      {/* Footer Section */}
-      <div className="mt-2 text-center text-sm">
-        <p className="text-slate-600">
-          Don't have an account ?{' '}
-          <Link to="/signup" className="text-blue-900 font-bold hover:cursor-pointer">
-            Sign up
-          </Link>
-        </p>
-      </div>
+        {/* Footer Section */}
+        <motion.div variants={itemVariants} className=" text-center text-sm">
+          <p className="text-slate-500 font-medium">
+            Don't have an account ?{' '}
+            <Link to="/signup" className="text-primary font-bold hover:underline decoration-2 underline-offset-4">
+              Sign up
+            </Link>
+          </p>
+        </motion.div>
+      </motion.form>
     </AuthLayout>
   );
 };

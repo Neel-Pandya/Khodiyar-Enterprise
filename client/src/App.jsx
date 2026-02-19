@@ -1,16 +1,29 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
 import { ForgotPassword, Login, ResetPassword, Signup } from './features/auth/pages'
+import MainLayout from './layouts/MainLayout'
+import LandingPage from './features/landing/pages/LandingPage'
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Navigate to="/login" replace />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/forgot-password' element={<ForgotPassword />} />
-        <Route path='/signup' element={<Signup />} />
-        <Route path='/reset-password' element={<ResetPassword />} />
+        {/* Public Landing Routes with MainLayout */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/products" element={<div>Products Page (Coming Soon)</div>} />
+          <Route path="/about" element={<div>About Page (Coming Soon)</div>} />
+          <Route path="/contact" element={<div>Contact Page (Coming Soon)</div>} />
+        </Route>
+
+        {/* Auth Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )
