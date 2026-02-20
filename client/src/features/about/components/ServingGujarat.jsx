@@ -62,7 +62,7 @@ const ServingGujarat = () => {
             
             <div className="flex flex-wrap gap-4">
               {["Residential", "Commercial", "Industrial", "Agricultural"].map((sector) => (
-                <div key={sector} className="px-6 py-3 bg-bg-light border border-primary/10 rounded-2xl font-bold text-primary hover:bg-secondary hover:border-secondary transition-all duration-300">
+                <div key={sector} className="px-6 py-3 bg-bg-light border border-primary/10 rounded-2xl font-bold text-primary hover:bg-secondary hover:border-secondary transition-colors duration-300">
                   {sector}
                 </div>
               ))}
