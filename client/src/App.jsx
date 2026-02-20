@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
 import { ForgotPassword, Login, ResetPassword, Signup } from './features/auth/pages'
 import MainLayout from './layouts/MainLayout'
 import LandingPage from './features/landing/pages/LandingPage'
+import ProductPage from './features/products/pages/ProductPage'
 
 const App = () => {
   return (
@@ -11,7 +12,7 @@ const App = () => {
         {/* Public Landing Routes with MainLayout */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/products" element={<div>Products Page (Coming Soon)</div>} />
+          <Route path="/products" element={<ProductPage />} />
           <Route path="/about" element={<div>About Page (Coming Soon)</div>} />
           <Route path="/contact" element={<div>Contact Page (Coming Soon)</div>} />
         </Route>
