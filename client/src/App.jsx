@@ -5,6 +5,8 @@ import MainLayout from './layouts/MainLayout'
 import LandingPage from './features/landing/pages/LandingPage'
 import ProductPage from './features/products/pages/ProductPage'
 
+import AboutPage from './features/about/pages/AboutPage'
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -13,7 +15,7 @@ const App = () => {
         <Route element={<MainLayout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/products" element={<ProductPage />} />
-          <Route path="/about" element={<div>About Page (Coming Soon)</div>} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<div>Contact Page (Coming Soon)</div>} />
         </Route>
 
