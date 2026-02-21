@@ -21,7 +21,6 @@ const LandingPage = () => {
             className="bg-primary rounded-[3rem] p-12 md:p-24 text-center text-white shadow-2xl shadow-primary/30 relative overflow-hidden group"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -ml-32 -mb-32"></div>
             
             <div className="relative z-10 flex flex-col items-center">
               <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">

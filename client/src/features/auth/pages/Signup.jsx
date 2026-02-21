@@ -5,31 +5,15 @@ import Button from '../../../common/components/Button';
 import { Link } from 'react-router';
 
 const Signup = () => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.5
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 }
-  };
-
   return (
     <AuthLayout title="Create Account" subtitle="Join Khodiyar Enterprise today">
       <motion.form 
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
         className="w-full flex flex-col gap-6"
       >
-        <motion.div variants={itemVariants}>
+        <div>
           <Input
             id="name"
             label="Full Name"
@@ -37,9 +21,9 @@ const Signup = () => {
             placeholder="Enter Name"
             required
           />
-        </motion.div>
+        </div>
         
-        <motion.div variants={itemVariants}>
+        <div>
           <Input
             id="email"
             label="Email address"
@@ -47,9 +31,9 @@ const Signup = () => {
             placeholder="Enter Address"
             required
           />
-        </motion.div>
+        </div>
 
-        <motion.div variants={itemVariants}>
+        <div>
           <Input
             id="password"
             label="Password"
@@ -57,9 +41,9 @@ const Signup = () => {
             placeholder="Enter Password"
             required
           />
-        </motion.div>
+        </div>
 
-        <motion.div variants={itemVariants}>
+        <div>
           <Input
             id="confirm-password"
             label="Confirm Password"
@@ -67,23 +51,23 @@ const Signup = () => {
             placeholder="Enter Confirm Password"
             required
           />
-        </motion.div>
+        </div>
 
-        <motion.div variants={itemVariants}>
+        <div>
           <Button type="submit" className="shadow-lg shadow-primary/20">
             Sign Up
           </Button>
-        </motion.div>
+        </div>
 
         {/* Footer Section */}
-        <motion.div variants={itemVariants} className="text-center text-sm">
+        <div className="text-center text-sm">
           <p className="text-slate-500 font-medium">
             Already have an account ?{' '}
             <Link to="/login" className="text-primary font-bold hover:underline decoration-2 underline-offset-4">
               Login
             </Link>
           </p>
-        </motion.div>
+        </div>
       </motion.form>
     </AuthLayout>
   );

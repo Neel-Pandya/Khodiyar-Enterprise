@@ -8,7 +8,8 @@ const Input = ({
   value, 
   onChange, 
   id, 
-  required = false 
+  required = false,
+  icon: Icon
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
@@ -29,8 +30,13 @@ const Input = ({
           value={value}
           onChange={onChange}
           required={required}
-          className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-[#1E3A5F]/5 focus:border-[#1E3A5F]/50 transition-all duration-200"
+          className={`w-full py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-[#1E3A5F]/5 focus:border-[#1E3A5F]/50 transition-all duration-200 ${Icon ? 'pl-11 pr-4' : 'px-4'}`}
         />
+        {Icon && (
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+            <Icon size={18} />
+          </div>
+        )}
         {isPassword && (
           <button
             type="button"

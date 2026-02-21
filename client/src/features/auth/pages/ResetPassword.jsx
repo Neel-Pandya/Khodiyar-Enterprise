@@ -14,35 +14,19 @@ const ResetPassword = () => {
     console.log('Reset password attempt');
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.5
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 }
-  };
-
   return (
     <AuthLayout 
       title="Set New Password" 
       subtitle="Ensure your account is secure with a new password"
     >
       <motion.form 
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
         onSubmit={handleSubmit} 
         className="w-full flex flex-col gap-6"
       >
-        <motion.div variants={itemVariants}>
+        <div>
           <Input
             id="password"
             label="New Password"
@@ -52,9 +36,9 @@ const ResetPassword = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </motion.div>
+        </div>
 
-        <motion.div variants={itemVariants}>
+        <div>
           <Input
             id="confirmPassword"
             label="Confirm New Password"
@@ -64,23 +48,23 @@ const ResetPassword = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
-        </motion.div>
+        </div>
 
-        <motion.div variants={itemVariants}>
+        <div>
           <Button type="submit" className="shadow-lg shadow-primary/20">
             Reset Password
           </Button>
-        </motion.div>
+        </div>
 
         {/* Footer Section */}
-        <motion.div variants={itemVariants} className="text-center text-sm">
+        <div className="text-center text-sm">
           <p className="text-slate-500 font-medium">
             Want to go back ?{' '}
             <Link to="/login" className="text-primary font-bold hover:underline decoration-2 underline-offset-4">
               Login
             </Link>
           </p>
-        </motion.div>
+        </div>
       </motion.form>
     </AuthLayout>
   );
