@@ -51,9 +51,6 @@ const SidebarContent = ({ onClose }) => (
 
     {/* Nav Items */}
     <nav className="flex-1 overflow-y-auto px-3 py-6 space-y-1">
-      <p className="px-3 mb-3 text-[10px] font-bold uppercase tracking-widest text-white/30">
-        Main Menu
-      </p>
       {navItems.map((item, i) => (
         <motion.div key={item.label} custom={i} variants={itemVariants} initial="hidden" animate="visible">
           <NavLink
