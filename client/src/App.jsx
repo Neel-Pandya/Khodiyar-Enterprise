@@ -4,15 +4,18 @@ import { ForgotPassword, Login, ResetPassword, Signup } from './features/auth/pa
 import MainLayout from './layouts/MainLayout'
 import LandingPage from './features/landing/pages/LandingPage'
 import ProductPage from './features/products/pages/ProductPage'
-
 import AboutPage from './features/about/pages/AboutPage'
 import ContactPage from './features/contact/pages/ContactPage'
+
+// Admin
+import AdminLayout from './features/admin/layouts/AdminLayout'
+import DashboardPage from './features/admin/pages/DashboardPage'
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Landing Routes with MainLayout */}
+        {/* Public Routes */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/products" element={<ProductPage />} />
@@ -25,6 +28,13 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+        </Route>
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
