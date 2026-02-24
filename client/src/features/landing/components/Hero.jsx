@@ -5,7 +5,7 @@ const Hero = () => {
   return (
     <section className="relative h-[80vh] min-h-[600px] flex items-center overflow-hidden">
       {/* Background Image with Overlay */}
-      <motion.div 
+      <motion.div
         initial={{ scale: 1.1 }}
         animate={{ scale: 1 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
@@ -21,9 +21,9 @@ const Hero = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <h1 className="text-4xl md:text-7xl font-extrabold text-white leading-tight mb-6">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
             Powering Your Future With <br />
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
@@ -36,14 +36,14 @@ const Hero = () => {
             Expert Solar solutions for home and business. Efficient, sustainable, and reliable energy for a better tomorrow. Join the green revolution today.
           </p>
           <div className="flex flex-wrap gap-4">
-            <motion.button 
+            <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="btn btn-secondary text-lg px-8 py-4 shadow-xl shadow-secondary/20"
             >
               Explore Solutions
             </motion.button>
-            <motion.button 
+            <motion.button
               whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,1)", color: "#1e3a5f" }}
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 border-2 border-white text-white rounded-lg font-semibold transition-all duration-300"

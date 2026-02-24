@@ -53,7 +53,7 @@ const Products = () => {
   return (
     <section className="section bg-white text-text-dark">
       <div className="container">
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -61,26 +61,26 @@ const Products = () => {
         >
           Solar Products
         </motion.h2>
-        
-        <motion.div 
+
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
         >
           {products.map((product) => (
-            <motion.div 
-              key={product.id} 
+            <motion.div
+              key={product.id}
               variants={itemVariants}
               whileHover={{ y: -10 }}
               className="bg-bg-light rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group transform-gpu"
             >
               <div className="h-48 overflow-hidden relative">
-                <img 
-                  src={product.image} 
-                  alt={product.name} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
@@ -89,7 +89,7 @@ const Products = () => {
                 <p className="text-sm text-text-muted mb-8 flex-grow leading-relaxed font-medium">
                   {product.description}
                 </p>
-                <motion.button 
+                <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-accent transition-colors shadow-lg shadow-primary/10"

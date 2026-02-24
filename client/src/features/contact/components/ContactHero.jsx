@@ -10,11 +10,11 @@ const ContactHero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
             Get in <span className="text-secondary">Touch</span>
           </h1>
           <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto font-medium leading-relaxed">
-            Have questions about solar energy? Need a consultation or support? 
+            Have questions about solar energy? Need a consultation or support?
             Our team of experts is ready to help you shine brighter.
           </p>
         </motion.div>

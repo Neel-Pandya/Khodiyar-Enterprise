@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Outlet, Link, NavLink } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, 
-  Home, 
-  Package, 
-  Info, 
-  Phone, 
-  Menu, 
-  Mail, 
-  MapPin, 
+import {
+  X,
+  Home,
+  Package,
+  Info,
+  Phone,
+  Menu,
+  Mail,
+  MapPin,
   ArrowRight,
   ChevronRight
 } from 'lucide-react';
@@ -48,13 +48,13 @@ const MainLayout = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <NavLink 
-                key={link.name} 
-                to={link.path} 
+              <NavLink
+                key={link.name}
+                to={link.path}
                 className={({ isActive }) => `
                   relative py-2 px-1 font-semibold transition-all duration-300
-                  ${isActive 
-                    ? 'text-primary' 
+                  ${isActive
+                    ? 'text-primary'
                     : 'text-slate-600 hover:text-primary'}
                   group
                 `}
@@ -62,9 +62,9 @@ const MainLayout = () => {
                 {({ isActive }) => (
                   <>
                     <span className="relative z-10">{link.name}</span>
-                    <motion.div 
+                    <motion.div
                       initial={false}
-                      animate={{ 
+                      animate={{
                         width: isActive ? '100%' : '0%',
                         opacity: isActive ? 1 : 0
                       }}
@@ -81,7 +81,7 @@ const MainLayout = () => {
           </nav>
 
           {/* Mobile Menu Toggle */}
-          <button 
+          <button
             className="md:hidden text-slate-800 focus:outline-none z-50 p-2 hover:bg-slate-100 rounded-full transition-colors"
             onClick={toggleMenu}
             aria-label="Toggle Menu"
@@ -94,14 +94,14 @@ const MainLayout = () => {
         <AnimatePresence>
           {isMenuOpen && (
             <>
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={toggleMenu}
                 className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
               />
-              <motion.div 
+              <motion.div
                 variants={menuVariants}
                 initial="closed"
                 animate="open"
@@ -111,7 +111,7 @@ const MainLayout = () => {
                 {/* Mobile Menu Header */}
                 <div className="p-6 border-b border-slate-100 flex items-center justify-between">
                   <img src={logo} alt="Logo" className="h-10" />
-                  <button 
+                  <button
                     onClick={toggleMenu}
                     className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600"
                   >
@@ -124,13 +124,13 @@ const MainLayout = () => {
                   <div className="flex flex-col gap-3">
                     {navLinks.map((link) => (
                       <motion.div key={link.name} variants={itemVariants}>
-                        <NavLink 
-                          to={link.path} 
+                        <NavLink
+                          to={link.path}
                           onClick={toggleMenu}
                           className={({ isActive }) => `
                             flex items-center justify-between p-4 rounded-2xl transition-all duration-300
-                            ${isActive 
-                              ? 'bg-primary shadow-lg shadow-primary/20 text-white' 
+                            ${isActive
+                              ? 'bg-primary shadow-lg shadow-primary/20 text-white'
                               : 'text-slate-800 hover:bg-slate-50 hover:text-primary'}
                             group
                           `}
@@ -140,8 +140,8 @@ const MainLayout = () => {
                               <div className="flex items-center gap-4">
                                 <div className={`
                                   p-2 rounded-xl transition-colors
-                                  ${isActive 
-                                    ? 'bg-white/20 text-white' 
+                                  ${isActive
+                                    ? 'bg-white/20 text-white'
                                     : 'bg-slate-100 group-hover:bg-primary/10 group-hover:text-primary'}
                                 `}>
                                   <link.icon size={22} />
@@ -150,9 +150,9 @@ const MainLayout = () => {
                                   {link.name}
                                 </span>
                               </div>
-                              <ChevronRight 
-                                size={18} 
-                                className={`transition-colors ${isActive ? 'text-white/60' : 'text-slate-400 group-hover:text-primary'}`} 
+                              <ChevronRight
+                                size={18}
+                                className={`transition-colors ${isActive ? 'text-white/60' : 'text-slate-400 group-hover:text-primary'}`}
                               />
                             </>
                           )}
@@ -162,8 +162,8 @@ const MainLayout = () => {
                   </div>
 
                   <motion.div variants={itemVariants} className="mt-8">
-                    <Link 
-                      to="/login" 
+                    <Link
+                      to="/login"
                       onClick={toggleMenu}
                       className="btn btn-primary w-full py-5 flex items-center justify-center gap-2 text-lg shadow-lg shadow-primary/20"
                     >
