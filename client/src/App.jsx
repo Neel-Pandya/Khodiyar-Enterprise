@@ -11,6 +11,7 @@ import ContactPage from './features/contact/pages/ContactPage'
 import AdminLayout from './features/admin/layouts/AdminLayout'
 import DashboardPage from './features/admin/pages/DashboardPage'
 import CustomersPage from './features/admin/pages/CustomersPage'
+import AddCustomerPage from './features/admin/pages/AddCustomerPage'
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="customers" element={<CustomersPage />} />
+          <Route path="customers/add" element={<AddCustomerPage />} />
           <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Route>
 

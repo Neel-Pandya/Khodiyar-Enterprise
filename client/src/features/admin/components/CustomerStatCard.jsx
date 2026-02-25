@@ -28,10 +28,10 @@ const CustomerStatCard = ({ label, value, icon, prefix = '' }) => {
                 <Icon size={24} className={meta.color} strokeWidth={2} />
             </div>
             <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                     {label}
                 </p>
-                <p className="text-2xl font-black text-[#111827]">
+                <p className="text-2xl font-bold text-[#111827]">
                     {prefix}{value.toLocaleString()}{icon === 'DollarSign' ? 'K' : ''}
                 </p>
             </div>

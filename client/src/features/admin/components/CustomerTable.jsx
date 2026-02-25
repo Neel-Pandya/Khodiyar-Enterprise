@@ -17,7 +17,7 @@ const CustomerTable = ({ customers }) => {
             {/* Table Header */}
             <div className="p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                    <h2 className="text-lg font-extrabold text-[#111827]">All Customers</h2>
+                    <h2 className="text-lg font-semibold text-[#111827]">All Customers</h2>
                     <div className="flex items-center gap-3">
                         <FilterButton options={filterOptions} className="flex-1 sm:flex-none" />
                         <ExportButton onExport={() => console.log('Exporting customers...')} className="flex-1 sm:flex-none" />
@@ -39,10 +39,10 @@ const CustomerTable = ({ customers }) => {
                     <table className="w-full text-left min-w-[700px] table-fixed">
                         <thead>
                             <tr className="border-b border-gray-50">
-                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap w-[30%]">Customer</th>
-                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap w-[40%]">Email Address</th>
-                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap text-center w-[15%]">Status</th>
-                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap text-right w-[15%]">Actions</th>
+                                <th className="px-6 py-4 text-[10px] font-medium text-gray-400 uppercase tracking-widest whitespace-nowrap w-[30%]">Customer</th>
+                                <th className="px-6 py-4 text-[10px] font-medium text-gray-400 uppercase tracking-widest whitespace-nowrap w-[40%]">Email Address</th>
+                                <th className="px-6 py-4 text-[10px] font-medium text-gray-400 uppercase tracking-widest whitespace-nowrap text-center w-[15%]">Status</th>
+                                <th className="px-6 py-4 text-[10px] font-medium text-gray-400 uppercase tracking-widest whitespace-nowrap text-right w-[15%]">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
