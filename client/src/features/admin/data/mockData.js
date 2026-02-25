@@ -105,10 +105,42 @@ export const recentOrders = [
 ];
 
 export const customerStats = {
-  newThisMonth: 24,
-  retention: 94.2,
-  topLocation: 'Los Angeles, CA',
+  total: 8,
+  active: 6,
+  newThisMonth: 0,
+  totalRevenue: 308000,
 };
+
+export const customersList = [
+  {
+    id: 'CUST-001',
+    name: 'John Smith',
+    email: 'john.smith@email.com',
+    status: 'Active',
+    avatar: 'JS',
+  },
+  {
+    id: 'CUST-002',
+    name: 'Emily Brown',
+    email: 'emily.brown@email.com',
+    status: 'Pending',
+    avatar: 'EB',
+  },
+  {
+    id: 'CUST-003',
+    name: 'David Wilson',
+    email: 'david.w@email.com',
+    status: 'Active',
+    avatar: 'DW',
+  },
+  {
+    id: 'CUST-004',
+    name: 'Sarah Jordan',
+    email: 'sarah.j@email.com',
+    status: 'Active',
+    avatar: 'SJ',
+  },
+];
 
 export const revenueChartData = [
   { month: 'Aug', value: 140 },

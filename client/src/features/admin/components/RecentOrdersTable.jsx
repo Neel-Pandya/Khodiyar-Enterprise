@@ -90,8 +90,8 @@ const RecentOrdersTable = ({ orders = [] }) => {
               onClick={() => setFilterMenuOpen(o => !o)}
               className={`
                 flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-300
-                ${filterMenuOpen 
-                  ? 'bg-blue-50 text-blue-600 border border-blue-200' 
+                ${filterMenuOpen
+                  ? 'bg-blue-50 text-blue-600 border border-blue-200'
                   : 'border border-slate-200 text-slate-600 hover:bg-slate-50'}
               `}
             >
