@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router';
-import AdminSidebar from '../components/AdminSidebar';
-import AdminTopbar from '../components/AdminTopbar';
+import AdminSidebar from './components/AdminSidebar';
+import AdminTopbar from './components/AdminTopbar';
 
 const AdminLayout = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);

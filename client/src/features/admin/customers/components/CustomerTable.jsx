@@ -2,8 +2,8 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search } from 'lucide-react';
 import CustomerTableRow from './CustomerTableRow';
-import FilterButton from './FilterButton';
-import ExportButton from './ExportButton';
+import FilterButton from '../../shared/components/FilterButton';
+import ExportButton from '../../shared/components/ExportButton';
 
 const CustomerTable = ({ customers }) => {
     const filterOptions = [
@@ -13,9 +13,9 @@ const CustomerTable = ({ customers }) => {
     ];
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mt-8">
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mt-8">
             {/* Table Header */}
-            <div className="p-6">
+            <div className="px-6 py-5 border-b border-slate-100">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <h2 className="text-lg font-semibold text-[#111827]">All Customers</h2>
                     <div className="flex items-center gap-3">
@@ -26,11 +26,11 @@ const CustomerTable = ({ customers }) => {
 
                 {/* Search Bar */}
                 <div className="relative mb-6">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                     <input
                         type="text"
                         placeholder="Search customers by name or email..."
-                        className="w-full pl-12 pr-4 py-3 bg-white border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-[#fbbf24] transition-all placeholder:text-gray-400"
+                        className="w-full pl-12 pr-4 py-3 bg-white border border-slate-100 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-[#fbbf24] transition-all placeholder:text-slate-400"
                     />
                 </div>
 
@@ -38,11 +38,11 @@ const CustomerTable = ({ customers }) => {
                 <div className="overflow-x-auto -mx-6 px-6">
                     <table className="w-full text-left min-w-[700px] table-fixed">
                         <thead>
-                            <tr className="border-b border-gray-50">
-                                <th className="px-6 py-4 text-[10px] font-medium text-gray-400 uppercase tracking-widest whitespace-nowrap w-[30%]">Customer</th>
-                                <th className="px-6 py-4 text-[10px] font-medium text-gray-400 uppercase tracking-widest whitespace-nowrap w-[40%]">Email Address</th>
-                                <th className="px-6 py-4 text-[10px] font-medium text-gray-400 uppercase tracking-widest whitespace-nowrap text-center w-[15%]">Status</th>
-                                <th className="px-6 py-4 text-[10px] font-medium text-gray-400 uppercase tracking-widest whitespace-nowrap text-right w-[15%]">Actions</th>
+                            <tr className="border-b border-slate-100">
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap w-[30%]">Customer</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap w-[40%]">Email Address</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap text-center w-[15%]">Status</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap text-right w-[15%]">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -56,18 +56,18 @@ const CustomerTable = ({ customers }) => {
                 </div>
 
                 {/* Pagination */}
-                <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-50 pt-6">
-                    <p className="text-xs font-medium text-gray-400">
-                        Showing <span className="text-[#111827] font-bold">{customers.length}</span> of <span className="text-[#111827] font-bold">{customers.length}</span> customers
+                <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100 pt-6">
+                    <p className="text-xs font-medium text-slate-400">
+                        Showing <span className="text-slate-800 font-bold">{customers.length}</span> of <span className="text-slate-800 font-bold">{customers.length}</span> customers
                     </p>
                     <div className="flex items-center gap-2">
-                        <button className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-50 transition-colors">
+                        <button className="px-4 py-2 bg-white border border-slate-100 rounded-xl text-xs font-bold text-slate-400 hover:bg-slate-50 transition-colors">
                             Previous
                         </button>
                         <button className="w-8 h-8 bg-[#1e293b] text-white rounded-xl text-xs font-bold flex items-center justify-center">
                             1
                         </button>
-                        <button className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors">
+                        <button className="px-4 py-2 bg-white border border-slate-100 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">
                             Next
                         </button>
                     </div>

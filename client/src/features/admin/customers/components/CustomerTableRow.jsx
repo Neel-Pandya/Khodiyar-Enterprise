@@ -18,25 +18,32 @@ const CustomerTableRow = ({ customer, index }) => {
             initial="hidden"
             animate="visible"
             custom={index}
-            className="hover:bg-gray-50/50 transition-colors group border-b border-gray-50 last:border-0"
+            className="hover:bg-slate-50/50 transition-colors group border-b border-slate-50 last:border-0"
         >
             <td className="px-6 py-5">
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-[#1e293b] text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
                         {customer.avatar}
                     </div>
-                    <p className="font-bold text-[#111827] text-sm">{customer.name}</p>
+                    <p className="font-semibold text-slate-800 text-sm">{customer.name}</p>
                 </div>
             </td>
             <td className="px-6 py-5">
-                <p className="text-sm font-medium text-gray-500">{customer.email}</p>
+                <p className="text-xs text-slate-400 font-medium">{customer.email}</p>
             </td>
             <td className="px-6 py-5 text-center">
-                <div className={`px-3 py-1 rounded-full text-[10px] font-bold inline-block ${customer.status === 'Active' ? 'bg-[#ecfdf5] text-[#059669]' :
-                    customer.status === 'Pending' ? 'bg-[#fffbeb] text-[#d97706]' : 'bg-gray-100 text-gray-500'
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ring-1 ${customer.status === 'Active'
+                    ? 'bg-[#ecfdf5] text-[#059669] ring-emerald-200'
+                    : customer.status === 'Pending'
+                        ? 'bg-[#fffbeb] text-[#d97706] ring-amber-200'
+                        : 'bg-gray-100 text-gray-500 ring-gray-200'
                     }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${customer.status === 'Active' ? 'bg-emerald-500'
+                        : customer.status === 'Pending' ? 'bg-amber-400'
+                            : 'bg-gray-400'
+                        }`} />
                     {customer.status}
-                </div>
+                </span>
             </td>
             <td className="px-3 py-5 text-right">
                 <div className="flex items-center justify-end gap-3">

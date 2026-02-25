@@ -6,8 +6,6 @@ const FormField = ({
     icon: Icon,
     type = 'text',
     placeholder = '',
-    required = false,
-    error = '',
     value,
     onChange,
     className = '',
@@ -20,7 +18,6 @@ const FormField = ({
         <div className={`flex flex-col gap-1.5 ${className}`}>
             <label className="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-1">
                 {label}
-                {required && <span className="text-[#fbc02d]">*</span>}
             </label>
 
             <div className="relative">
@@ -37,14 +34,11 @@ const FormField = ({
                     onChange={onChange}
                     className={`
                         w-full ${Icon ? 'pl-10' : 'pl-4'} ${isPassword ? 'pr-10' : 'pr-4'}
-                        py-3 bg-white border rounded-xl text-sm text-[#111827]
+                        py-3 bg-white border border-gray-200 rounded-xl text-sm text-[#111827]
                         placeholder:text-gray-400 font-medium
                         transition-all duration-200 outline-none
                         focus:ring-2 focus:ring-[#fbc02d]/25 focus:border-[#fbc02d]
-                        ${error
-                            ? 'border-red-300 focus:ring-red-100 focus:border-red-400'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }
+                        hover:border-gray-300
                     `}
                 />
 
@@ -58,12 +52,6 @@ const FormField = ({
                     </button>
                 )}
             </div>
-
-            {error && (
-                <p className="text-xs text-red-500 font-medium flex items-center gap-1 mt-0.5">
-                    {error}
-                </p>
-            )}
         </div>
     );
 };

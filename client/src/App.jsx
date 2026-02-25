@@ -8,10 +8,11 @@ import AboutPage from './features/about/pages/AboutPage'
 import ContactPage from './features/contact/pages/ContactPage'
 
 // Admin
-import AdminLayout from './features/admin/layouts/AdminLayout'
-import DashboardPage from './features/admin/pages/DashboardPage'
-import CustomersPage from './features/admin/pages/CustomersPage'
-import AddCustomerPage from './features/admin/pages/AddCustomerPage'
+import AdminLayout from './features/admin/layout/AdminLayout'
+import DashboardPage from './features/admin/dashboard/pages/DashboardPage'
+import CustomersPage from './features/admin/customers/pages/CustomersPage'
+import AddCustomerPage from './features/admin/customers/pages/AddCustomerPage'
+import ProductsPage from './features/admin/products/pages/ProductsPage'
 
 const App = () => {
   return (
@@ -37,6 +38,7 @@ const App = () => {
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="customers" element={<CustomersPage />} />
           <Route path="customers/add" element={<AddCustomerPage />} />
+          <Route path="products" element={<ProductsPage />} />
           <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Route>
 

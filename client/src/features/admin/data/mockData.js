@@ -111,6 +111,43 @@ export const customerStats = {
   totalRevenue: 308000,
 };
 
+export const productStats = [
+  {
+    id: 1,
+    label: 'Total Products',
+    value: 5,
+    icon: 'Package',
+    iconColor: '#1e3a5f',
+    bgLight: 'bg-[#1e3a5f]/5',
+  },
+  {
+    id: 2,
+    label: 'Active Products',
+    value: 3,
+    icon: 'CheckCircle',
+    iconColor: '#10b981',
+    bgLight: 'bg-[#10b981]/5',
+  },
+  {
+    id: 3,
+    label: 'Low Stock',
+    value: 2,
+    icon: 'AlertTriangle',
+    iconColor: '#f59e0b',
+    bgLight: 'bg-[#f59e0b]/5',
+  },
+  {
+    id: 4,
+    label: 'Total Inventory Value',
+    value: 97.6,
+    prefix: '₹',
+    suffix: 'L',
+    icon: 'CreditCard',
+    iconColor: '#8b5cf6',
+    bgLight: 'bg-[#8b5cf6]/5',
+  },
+];
+
 export const customersList = [
   {
     id: 'CUST-001',
@@ -139,6 +176,45 @@ export const customersList = [
     email: 'sarah.j@email.com',
     status: 'Active',
     avatar: 'SJ',
+  },
+];
+
+export const productsList = [
+  {
+    id: 1,
+    name: 'Solar Panel 300W Monocrystalline',
+    category: 'Solar Panels',
+    price: 18999,
+    stock: 145,
+    status: 'Active',
+    image: 'https://images.unsplash.com/photo-1508514177221-18d1427d5e4f?auto=format&fit=crop&q=80&w=100&h=100',
+  },
+  {
+    id: 2,
+    name: 'Inverter 5kW Hybrid',
+    category: 'Inverters',
+    price: 99999,
+    stock: 32,
+    status: 'Active',
+    image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=100&h=100',
+  },
+  {
+    id: 3,
+    name: 'Mounting System Roof Kit',
+    category: 'Mounting Systems',
+    price: 14999,
+    stock: 67,
+    status: 'Active',
+    image: 'https://images.unsplash.com/photo-1592833159155-c62df1b65634?auto=format&fit=crop&q=80&w=100&h=100',
+  },
+  {
+    id: 4,
+    name: 'Charge Controller 40A MPPT',
+    category: 'Controllers',
+    price: 26999,
+    stock: 0,
+    status: 'Out of Stock',
+    image: 'https://images.unsplash.com/photo-1548332968-3850aa062547?auto=format&fit=crop&q=80&w=100&h=100',
   },
 ];
 

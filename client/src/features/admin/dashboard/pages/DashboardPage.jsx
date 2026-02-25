@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import StatCard from '../components/StatCard';
 import RecentOrdersTable from '../components/RecentOrdersTable';
-import { statsData, recentOrders } from '../data/mockData';
+import { statsData, recentOrders } from '../../data/mockData';
 
 const containerVariants = {
   hidden: {},

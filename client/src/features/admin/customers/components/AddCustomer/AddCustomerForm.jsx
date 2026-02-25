@@ -28,8 +28,6 @@ const INITIAL_FORM = {
     zip: '',
 };
 
-const REQUIRED_FIELDS = ['fullName', 'email', 'phone', 'password', 'street', 'city', 'state', 'zip'];
-
 const STATE_OPTIONS = [
     'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
     'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
@@ -41,7 +39,6 @@ const STATE_OPTIONS = [
 
 const AddCustomerForm = ({ onSuccess }) => {
     const [form, setForm] = useState(INITIAL_FORM);
-    const [errors, setErrors] = useState({});
     const [photoPreview, setPhotoPreview] = useState(null);
     const [submitted, setSubmitted] = useState(false);
 
@@ -53,35 +50,16 @@ const AddCustomerForm = ({ onSuccess }) => {
         setPhotoPreview(url);
     };
 
-    const validate = () => {
-        const newErrors = {};
-        REQUIRED_FIELDS.forEach((key) => {
-            if (!form[key].trim()) newErrors[key] = 'This field is required';
-        });
-        if (form.email && !/\S+@\S+\.\S+/.test(form.email))
-            newErrors.email = 'Enter a valid email address';
-        if (form.phone && !/^\+?[\d\s\-()]{7,15}$/.test(form.phone))
-            newErrors.phone = 'Enter a valid phone number';
-        if (form.password && form.password.length < 6)
-            newErrors.password = 'Password must be at least 6 characters';
-        return newErrors;
-    };
-
     const handleReset = () => {
         setForm(INITIAL_FORM);
-        setErrors({});
         setPhotoPreview(null);
         setSubmitted(false);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const errs = validate();
-        setErrors(errs);
-        if (Object.keys(errs).length === 0) {
-            setSubmitted(true);
-            if (onSuccess) onSuccess(form);
-        }
+        setSubmitted(true);
+        if (onSuccess) onSuccess(form);
     };
 
     return (
@@ -109,10 +87,8 @@ const AddCustomerForm = ({ onSuccess }) => {
                                 label="Full Name"
                                 icon={User}
                                 placeholder="e.g. Neel Pandya"
-                                required
                                 value={form.fullName}
                                 onChange={handleChange('fullName')}
-                                error={errors.fullName}
                                 className="sm:col-span-2"
                             />
                             <FormField
@@ -120,30 +96,24 @@ const AddCustomerForm = ({ onSuccess }) => {
                                 icon={Mail}
                                 type="email"
                                 placeholder="email@example.com"
-                                required
                                 value={form.email}
                                 onChange={handleChange('email')}
-                                error={errors.email}
                             />
                             <FormField
                                 label="Phone Number"
                                 icon={Phone}
                                 type="tel"
                                 placeholder="+91 98765 43210"
-                                required
                                 value={form.phone}
                                 onChange={handleChange('phone')}
-                                error={errors.phone}
                             />
                             <FormField
                                 label="Password"
                                 icon={Lock}
                                 type="password"
                                 placeholder="Min. 6 characters"
-                                required
                                 value={form.password}
                                 onChange={handleChange('password')}
-                                error={errors.password}
                                 className="sm:col-span-2"
                             />
                         </div>
@@ -157,10 +127,8 @@ const AddCustomerForm = ({ onSuccess }) => {
                             label="Street Address"
                             icon={Home}
                             placeholder="123 Main Street"
-                            required
                             value={form.street}
                             onChange={handleChange('street')}
-                            error={errors.street}
                         />
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -168,16 +136,14 @@ const AddCustomerForm = ({ onSuccess }) => {
                                 label="City"
                                 icon={Building2}
                                 placeholder="Ahmedabad"
-                                required
                                 value={form.city}
                                 onChange={handleChange('city')}
-                                error={errors.city}
                             />
 
                             {/* State — native select, styled to match FormField */}
                             <div className="flex flex-col gap-1.5">
                                 <label className="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-1">
-                                    State <span className="text-[#fbc02d]">*</span>
+                                    State
                                 </label>
                                 <div className="relative">
                                     <Building2
@@ -188,13 +154,7 @@ const AddCustomerForm = ({ onSuccess }) => {
                                     <select
                                         value={form.state}
                                         onChange={handleChange('state')}
-                                        className={`
-                                            w-full pl-10 pr-4 py-3 bg-white border rounded-xl
-                                            text-sm font-medium text-[#111827] appearance-none
-                                            transition-all duration-200 outline-none cursor-pointer
-                                            focus:ring-2 focus:ring-[#fbc02d]/25 focus:border-[#fbc02d]
-                                            ${errors.state ? 'border-red-300' : 'border-gray-200 hover:border-gray-300'}
-                                        `}
+                                        className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium text-[#111827] appearance-none transition-all duration-200 outline-none cursor-pointer focus:ring-2 focus:ring-[#fbc02d]/25 focus:border-[#fbc02d] hover:border-gray-300"
                                     >
                                         <option value="" disabled>Select State</option>
                                         {STATE_OPTIONS.map((s) => (
@@ -202,19 +162,14 @@ const AddCustomerForm = ({ onSuccess }) => {
                                         ))}
                                     </select>
                                 </div>
-                                {errors.state && (
-                                    <p className="text-xs text-red-500 font-medium">{errors.state}</p>
-                                )}
                             </div>
 
                             <FormField
                                 label="ZIP / PIN Code"
                                 icon={Hash}
                                 placeholder="380001"
-                                required
                                 value={form.zip}
                                 onChange={handleChange('zip')}
-                                error={errors.zip}
                             />
                         </div>
                     </div>

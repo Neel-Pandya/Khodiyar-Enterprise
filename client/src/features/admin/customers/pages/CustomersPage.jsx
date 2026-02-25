@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { customerStats, customersList } from '../data/mockData';
+import { customerStats, customersList } from '../../data/mockData';
 import CustomerHeader from '../components/CustomerHeader';
 import CustomerStatCard from '../components/CustomerStatCard';
 import CustomerTable from '../components/CustomerTable';
