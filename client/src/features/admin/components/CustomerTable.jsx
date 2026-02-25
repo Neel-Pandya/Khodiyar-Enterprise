@@ -36,13 +36,13 @@ const CustomerTable = ({ customers }) => {
 
                 {/* Table Content */}
                 <div className="overflow-x-auto -mx-6 px-6">
-                    <table className="w-full text-left min-w-[600px]">
+                    <table className="w-full text-left min-w-[700px] table-fixed">
                         <thead>
                             <tr className="border-b border-gray-50">
-                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Customer</th>
-                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Email Address</th>
-                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Status</th>
-                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Actions</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap w-[30%]">Customer</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap w-[40%]">Email Address</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap text-center w-[15%]">Status</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap text-right w-[15%]">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">

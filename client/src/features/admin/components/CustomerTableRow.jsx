@@ -31,15 +31,15 @@ const CustomerTableRow = ({ customer, index }) => {
             <td className="px-6 py-5">
                 <p className="text-sm font-medium text-gray-500">{customer.email}</p>
             </td>
-            <td className="px-6 py-5">
+            <td className="px-6 py-5 text-center">
                 <div className={`px-3 py-1 rounded-full text-[10px] font-bold inline-block ${customer.status === 'Active' ? 'bg-[#ecfdf5] text-[#059669]' :
                     customer.status === 'Pending' ? 'bg-[#fffbeb] text-[#d97706]' : 'bg-gray-100 text-gray-500'
                     }`}>
                     {customer.status}
                 </div>
             </td>
-            <td className="px-6 py-5">
-                <div className="flex items-center gap-3">
+            <td className="px-3 py-5 text-right">
+                <div className="flex items-center justify-end gap-3">
                     <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
                         <Edit2 size={16} />
                     </button>
