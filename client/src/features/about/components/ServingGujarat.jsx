@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import OurReachImage from "../../../assets/images/about_image_2.png"
 
@@ -9,11 +8,7 @@ const ServingGujarat = () => {
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Image Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+          <div
             className="order-2 lg:order-1 relative"
           >
             <div className="absolute inset-0 bg-secondary/5 rounded-[3rem] rotate-3 scale-105"></div>
@@ -24,25 +19,10 @@ const ServingGujarat = () => {
                 className="w-full h-[500px] object-cover scale-105 hover:scale-110 transition-transform duration-700"
               />
             </div>
-            
-            {/* Location Tag */}
-            {/* <div className="absolute -bottom-6 -right-6 bg-primary text-white p-6 rounded-3xl shadow-xl flex items-center gap-4 animate-bounce-slow">
-              <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary">
-                <MapPin className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="text-secondary text-xs font-bold uppercase tracking-widest mb-1">Based in</div>
-                <div className="text-xl font-black">Rajkot, Gujarat</div>
-              </div>
-            </div> */}
-          </motion.div>
+          </div>
 
           {/* Text Content */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+          <div
             className="order-1 lg:order-2"
           >
             <span className="inline-block px-4 py-1.5 bg-accent/10 text-accent text-sm font-bold tracking-widest uppercase rounded-full mb-6 border border-accent/20">
@@ -67,7 +47,7 @@ const ServingGujarat = () => {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

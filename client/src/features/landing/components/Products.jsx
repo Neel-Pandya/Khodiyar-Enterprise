@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 const products = [
   {
@@ -34,47 +33,19 @@ const products = [
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
 const Products = () => {
   return (
     <section className="section bg-white text-text-dark">
       <div className="container">
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold text-primary mb-16 text-center"
-        >
+        <h2 className="text-4xl md:text-5xl font-bold text-primary mb-16 text-center">
           Solar Products
-        </motion.h2>
+        </h2>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {products.map((product) => (
-            <motion.div
+            <div
               key={product.id}
-              variants={itemVariants}
-              whileHover={{ y: -10 }}
-              className="bg-bg-light rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group transform-gpu"
+              className="bg-bg-light rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col group transform-gpu hover:-translate-y-2 transition-transform duration-300"
             >
               <div className="h-48 overflow-hidden relative">
                 <img
@@ -89,17 +60,15 @@ const Products = () => {
                 <p className="text-sm text-text-muted mb-8 flex-grow leading-relaxed font-medium">
                   {product.description}
                 </p>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-accent transition-colors shadow-lg shadow-primary/10"
+                <button
+                  className="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-accent hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/10"
                 >
                   View Details
-                </motion.button>
+                </button>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

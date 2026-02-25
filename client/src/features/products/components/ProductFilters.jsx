@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, X, ArrowUpDown } from 'lucide-react';
 import { categories } from '../data/products';
 
@@ -35,79 +34,72 @@ const ProductFilters = () => {
         </div>
 
         {/* Advanced Filter Panel */}
-        <AnimatePresence>
-          {isFilterPanelOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="overflow-hidden"
-            >
-              <div className="pt-8 pb-4 grid grid-cols-1 md:grid-cols-2 gap-10 border-t border-gray-100 mt-6 md:mt-8">
-                {/* Category Selection */}
-                <div>
-                  <h4 className="text-xs font-black uppercase tracking-[0.2em] text-text-muted mb-6 flex items-center gap-2">
-                    Select Category
-                  </h4>
-                  <div className="flex flex-wrap gap-2.5">
-                    {categories.map((cat) => (
-                      <button
-                        key={cat}
-                        className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
-                          cat === 'All' 
-                            ? 'bg-primary text-white shadow-lg shadow-primary/10' 
-                            : 'bg-gray-50 text-text-muted hover:bg-gray-100 border border-transparent hover:border-gray-200'
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Sort By */}
-                <div>
-                  <h4 className="text-xs font-black uppercase tracking-[0.2em] text-text-muted mb-6 flex items-center gap-2">
-                    <ArrowUpDown size={14} /> Sort Results
-                  </h4>
-                  <div className="flex flex-wrap gap-2.5">
-                    {[
-                      { id: 'name-asc', label: 'Name (A-Z)' },
-                      { id: 'name-desc', label: 'Name (Z-A)' },
-                      { id: 'category', label: 'By Category' }
-                    ].map((option) => (
-                      <button
-                        key={option.id}
-                        className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                          option.id === 'name-asc'
-                            ? 'bg-primary text-white shadow-lg shadow-primary/10'
-                            : 'bg-gray-50 text-text-muted border border-transparent hover:border-gray-200'
-                        }`}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
+        {isFilterPanelOpen && (
+          <div className="overflow-hidden transition-all duration-300">
+            <div className="pt-8 pb-4 grid grid-cols-1 md:grid-cols-2 gap-10 border-t border-gray-100 mt-6 md:mt-8">
+              {/* Category Selection */}
+              <div>
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-text-muted mb-6 flex items-center gap-2">
+                  Select Category
+                </h4>
+                <div className="flex flex-wrap gap-2.5">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                        cat === 'All' 
+                          ? 'bg-primary text-white shadow-lg shadow-primary/10' 
+                          : 'bg-gray-50 text-text-muted hover:bg-gray-100 border border-transparent hover:border-gray-200'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3">
-                <button 
-                  className="px-6 py-3 rounded-xl font-bold text-sm text-text-muted hover:text-primary transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  className="px-8 py-3 bg-secondary text-primary rounded-xl font-black text-sm shadow-xl shadow-secondary/10 hover:shadow-secondary/20 transition-all hover:-translate-y-0.5"
-                >
-                  Apply Filters
-                </button>
+              {/* Sort By */}
+              <div>
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-text-muted mb-6 flex items-center gap-2">
+                  <ArrowUpDown size={14} /> Sort Results
+                </h4>
+                <div className="flex flex-wrap gap-2.5">
+                  {[
+                    { id: 'name-asc', label: 'Name (A-Z)' },
+                    { id: 'name-desc', label: 'Name (Z-A)' },
+                    { id: 'category', label: 'By Category' }
+                  ].map((option) => (
+                    <button
+                      key={option.id}
+                      className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                        option.id === 'name-asc'
+                          ? 'bg-primary text-white shadow-lg shadow-primary/10'
+                          : 'bg-gray-50 text-text-muted border border-transparent hover:border-gray-200'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3">
+              <button 
+                className="px-6 py-3 rounded-xl font-bold text-sm text-text-muted hover:text-primary transition-colors"
+                onClick={() => setIsFilterPanelOpen(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="px-8 py-3 bg-secondary text-primary rounded-xl font-black text-sm shadow-xl shadow-secondary/10 hover:shadow-secondary/20 transition-all hover:-translate-y-0.5"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

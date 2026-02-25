@@ -1,21 +1,10 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 // Data & Components
 import { products } from '../data/products';
 import ProductCard from '../components/ProductCard';
 import ProductFilters from '../components/ProductFilters';
 import Pagination from '../components/Pagination';
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
 
 const ProductPage = () => {
   return (
@@ -24,16 +13,13 @@ const ProductPage = () => {
 
       {/* Product Display Area */}
       <section className="container">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+        <div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
         >
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
-        </motion.div>
+        </div>
 
         <Pagination />
       </section>

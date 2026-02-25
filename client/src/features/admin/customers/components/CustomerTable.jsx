@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Search } from 'lucide-react';
 import CustomerTableRow from './CustomerTableRow';
 import FilterButton from '../../shared/components/FilterButton';
@@ -46,11 +45,9 @@ const CustomerTable = ({ customers }) => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
-                            <AnimatePresence>
-                                {customers.map((customer, i) => (
-                                    <CustomerTableRow key={customer.id} customer={customer} index={i} />
-                                ))}
-                            </AnimatePresence>
+                            {customers.map((customer, i) => (
+                                <CustomerTableRow key={customer.id} customer={customer} index={i} />
+                            ))}
                         </tbody>
                     </table>
                 </div>

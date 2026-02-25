@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Users, Zap, Calendar, CheckCircle } from 'lucide-react';
 
 const stats = [
@@ -31,12 +30,8 @@ const Stats = () => {
       <div className="container">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
               className="text-center"
             >
               <div className="inline-flex items-center justify-center p-4 bg-secondary text-primary rounded-2xl mb-4 shadow-lg shadow-secondary/20">
@@ -48,7 +43,7 @@ const Stats = () => {
               <div className="text-white/60 font-medium uppercase tracking-wider text-xs md:text-sm">
                 {stat.label}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

@@ -1,11 +1,9 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 
-const ContactInfo = ({ fadeUp }) => {
+const ContactInfo = () => {
   return (
-    <motion.div 
-      variants={fadeUp}
+    <div 
       className="bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 h-full flex flex-col"
     >
       <div className="mb-12">
@@ -62,7 +60,7 @@ const ContactInfo = ({ fadeUp }) => {
         </div>
 
       </div>
-    </motion.div>
+    </div>
   );
 };
 

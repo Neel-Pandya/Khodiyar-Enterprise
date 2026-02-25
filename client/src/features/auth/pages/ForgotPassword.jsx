@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import Input from '../../../common/components/Input';
 import Button from '../../../common/components/Button';
 import AuthLayout from '../components/AuthLayout';
@@ -19,10 +18,7 @@ const ForgotPassword = () => {
       title="Reset Password" 
       subtitle="Enter your email to receive a reset link"
     >
-      <motion.form 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+      <form 
         onSubmit={handleSubmit} 
         className="w-full flex flex-col gap-6"
       >
@@ -53,7 +49,7 @@ const ForgotPassword = () => {
             </Link>
           </p>
         </div>
-      </motion.form>
+      </form>
     </AuthLayout>
   );
 };

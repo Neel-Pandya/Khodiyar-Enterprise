@@ -1,23 +1,9 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Edit2, Trash2 } from 'lucide-react';
-
-const rowVariants = {
-    hidden: { opacity: 0, x: -16 },
-    visible: (i) => ({
-        opacity: 1,
-        x: 0,
-        transition: { delay: i * 0.07, duration: 0.35, ease: 'easeOut' },
-    }),
-};
 
 const CustomerTableRow = ({ customer, index }) => {
     return (
-        <motion.tr
-            variants={rowVariants}
-            initial="hidden"
-            animate="visible"
-            custom={index}
+        <tr
             className="hover:bg-slate-50/50 transition-colors group border-b border-slate-50 last:border-0"
         >
             <td className="px-6 py-5">
@@ -47,15 +33,15 @@ const CustomerTableRow = ({ customer, index }) => {
             </td>
             <td className="px-3 py-5 text-right">
                 <div className="flex items-center justify-end gap-3">
-                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-all hover:scale-110 active:scale-90">
                         <Edit2 size={16} />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                    <button className="p-2 text-gray-400 hover:text-red-500 transition-all hover:scale-110 active:scale-90">
                         <Trash2 size={16} />
                     </button>
                 </div>
             </td>
-        </motion.tr>
+        </tr>
     );
 };
 

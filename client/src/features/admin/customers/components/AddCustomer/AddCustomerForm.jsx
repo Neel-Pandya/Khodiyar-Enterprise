@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
     User, Mail, Phone, Lock, MapPin, Home, Building2,
     Hash, UserPlus, RotateCcw,
@@ -8,14 +7,6 @@ import {
 import FormSectionCard from './FormSectionCard';
 import FormField from './FormField';
 import PhotoUpload from './PhotoUpload';
-
-// Stagger container — matches pattern from CustomersPage
-const containerVariants = {
-    hidden: {},
-    visible: {
-        transition: { staggerChildren: 0.1, delayChildren: 0.15 },
-    },
-};
 
 const INITIAL_FORM = {
     fullName: '',
@@ -64,10 +55,7 @@ const AddCustomerForm = ({ onSuccess }) => {
 
     return (
         <form onSubmit={handleSubmit} noValidate>
-            <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
+            <div
                 className="flex flex-col gap-6"
             >
                 {/* ─── Section 1: Personal Information ─────────────────── */}
@@ -176,29 +164,24 @@ const AddCustomerForm = ({ onSuccess }) => {
                 </FormSectionCard>
 
                 {/* ─── Action Bar ──────────────────────────────────────── */}
-                <motion.div
-                    variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } } }}
+                <div
                     className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3"
                 >
                     {/* Reset — ghost style matching the table pagination ghost buttons */}
-                    <motion.button
+                    <button
                         type="button"
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
                         onClick={handleReset}
-                        className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
+                        className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 hover:scale-105 active:scale-95"
                     >
                         <RotateCcw size={15} strokeWidth={2.5} />
                         Reset
-                    </motion.button>
+                    </button>
 
                     {/* Submit — amber solid, same style as CustomerHeader "Add New Customer" button */}
-                    <motion.button
+                    <button
                         type="submit"
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
                         className={`
-                            flex items-center justify-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-200 shadow-sm
+                            flex items-center justify-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-200 shadow-sm hover:scale-105 active:scale-95
                             ${submitted
                                 ? 'bg-emerald-500 text-white shadow-emerald-500/20'
                                 : 'bg-[#fbc02d] hover:bg-[#fbbf24] text-[#1e3a5f] shadow-[#fbc02d]/20'
@@ -207,9 +190,9 @@ const AddCustomerForm = ({ onSuccess }) => {
                     >
                         <UserPlus size={16} strokeWidth={2.5} />
                         {submitted ? 'Customer Added!' : 'Add Customer'}
-                    </motion.button>
-                </motion.div>
-            </motion.div>
+                    </button>
+                </div>
+            </div>
         </form>
     );
 };

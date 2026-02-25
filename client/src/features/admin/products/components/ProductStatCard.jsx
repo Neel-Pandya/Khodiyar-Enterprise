@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Package, CheckCircle, AlertTriangle, CreditCard } from 'lucide-react';
 
 const iconMap = {
@@ -9,20 +8,13 @@ const iconMap = {
     CreditCard: { icon: CreditCard, color: 'text-[#8b5cf6]', bg: 'bg-[#8b5cf6]/5' },
 };
 
-const cardVariants = {
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-};
-
 const ProductStatCard = ({ label, value, icon, prefix = '', suffix = '' }) => {
     const meta = iconMap[icon] || iconMap.Package;
     const Icon = meta.icon;
 
     return (
-        <motion.div
-            variants={cardVariants}
-            whileHover={{ y: -4 }}
-            className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col gap-4 hover:shadow-md transition-shadow duration-300 cursor-default select-none"
+        <div
+            className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col gap-4 hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-default select-none"
         >
             <div className={`p-3 rounded-xl w-fit ${meta.bg}`}>
                 <Icon size={24} className={meta.color} strokeWidth={2} />
@@ -35,7 +27,7 @@ const ProductStatCard = ({ label, value, icon, prefix = '', suffix = '' }) => {
                     {prefix}{value.toLocaleString()}{suffix}
                 </p>
             </div>
-        </motion.div>
+        </div>
     );
 };
 

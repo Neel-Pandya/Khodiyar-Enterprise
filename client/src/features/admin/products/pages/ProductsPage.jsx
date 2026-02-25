@@ -1,21 +1,8 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { productStats, productsList } from '../../data/mockData';
 import ProductHeader from '../components/ProductHeader';
 import ProductStatCard from '../components/ProductStatCard';
 import ProductTable from '../components/ProductTable';
-
-const fadeUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-};
-
-const containerVariants = {
-    hidden: {},
-    visible: {
-        transition: { staggerChildren: 0.1, delayChildren: 0.1 },
-    },
-};
 
 const ProductsPage = () => {
     return (
@@ -24,11 +11,8 @@ const ProductsPage = () => {
             <ProductHeader />
 
             {/* Stats Grid */}
-            <motion.div
+            <div
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
             >
                 {productStats.map((stat, i) => (
                     <ProductStatCard
@@ -40,12 +24,12 @@ const ProductsPage = () => {
                         suffix={stat.suffix}
                     />
                 ))}
-            </motion.div>
+            </div>
 
             {/* Product List Section */}
-            <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.3 }}>
+            <div>
                 <ProductTable products={productsList} />
-            </motion.div>
+            </div>
         </div>
     );
 };

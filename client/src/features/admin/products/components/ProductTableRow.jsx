@@ -1,23 +1,9 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Edit2, Trash2 } from 'lucide-react';
-
-const rowVariants = {
-    hidden: { opacity: 0, x: -16 },
-    visible: (i) => ({
-        opacity: 1,
-        x: 0,
-        transition: { delay: i * 0.07, duration: 0.35, ease: 'easeOut' },
-    }),
-};
 
 const ProductTableRow = ({ product, index }) => {
     return (
-        <motion.tr
-            variants={rowVariants}
-            initial="hidden"
-            animate="visible"
-            custom={index}
+        <tr
             className="hover:bg-slate-50/50 transition-colors group border-b border-slate-50 last:border-0"
         >
             <td className="px-6 py-5">
@@ -57,15 +43,15 @@ const ProductTableRow = ({ product, index }) => {
             </td>
             <td className="px-3 py-5 text-right">
                 <div className="flex items-center justify-end gap-2">
-                    <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all">
+                    <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:scale-110 active:scale-90">
                         <Edit2 size={16} />
                     </button>
-                    <button className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all">
+                    <button className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all hover:scale-110 active:scale-90">
                         <Trash2 size={16} />
                     </button>
                 </div>
             </td>
-        </motion.tr>
+        </tr>
     );
 };
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Users, UserCheck, UserPlus, DollarSign } from 'lucide-react';
 
 const iconMap = {
@@ -9,20 +8,13 @@ const iconMap = {
     DollarSign: { icon: DollarSign, color: 'text-[#7c3aed]', bg: 'bg-[#f5f3ff]' },
 };
 
-const cardVariants = {
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-};
-
 const CustomerStatCard = ({ label, value, icon, prefix = '' }) => {
     const meta = iconMap[icon] || iconMap.Users;
     const Icon = meta.icon;
 
     return (
-        <motion.div
-            variants={cardVariants}
-            whileHover={{ y: -4 }}
-            className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col gap-4 hover:shadow-md transition-shadow duration-300 cursor-default select-none"
+        <div
+            className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col gap-4 hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-default select-none"
         >
             <div className={`p-3 rounded-xl w-fit ${meta.bg}`}>
                 <Icon size={24} className={meta.color} strokeWidth={2} />
@@ -35,7 +27,7 @@ const CustomerStatCard = ({ label, value, icon, prefix = '' }) => {
                     {prefix}{value.toLocaleString()}{icon === 'DollarSign' ? 'K' : ''}
                 </p>
             </div>
-        </motion.div>
+        </div>
     );
 };
 

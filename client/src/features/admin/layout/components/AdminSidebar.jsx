@@ -1,6 +1,5 @@
 import React from 'react';
 import { NavLink } from 'react-router';
-import { motion, AnimatePresence } from 'framer-motion';
 import { X, LayoutDashboard, Users, Package, ClipboardList, Settings, LogOut, Zap } from 'lucide-react';
 
 const navItems = [
@@ -11,28 +10,11 @@ const navItems = [
   { label: 'Settings', path: '/admin/settings', icon: Settings },
 ];
 
-const sidebarVariants = {
-  hidden: { x: '-100%', transition: { type: 'spring', damping: 28, stiffness: 220 } },
-  visible: { x: 0, transition: { type: 'spring', damping: 28, stiffness: 220 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, x: -16 },
-  visible: (i) => ({
-    opacity: 1,
-    x: 0,
-    transition: { delay: 0.1 + i * 0.06, duration: 0.3, ease: 'easeOut' },
-  }),
-};
-
 const SidebarContent = ({ onClose }) => (
   <div className="flex flex-col h-full bg-[#1e3a5f] text-white">
     {/* Logo */}
     <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
       <div className="flex items-center gap-2.5">
-        {/* <div className="w-8 h-8 bg-[#fbc02d] rounded-lg flex items-center justify-center flex-shrink-0">
-          <Zap size={16} className="text-[#1e3a5f]" strokeWidth={2.5} />
-        </div> */}
         <div>
           <p className="text-lg font-extrabold tracking-wide leading-none text-secondary">KHODIYAR</p>
           <p className="text-[10px] text-white/50 font-semibold tracking-widest uppercase">Enterprise</p>
@@ -52,7 +34,7 @@ const SidebarContent = ({ onClose }) => (
     {/* Nav Items */}
     <nav className="flex-1 overflow-y-auto px-3 py-6 space-y-1">
       {navItems.map((item, i) => (
-        <motion.div key={item.label} custom={i} variants={itemVariants} initial="hidden" animate="visible">
+        <div key={item.label}>
           <NavLink
             to={item.path}
             onClick={onClose}
@@ -73,15 +55,14 @@ const SidebarContent = ({ onClose }) => (
                 />
                 {item.label}
                 {isActive && (
-                  <motion.span
-                    layoutId="activePill"
+                  <span
                     className="ml-auto w-1.5 h-1.5 bg-[#1e3a5f] rounded-full"
                   />
                 )}
               </>
             )}
           </NavLink>
-        </motion.div>
+        </div>
       ))}
     </nav>
 
@@ -109,30 +90,19 @@ const AdminSidebar = ({ mobileOpen, onClose }) => (
     </aside>
 
     {/* Mobile Overlay + Drawer */}
-    <AnimatePresence>
-      {mobileOpen && (
-        <>
-          <motion.div
-            key="overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
-          />
-          <motion.div
-            key="drawer"
-            variants={sidebarVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            className="fixed top-0 left-0 h-full w-64 z-50 md:hidden shadow-2xl"
-          >
-            <SidebarContent onClose={onClose} />
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+    {mobileOpen && (
+      <>
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+        />
+        <div
+          className="fixed top-0 left-0 h-full w-64 z-50 md:hidden shadow-2xl transition-transform duration-300 translate-x-0"
+        >
+          <SidebarContent onClose={onClose} />
+        </div>
+      </>
+    )}
   </>
 );
 

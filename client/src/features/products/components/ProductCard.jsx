@@ -1,26 +1,10 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { 
-      type: "spring",
-      stiffness: 100,
-      damping: 15
-    } 
-  },
-};
 
 const ProductCard = ({ product }) => {
   return (
-    <motion.div 
-      variants={itemVariants}
-      whileHover={{ y: -12 }}
-      className="bg-white rounded-[2rem] overflow-hidden shadow-xl shadow-gray-200/50 border border-gray-50 flex flex-col group"
+    <div 
+      className="bg-white rounded-[2rem] overflow-hidden shadow-xl shadow-gray-200/50 border border-gray-50 flex flex-col group hover:-translate-y-2 transition-transform duration-300"
     >
       <div className="h-64 overflow-hidden relative">
         <img 
@@ -46,7 +30,7 @@ const ProductCard = ({ product }) => {
           <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

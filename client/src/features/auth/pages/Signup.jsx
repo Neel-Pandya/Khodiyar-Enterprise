@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import AuthLayout from '../components/AuthLayout';
 import Input from '../../../common/components/Input';
 import Button from '../../../common/components/Button';
@@ -7,10 +6,7 @@ import { Link } from 'react-router';
 const Signup = () => {
   return (
     <AuthLayout title="Create Account" subtitle="Join Khodiyar Enterprise today">
-      <motion.form 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+      <form 
         className="w-full flex flex-col gap-6"
       >
         <div>
@@ -68,7 +64,7 @@ const Signup = () => {
             </Link>
           </p>
         </div>
-      </motion.form>
+      </form>
     </AuthLayout>
   );
 };

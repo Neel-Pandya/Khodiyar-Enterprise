@@ -1,16 +1,8 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-
-// Matches the fadeUp pattern used across CustomersPage and CustomerStatCard
-const fadeUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-};
 
 const FormSectionCard = ({ title, icon: Icon, children }) => {
     return (
-        <motion.div
-            variants={fadeUp}
+        <div
             className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
         >
             {/* Section Header */}
@@ -29,7 +21,7 @@ const FormSectionCard = ({ title, icon: Icon, children }) => {
             <div className="px-6 py-6">
                 {children}
             </div>
-        </motion.div>
+        </div>
     );
 };
 

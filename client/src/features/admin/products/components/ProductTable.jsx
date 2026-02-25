@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Search } from 'lucide-react';
 import ProductTableRow from './ProductTableRow';
 import FilterButton from '../../shared/components/FilterButton';
@@ -49,11 +48,9 @@ const ProductTable = ({ products }) => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
-                            <AnimatePresence>
-                                {products.map((product, i) => (
-                                    <ProductTableRow key={product.id} product={product} index={i} />
-                                ))}
-                            </AnimatePresence>
+                            {products.map((product, i) => (
+                                <ProductTableRow key={product.id} product={product} index={i} />
+                            ))}
                         </tbody>
                     </table>
                 </div>

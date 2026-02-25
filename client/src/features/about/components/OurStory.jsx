@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import AboutStoryImage from '../../../assets/images/about_image_1.png';
 
 const OurStory = () => {
@@ -8,12 +7,7 @@ const OurStory = () => {
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Text Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <span className="inline-block px-4 py-1.5 bg-secondary/10 text-secondary text-sm font-bold tracking-widest uppercase rounded-full mb-6 border border-secondary/20">
               Our Story
             </span>
@@ -47,16 +41,10 @@ const OurStory = () => {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Image Content */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="relative"
-          >
+          <div className="relative">
             <div className="relative rounded-[3rem] overflow-hidden">
               <img 
                 src={AboutStoryImage} 
@@ -64,7 +52,7 @@ const OurStory = () => {
                 className="w-full h-[500px] object-cover scale-105 hover:scale-110 transition-transform duration-700"
               />
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

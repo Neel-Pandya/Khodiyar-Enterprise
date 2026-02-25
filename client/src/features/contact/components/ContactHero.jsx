@@ -1,15 +1,10 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 const ContactHero = () => {
   return (
     <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 bg-[#1E3A5F] shrink-0">
       <div className="container relative z-10 text-center px-4 mx-auto max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
+        <div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
             Get in <span className="text-secondary">Touch</span>
           </h1>
@@ -17,7 +12,7 @@ const ContactHero = () => {
             Have questions about solar energy? Need a consultation or support?
             Our team of experts is ready to help you shine brighter.
           </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

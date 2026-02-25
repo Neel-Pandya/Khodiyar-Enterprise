@@ -187,7 +187,7 @@ export const productsList = [
     price: 18999,
     stock: 145,
     status: 'Active',
-    image: 'https://images.unsplash.com/photo-1508514177221-18d1427d5e4f?auto=format&fit=crop&q=80&w=100&h=100',
+    image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=100&h=100',
   },
   {
     id: 2,
@@ -214,15 +214,6 @@ export const productsList = [
     price: 26999,
     stock: 0,
     status: 'Out of Stock',
-    image: 'https://images.unsplash.com/photo-1548332968-3850aa062547?auto=format&fit=crop&q=80&w=100&h=100',
+    image: 'https://images.unsplash.com/photo-1592833159155-c62df1b65634?auto=format&fit=crop&q=80&w=100&h=100',
   },
-];
-
-export const revenueChartData = [
-  { month: 'Aug', value: 140 },
-  { month: 'Sep', value: 165 },
-  { month: 'Oct', value: 155 },
-  { month: 'Nov', value: 180 },
-  { month: 'Dec', value: 195 },
-  { month: 'Jan', value: 220 },
 ];

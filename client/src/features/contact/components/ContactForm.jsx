@@ -1,11 +1,10 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { User, Phone, Mail, FileText, Send } from 'lucide-react';
 import Input from '../../../common/components/Input';
 import Button from '../../../common/components/Button';
 import Textarea from '../../../common/components/Textarea';
 
-const ContactForm = ({ fadeUp }) => {
+const ContactForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission
@@ -13,8 +12,7 @@ const ContactForm = ({ fadeUp }) => {
   };
 
   return (
-    <motion.div 
-      variants={fadeUp}
+    <div 
       className="bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 h-full"
     >
       <div className="mb-10">
@@ -67,7 +65,7 @@ const ContactForm = ({ fadeUp }) => {
           <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
         </Button>
       </form>
-    </motion.div>
+    </div>
   );
 };
 

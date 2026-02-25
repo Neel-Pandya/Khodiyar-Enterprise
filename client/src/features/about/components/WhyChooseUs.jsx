@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ShieldCheck, Clock, BadgePercent, GraduationCap, Trophy, Globe } from 'lucide-react';
 
 const reasons = [
@@ -53,12 +52,8 @@ const WhyChooseUs = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {reasons.map((reason, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
               className="p-8 rounded-3xl bg-bg-light border border-primary/5 hover:border-secondary/50 transition-colors duration-300 group"
             >
               <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-secondary group-hover:text-primary transition-colors duration-300">
@@ -68,7 +63,7 @@ const WhyChooseUs = () => {
               <p className="text-text-muted font-medium leading-relaxed">
                 {reason.description}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
