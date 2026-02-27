@@ -12,8 +12,10 @@ import AdminLayout from './features/admin/layout/AdminLayout'
 import DashboardPage from './features/admin/dashboard/pages/DashboardPage'
 import CustomersPage from './features/admin/customers/pages/CustomersPage'
 import AddCustomerPage from './features/admin/customers/pages/AddCustomerPage'
+import EditCustomerPage from './features/admin/customers/pages/EditCustomerPage'
 import ProductsPage from './features/admin/products/pages/ProductsPage'
 import AddProductPage from './features/admin/products/pages/AddProductPage'
+import EditProductPage from './features/admin/products/pages/EditProductPage'
 
 const App = () => {
   return (
@@ -39,8 +41,10 @@ const App = () => {
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="customers" element={<CustomersPage />} />
           <Route path="customers/add" element={<AddCustomerPage />} />
+          <Route path="customers/edit/:id" element={<EditCustomerPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="products/add" element={<AddProductPage />} />
+          <Route path="products/edit/:id" element={<EditProductPage />} />
           <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Route>
 

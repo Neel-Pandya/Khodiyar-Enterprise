@@ -3,7 +3,36 @@ import { Upload, X, Image as ImageIcon } from 'lucide-react';
 
 const ImageUploadArea = ({ value, onChange }) => {
   const fileInputRef = useRef(null);
-  const [preview, setPreview] = useState(value ? URL.createObjectURL(value) : null);
+  
+  // Helper to get preview URL
+  const getPreviewUrl = (val) => {
+    if (!val) return null;
+    if (typeof val === 'string') return val;
+    if (val instanceof File || val instanceof Blob) {
+      try {
+        return URL.createObjectURL(val);
+      } catch (e) {
+        console.error("Failed to create object URL", e);
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const [preview, setPreview] = useState(() => getPreviewUrl(value));
+
+  // Sync preview if value changes externally (e.g. initial load)
+  React.useEffect(() => {
+    const newPreview = getPreviewUrl(value);
+    setPreview(newPreview);
+
+    // Cleanup: revoke object URLs if they were created from Files
+    return () => {
+      if (newPreview && newPreview.startsWith('blob:')) {
+        URL.revokeObjectURL(newPreview);
+      }
+    };
+  }, [value]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -12,7 +41,8 @@ const ImageUploadArea = ({ value, onChange }) => {
         alert('File size exceeds 5MB limit.');
         return;
       }
-      setPreview(URL.createObjectURL(file));
+      
+      // The useEffect will handle the setPreview and revokeold via value prop change
       onChange(file);
     }
   };

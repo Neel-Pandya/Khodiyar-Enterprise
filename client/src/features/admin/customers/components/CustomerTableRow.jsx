@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from 'react-router';
 import { Edit2, Trash2 } from 'lucide-react';
 
 const CustomerTableRow = ({ customer, index }) => {
@@ -33,9 +33,12 @@ const CustomerTableRow = ({ customer, index }) => {
             </td>
             <td className="px-3 py-4 text-right">
                 <div className="flex items-center justify-end gap-3">
-                    <button className="p-2 text-slate-400 hover:text-[#1e3a5f] hover:bg-[#1e3a5f]/8 rounded-lg transition-all hover:scale-110 active:scale-95">
+                    <Link 
+                        to={`/admin/customers/edit/${customer.id}`}
+                        className="p-2 text-slate-400 hover:text-[#1e3a5f] hover:bg-[#1e3a5f]/8 rounded-lg transition-all hover:scale-110 active:scale-95"
+                    >
                         <Edit2 size={16} />
-                    </button>
+                    </Link>
                     <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all hover:scale-110 active:scale-95">
                         <Trash2 size={16} />
                     </button>

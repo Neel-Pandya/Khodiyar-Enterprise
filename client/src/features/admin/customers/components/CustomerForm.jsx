@@ -4,8 +4,8 @@ import {
     Hash, UserPlus, RotateCcw,
 } from 'lucide-react';
 
-import FormSectionCard from './FormSectionCard';
-import FormField from './FormField';
+import FormSectionCard from '@admin/shared/components/FormSectionCard';
+import FormField from '@admin/shared/components/FormField';
 import PhotoUpload from './PhotoUpload';
 
 const INITIAL_FORM = {
@@ -28,10 +28,12 @@ const STATE_OPTIONS = [
     'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
 ];
 
-const AddCustomerForm = ({ onSuccess }) => {
-    const [form, setForm] = useState(INITIAL_FORM);
-    const [photoPreview, setPhotoPreview] = useState(null);
+const CustomerForm = ({ initialData, onSubmit, onCancel }) => {
+    const [form, setForm] = useState(initialData || INITIAL_FORM);
+    const [photoPreview, setPhotoPreview] = useState(initialData?.photo || null);
     const [submitted, setSubmitted] = useState(false);
+
+    const isEdit = !!initialData;
 
     const handleChange = (field) => (e) =>
         setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -42,6 +44,10 @@ const AddCustomerForm = ({ onSuccess }) => {
     };
 
     const handleReset = () => {
+        if (onCancel) {
+            onCancel();
+            return;
+        }
         setForm(INITIAL_FORM);
         setPhotoPreview(null);
         setSubmitted(false);
@@ -50,7 +56,7 @@ const AddCustomerForm = ({ onSuccess }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setSubmitted(true);
-        if (onSuccess) onSuccess(form);
+        if (onSubmit) onSubmit(form);
     };
 
     return (
@@ -174,7 +180,7 @@ const AddCustomerForm = ({ onSuccess }) => {
                         className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 hover:scale-105 active:scale-95"
                     >
                         <RotateCcw size={15} strokeWidth={2.5} />
-                        Reset
+                        {isEdit ? 'Cancel' : 'Reset'}
                     </button>
 
                     {/* Submit — amber solid, same style as CustomerHeader "Add New Customer" button */}
@@ -188,8 +194,8 @@ const AddCustomerForm = ({ onSuccess }) => {
                             }
                         `}
                     >
-                        <UserPlus size={16} strokeWidth={2.5} />
-                        {submitted ? 'Customer Added!' : 'Add Customer'}
+                        {isEdit ? <RotateCcw size={16} strokeWidth={2.5} /> : <UserPlus size={16} strokeWidth={2.5} />}
+                        {submitted ? (isEdit ? 'Changes Saved!' : 'Customer Added!') : (isEdit ? 'Save Changes' : 'Add Customer')}
                     </button>
                 </div>
             </div>
@@ -197,4 +203,4 @@ const AddCustomerForm = ({ onSuccess }) => {
     );
 };
 
-export default AddCustomerForm;
+export default CustomerForm;

@@ -1,12 +1,12 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import AddCustomerForm from '../components/AddCustomer/AddCustomerForm';
+import CustomerForm from '../components/CustomerForm';
 
 const AddCustomerPage = () => {
     const navigate = useNavigate();
 
-    const handleSuccess = (data) => {
+    const handleSubmit = (data) => {
         // TODO: wire to API — for now navigate back to customers list
         console.log('New customer:', data);
         navigate('/admin/customers');
@@ -42,7 +42,7 @@ const AddCustomerPage = () => {
             </div>
 
             {/* ─── Form ─────────────────────────────────────────────────── */}
-            <AddCustomerForm onSuccess={handleSuccess} />
+            <CustomerForm onSubmit={handleSubmit} />
         </div>
     );
 };
