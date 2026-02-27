@@ -1,52 +1,23 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
-import { ForgotPassword, Login, ResetPassword, Signup } from './features/auth/pages'
-import MainLayout from './layouts/MainLayout'
-import LandingPage from './features/landing/pages/LandingPage'
-import ProductPage from './features/products/pages/ProductPage'
-import AboutPage from './features/about/pages/AboutPage'
-import ContactPage from './features/contact/pages/ContactPage'
 
-// Admin
-import AdminLayout from './features/admin/layout/AdminLayout'
-import DashboardPage from './features/admin/dashboard/pages/DashboardPage'
-import CustomersPage from './features/admin/customers/pages/CustomersPage'
-import AddCustomerPage from './features/admin/customers/pages/AddCustomerPage'
-import EditCustomerPage from './features/admin/customers/pages/EditCustomerPage'
-import ProductsPage from './features/admin/products/pages/ProductsPage'
-import AddProductPage from './features/admin/products/pages/AddProductPage'
-import EditProductPage from './features/admin/products/pages/EditProductPage'
+// Routes
+import PublicRoutes from './routes/PublicRoutes'
+import AuthRoutes from './routes/AuthRoutes'
+import AdminRoutes from './routes/AdminRoutes'
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/products" element={<ProductPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-        </Route>
+        {PublicRoutes()}
 
         {/* Auth Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        {AuthRoutes()}
 
         {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="customers" element={<CustomersPage />} />
-          <Route path="customers/add" element={<AddCustomerPage />} />
-          <Route path="customers/edit/:id" element={<EditCustomerPage />} />
-          <Route path="products" element={<ProductsPage />} />
-          <Route path="products/add" element={<AddProductPage />} />
-          <Route path="products/edit/:id" element={<EditProductPage />} />
-          <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
-        </Route>
+        {AdminRoutes()}
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />

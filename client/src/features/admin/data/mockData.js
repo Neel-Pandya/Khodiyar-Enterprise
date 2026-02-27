@@ -51,6 +51,8 @@ export const recentOrders = [
     status: 'Processing',
     date: '2026-01-15',
     avatar: 'JS',
+    email: 'john.smith@example.com',
+    phone: '+1 234-567-8901'
   },
   {
     id: 'KE-1020',
@@ -61,6 +63,8 @@ export const recentOrders = [
     status: 'Delivered',
     date: '2026-01-14',
     avatar: 'SJ',
+    email: 'sarah.j@example.com',
+    phone: '+1 234-567-8902'
   },
   {
     id: 'KE-1019',
@@ -71,6 +75,8 @@ export const recentOrders = [
     status: 'Pending',
     date: '2026-01-13',
     avatar: 'MD',
+    email: 'mike.d@example.com',
+    phone: '+1 234-567-8903'
   },
   {
     id: 'KE-1018',
@@ -81,6 +87,8 @@ export const recentOrders = [
     status: 'Processing',
     date: '2026-01-12',
     avatar: 'EB',
+    email: 'emily.b@example.com',
+    phone: '+1 234-567-8904'
   },
   {
     id: 'KE-1017',
@@ -91,6 +99,8 @@ export const recentOrders = [
     status: 'Delivered',
     date: '2026-01-11',
     avatar: 'DW',
+    email: 'david.w@example.com',
+    phone: '+1 234-567-8905'
   },
   {
     id: 'KE-1016',
@@ -101,6 +111,79 @@ export const recentOrders = [
     status: 'Pending',
     date: '2026-01-10',
     avatar: 'PP',
+    email: 'priya.p@example.com',
+    phone: '+1 234-567-8906'
+  },
+  {
+    id: 'KE-1015',
+    customer: 'James Wilson',
+    location: 'Riverside, CA',
+    solution: '3kW Starter Solar Kit',
+    amount: 8500,
+    status: 'Delivered',
+    date: '2026-01-09',
+    avatar: 'JW',
+    email: 'james.w@example.com',
+    phone: '+1 234-567-8907'
+  },
+  {
+    id: 'KE-1014',
+    customer: 'Anna Martinez',
+    location: 'San Jose, CA',
+    solution: '12kW Premium Solar Setup',
+    amount: 28900,
+    status: 'Processing',
+    date: '2026-01-08',
+    avatar: 'AM',
+    email: 'anna.m@example.com',
+    phone: '+1 234-567-8908'
+  },
+  {
+    id: 'KE-1013',
+    customer: 'Robert Taylor',
+    location: 'Irvine, CA',
+    solution: '5kW Off-Grid System',
+    amount: 14200,
+    status: 'Pending',
+    date: '2026-01-07',
+    avatar: 'RT',
+    email: 'robert.t@example.com',
+    phone: '+1 234-567-8909'
+  }
+];
+
+export const orderStats = [
+  {
+    id: 1,
+    label: 'Total Orders',
+    value: 458,
+    icon: 'ClipboardList',
+    iconColor: '#1e3a5f',
+    bgLight: 'bg-[#1e3a5f]/5',
+  },
+  {
+    id: 2,
+    label: 'Pending Orders',
+    value: 12,
+    icon: 'Clock',
+    iconColor: '#f59e0b',
+    bgLight: 'bg-[#f59e0b]/5',
+  },
+  {
+    id: 3,
+    label: 'Completed Orders',
+    value: 421,
+    icon: 'CheckCircle',
+    iconColor: '#10b981',
+    bgLight: 'bg-[#10b981]/5',
+  },
+  {
+    id: 4,
+    label: 'Canceled Orders',
+    value: 25,
+    icon: 'XCircle',
+    iconColor: '#ef4444',
+    bgLight: 'bg-[#ef4444]/5',
   },
 ];
 
