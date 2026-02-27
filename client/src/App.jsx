@@ -13,6 +13,7 @@ import DashboardPage from './features/admin/dashboard/pages/DashboardPage'
 import CustomersPage from './features/admin/customers/pages/CustomersPage'
 import AddCustomerPage from './features/admin/customers/pages/AddCustomerPage'
 import ProductsPage from './features/admin/products/pages/ProductsPage'
+import AddProductPage from './features/admin/products/pages/AddProductPage'
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
           <Route path="customers" element={<CustomersPage />} />
           <Route path="customers/add" element={<AddCustomerPage />} />
           <Route path="products" element={<ProductsPage />} />
+          <Route path="products/add" element={<AddProductPage />} />
           <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Route>
 

@@ -65,9 +65,9 @@ const RecentOrdersTable = ({ orders = [] }) => {
   const columns = ['Customer', 'Solar Solution', 'Amount', 'Status', 'Date'];
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+      <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200">
         <div>
           <h2 className="text-lg font-bold text-slate-800">Recent Orders</h2>
           <p className="text-xs text-slate-400 mt-0.5">{orders.length} orders this month</p>
@@ -123,7 +123,7 @@ const RecentOrdersTable = ({ orders = [] }) => {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[700px]">
           <thead>
-            <tr className="border-b border-slate-100">
+            <tr className="border-b border-slate-200">
               {columns.map((col) => (
                 <th
                   key={col}
@@ -145,7 +145,7 @@ const RecentOrdersTable = ({ orders = [] }) => {
             {orders.map((order, i) => (
               <tr
                 key={order.id}
-                className="border-b border-slate-50 last:border-0 hover:bg-slate-50/60 transition-colors group"
+                className="border-b border-slate-200 last:border-0 hover:bg-slate-50/60 transition-colors group"
               >
                 {/* Customer */}
                 <td className="px-6 py-4">

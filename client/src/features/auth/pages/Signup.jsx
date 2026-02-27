@@ -1,6 +1,6 @@
 import AuthLayout from '../components/AuthLayout';
-import Input from '../../../common/components/Input';
-import Button from '../../../common/components/Button';
+import Input from '@common/Input';
+import Button from '@common/Button';
 import { Link } from 'react-router';
 
 const Signup = () => {

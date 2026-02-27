@@ -18,7 +18,7 @@ const ExportButton = ({ onExport, className = "" }) => {
         ${className}
         ${exported
                     ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                    : 'bg-[#1e293b] text-white hover:bg-[#0f172a] shadow-sm'}
+                    : 'bg-[#1e3a5f] text-white hover:bg-[#2c5282] shadow-sm'}
       `}
         >
             {exported ? <Check size={14} strokeWidth={3} /> : <Download size={14} strokeWidth={2.5} />}

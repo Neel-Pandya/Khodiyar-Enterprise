@@ -12,7 +12,7 @@ const FilterButton = ({ options = [], className = "" }) => {
           w-full flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105 active:scale-95
           ${isOpen
                         ? 'bg-blue-50 text-blue-600 border border-blue-200'
-                        : 'border border-gray-100 text-gray-600 hover:bg-slate-50'}
+                        : 'border border-slate-200 text-gray-600 hover:bg-slate-50'}
         `}
             >
                 <Filter size={14} strokeWidth={2.5} />

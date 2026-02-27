@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Input from '../../../common/components/Input';
-import Button from '../../../common/components/Button';
+import Input from '@common/Input';
+import Button from '@common/Button';
 import AuthLayout from '../components/AuthLayout';
 import { Link } from 'react-router';
 

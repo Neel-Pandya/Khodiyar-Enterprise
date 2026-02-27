@@ -1,5 +1,5 @@
 import React from 'react';
-import { productStats, productsList } from '../../data/mockData';
+import { productStats, productsList } from '@admin/data/mockData';
 import ProductHeader from '../components/ProductHeader';
 import ProductStatCard from '../components/ProductStatCard';
 import ProductTable from '../components/ProductTable';

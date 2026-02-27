@@ -1,8 +1,8 @@
 import React from 'react';
 import { User, Phone, Mail, FileText, Send } from 'lucide-react';
-import Input from '../../../common/components/Input';
-import Button from '../../../common/components/Button';
-import Textarea from '../../../common/components/Textarea';
+import Input from '@common/Input';
+import Button from '@common/Button';
+import Textarea from '@common/Textarea';
 
 const ContactForm = () => {
   const handleSubmit = (e) => {
