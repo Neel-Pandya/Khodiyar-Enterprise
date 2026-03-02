@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavLink, Link } from 'react-router';
 import { X, ChevronRight, Heart, ShoppingCart, User, Lock, LogOut, ArrowRight, Mail, Phone, MapPin } from 'lucide-react';
 

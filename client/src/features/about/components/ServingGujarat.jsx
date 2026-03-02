@@ -1,4 +1,3 @@
-import React from 'react';
 import { MapPin } from 'lucide-react';
 import OurReachImage from "../../../assets/images/about_image_2.png"
 

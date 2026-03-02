@@ -1,4 +1,3 @@
-import React from 'react';
 
 const FormSectionCard = ({ title, icon: Icon, children }) => {
     return (

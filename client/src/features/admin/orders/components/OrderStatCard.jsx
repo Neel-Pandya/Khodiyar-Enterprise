@@ -1,4 +1,3 @@
-import React from 'react';
 import { ClipboardList, Clock, CheckCircle, XCircle } from 'lucide-react';
 
 const iconMap = {

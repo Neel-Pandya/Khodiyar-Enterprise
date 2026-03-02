@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavLink } from 'react-router';
 import { X, LayoutDashboard, Users, Package, ClipboardList, Settings, LogOut, Zap } from 'lucide-react';
 

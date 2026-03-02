@@ -1,4 +1,3 @@
-import React from 'react';
 import { productStats, productsList } from '@admin/data/mockData';
 import ProductHeader from '../components/ProductHeader';
 import ProductStatCard from '../components/ProductStatCard';

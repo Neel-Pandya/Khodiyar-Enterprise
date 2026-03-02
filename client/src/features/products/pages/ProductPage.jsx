@@ -1,4 +1,3 @@
-import React from 'react';
 
 // Data & Components
 import { products } from '../data/products';

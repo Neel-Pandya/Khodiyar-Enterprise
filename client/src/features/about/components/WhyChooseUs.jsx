@@ -1,4 +1,3 @@
-import React from 'react';
 import { ShieldCheck, Clock, BadgePercent, GraduationCap, Trophy, Globe } from 'lucide-react';
 
 const reasons = [

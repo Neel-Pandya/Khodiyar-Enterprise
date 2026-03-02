@@ -1,4 +1,3 @@
-import React from 'react';
 import { Package, CheckCircle, AlertTriangle, CreditCard } from 'lucide-react';
 
 const iconMap = {

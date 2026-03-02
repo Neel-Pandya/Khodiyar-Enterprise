@@ -1,4 +1,3 @@
-import React from 'react';
 import { Sun, Zap, Users, DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 
 const iconMap = {

@@ -1,4 +1,3 @@
-import React from 'react';
 import StatCard from '../components/StatCard';
 import RecentOrdersTable from '../components/RecentOrdersTable';
 import { statsData, recentOrders } from '@admin/data/mockData';

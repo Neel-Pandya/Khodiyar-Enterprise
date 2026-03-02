@@ -1,4 +1,3 @@
-import React from 'react';
 import { Users, Zap, Calendar, CheckCircle } from 'lucide-react';
 
 const stats = [

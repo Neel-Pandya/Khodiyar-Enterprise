@@ -1,4 +1,3 @@
-import React from 'react';
 import { Search } from 'lucide-react';
 import ProductTableRow from './ProductTableRow';
 import FilterButton from '@admin/shared/components/FilterButton';

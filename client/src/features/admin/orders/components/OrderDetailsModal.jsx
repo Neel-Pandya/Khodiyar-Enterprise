@@ -1,4 +1,3 @@
-import React from 'react';
 import { X, Calendar, MapPin, Package, Mail, Phone, ExternalLink, ShieldCheck } from 'lucide-react';
 
 const OrderDetailsModal = ({ order, onClose }) => {

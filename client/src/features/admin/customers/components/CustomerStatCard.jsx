@@ -1,4 +1,3 @@
-import React from 'react';
 import { Users, UserCheck, UserPlus, DollarSign } from 'lucide-react';
 
 const iconMap = {
