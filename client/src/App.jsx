@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
 import PublicRoutes from './routes/PublicRoutes'
 import AuthRoutes from './routes/AuthRoutes'
 import AdminRoutes from './routes/AdminRoutes'
+import UserRoutes from './routes/UserRoutes'
 
 const App = () => {
   return (
@@ -18,6 +19,9 @@ const App = () => {
 
         {/* Admin Routes */}
         {AdminRoutes()}
+
+        {/* User Routes */}
+        {UserRoutes()}
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
