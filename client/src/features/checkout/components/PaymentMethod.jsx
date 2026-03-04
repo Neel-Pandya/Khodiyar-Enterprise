@@ -41,14 +41,14 @@ const PaymentMethod = () => {
               <input
                 type="radio"
                 name="payment_method"
-                className="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary focus:ring-2"
+                className="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary"
                 checked={selectedMethod === method.id}
                 onChange={() => setSelectedMethod(method.id)}
               />
             </div>
             
             <div className="ml-4 flex gap-4 w-full">
-              <div className="flex-shrink-0 p-2 bg-white rounded-lg shadow-sm border border-gray-100">
+              <div className="flex-shrink-0 p-2 bg-white rounded-lg shadow-sm border border-gray-100 h-fit">
                 {method.icon}
               </div>
               <div className="flex-1">
