@@ -9,6 +9,7 @@ import ProductPage from '../features/products/pages/ProductPage';
 import AboutPage from '../features/about/pages/AboutPage';
 import ContactPage from '../features/contact/pages/ContactPage';
 import CartPage from '../features/cart/pages/CartPage';
+import CheckoutPage from '../features/checkout/pages/CheckoutPage';
 
 const PublicRoutes = () => {
     return (
@@ -18,6 +19,7 @@ const PublicRoutes = () => {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
         </Route>
     );
 };

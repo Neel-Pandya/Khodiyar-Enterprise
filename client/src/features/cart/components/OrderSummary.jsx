@@ -28,10 +28,10 @@ const OrderSummary = ({ subtotal }) => {
       </div>
 
       <div className="flex flex-col gap-4 pt-4">
-        <button className="w-full py-5 bg-primary text-white rounded-2xl font-black text-sm hover:bg-accent transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 group/btn">
+        <Link to="/checkout" className="w-full py-5 bg-primary text-white rounded-2xl font-black text-sm hover:bg-accent transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 group/btn">
           Proceed to Checkout
           <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
-        </button>
+        </Link>
         
         <Link 
           to="/products"
