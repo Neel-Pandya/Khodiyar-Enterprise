@@ -81,7 +81,7 @@ const FavoritesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] py-12 md:py-20">
+    <div className="min-h-screen bg-[#f8fafc] py-12 md:py-12">
       <div className="container mx-auto px-6">
         <FavoritesHeader count={favorites.length} />
         
