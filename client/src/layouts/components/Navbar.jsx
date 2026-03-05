@@ -44,7 +44,7 @@ const Navbar = ({
           {isLoggedIn ? (
             <div className="flex items-center gap-6 ml-4">
               <div className="flex items-center gap-5 border-r border-slate-200 pr-6">
-                <Link to="/wishlist" className="relative text-slate-600 hover:text-primary transition-colors p-2 hover:bg-slate-50 rounded-full">
+                <Link to="/favorites" className="relative text-slate-600 hover:text-primary transition-colors p-2 hover:bg-slate-50 rounded-full">
                   <Heart size={22} />
                   <span className="absolute top-0 right-0 bg-secondary text-primary text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full border-2 border-white">2</span>
                 </Link>

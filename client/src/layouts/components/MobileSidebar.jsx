@@ -63,8 +63,8 @@ const MobileSidebar = ({
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Profile</p>
                   <p className="text-lg font-bold text-slate-800">Neel Pandya</p>
                 </div>
-                <Link to="/wishlist" onClick={onClose} className="flex items-center gap-4 p-4 rounded-2xl text-slate-800 hover:bg-slate-50 hover:text-primary transition-all font-semibold">
-                  <div className="p-2 bg-slate-100 rounded-xl"><Heart size={20} /></div> Wishlist
+                <Link to="/favorites" onClick={onClose} className="flex items-center gap-4 p-4 rounded-2xl text-slate-800 hover:bg-slate-50 hover:text-primary transition-all font-semibold">
+                  <div className="p-2 bg-slate-100 rounded-xl"><Heart size={20} /></div> Favorites
                 </Link>
                 <Link to="/cart" onClick={onClose} className="flex items-center gap-4 p-4 rounded-2xl text-slate-800 hover:bg-slate-50 hover:text-primary transition-all font-semibold">
                   <div className="p-2 bg-slate-100 rounded-xl"><ShoppingCart size={20} /></div> Cart
