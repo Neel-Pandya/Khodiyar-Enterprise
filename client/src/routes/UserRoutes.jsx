@@ -10,6 +10,7 @@ import ProtectedRoute from './ProtectedRoute';
 import { ChangePasswordPage } from '../features/auth/pages';
 import { EditProfilePage } from '../features/profile/pages';
 import { FavoritesPage } from '../features/favorites/pages';
+import { OrderHistoryPage, OrderDetailsPage } from '../features/orders/pages';
 
 const UserRoutes = () => {
     return (
@@ -18,6 +19,8 @@ const UserRoutes = () => {
                 <Route path="/change-password" element={<ChangePasswordPage />} />
                 <Route path="/profile" element={<EditProfilePage />} />
                 <Route path="/favorites" element={<FavoritesPage />} />
+                <Route path="/orders" element={<OrderHistoryPage />} />
+                <Route path="/orders/:id" element={<OrderDetailsPage />} />
             </Route>
         </Route>
     );
