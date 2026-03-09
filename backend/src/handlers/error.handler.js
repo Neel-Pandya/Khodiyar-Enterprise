@@ -1,4 +1,5 @@
-import { ApiError } from "../utils/ApiError.js";
+import ApiError from "../utils/ApiError.js";
+import logger from "../utils/logger.js";
 
 /**
  * Global Express error-handling middleware.
@@ -6,7 +7,6 @@ import { ApiError } from "../utils/ApiError.js";
  *
  * Handles:
  *  - Custom ApiError instances  → structured JSON response
- *  - Zod validation errors      → 400 with field details
  *  - Unexpected errors          → generic 500 response
  */
 const errorHandler = (err, req, res, next) => {
@@ -21,7 +21,12 @@ const errorHandler = (err, req, res, next) => {
     }
 
     // ── Unexpected / Unhandled Error ──────────────────────────────────────────
-    console.error("[Unhandled Error]", err);
+    logger.error("Unhandled error occurred", {
+        error: err.message,
+        stack: err.stack,
+        ip: req.ip,
+        message: err.message,
+    });
 
     return res.status(500).json({
         success: false,

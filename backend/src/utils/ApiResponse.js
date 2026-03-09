@@ -5,15 +5,15 @@
 class ApiResponse {
     /**
      * @param {number} statusCode - HTTP status code (e.g. 200, 201)
-     * @param {*}      data       - Payload to send back to the client
      * @param {string} message    - Human-readable success message
+     * @param {*}      data       - Payload to send back to the client
      */
-    constructor(statusCode, data, message = "Success") {
+    constructor(statusCode, message = "Success", data = []) {
         this.statusCode = statusCode;
-        this.data = data;
         this.message = message;
+        this.data = data;
         this.success = statusCode < 400;
     }
 }
 
-export { ApiResponse };
+export default ApiResponse ;
