@@ -12,16 +12,38 @@ const login = asyncHandler(async (req, res) => {
 });
 
 const register = asyncHandler(async (req, res) => {
-    // Implement registration logic here
-
     const {name, email, password} = req.body;
 
     const user = await authService.register({name, email, password});
 
-    res.status(201).json(new ApiResponse(200, "User registered successfully", user));
+    res.status(201).json(new ApiResponse(201, "User registered successfully. Please verify your email.", user));
+});
+
+const verifyOTP = asyncHandler(async (req, res) => {
+    const { token, otp } = req.body;
+    
+    if (!token || !otp) {
+        throw new ApiError(400, "Token and OTP are required");
+    }
+
+    const result = await authService.verifyOTP(token, otp);
+    res.status(200).json(new ApiResponse(200, result.message));
+});
+
+const resendOTP = asyncHandler(async (req, res) => {
+    const { token } = req.body;
+
+    if (!token) {
+        throw new ApiError(400, "Token is required");
+    }
+
+    const result = await authService.resendOTP(token);
+    res.status(200).json(new ApiResponse(200, result.message));
 });
 
 export default {
     login,
     register,
+    verifyOTP,
+    resendOTP,
 };

@@ -1,15 +1,20 @@
 import logger from "../utils/logger.js";
 import db from "./pool.js";
-import { createUsersTableQuery , dropUsersTableQuery} from "./queries.js";
+import { createUsersTableQuery, createVerificationsTableQuery, dropUsersTableQuery} from "./queries.js";
 
 const migrate = async () => {
     try {
         logger.info("Migration started: Creating Tables", {
-            table: ["users"],
+            table: ["users", "verifications"],
         });
+        // Ensure gen_random_uuid() is available (PostgreSQL 13+ has it by default, but good to check/enable extension)
+        await db.query(`CREATE EXTENSION IF NOT EXISTS "pgcrypto";`);
+        
         await db.query(createUsersTableQuery);
-        logger.info("Migration Successfull", {
-            table: ["users"],
+        await db.query(createVerificationsTableQuery);
+        
+        logger.info("Migration Successful", {
+            table: ["users", "verifications"],
         })
     } catch (err) {
         logger.error("Migration failed", {

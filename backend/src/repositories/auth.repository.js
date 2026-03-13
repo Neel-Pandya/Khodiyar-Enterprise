@@ -44,6 +44,20 @@ class AuthRepository {
     }
 
     /**
+     * Mark user as verified
+     * @param {string} userId - The ID of the user to verify
+     */
+    async markUserAsVerified(userId) {
+        try {
+            const query = `UPDATE users SET is_verified = true WHERE id = $1;`;
+            await this.pool.query(query, [userId]);
+        } catch (error) {
+            logger.error("Failed to mark user as verified", { error: error.message, userId });
+            throw new ApiError(500, "Failed to update user verification status");
+        }
+    }
+
+    /**
      * Find user by email
      * @param {string} email - The email of the user to find
      * @returns {Promise<Object>} The found user data
@@ -52,7 +66,7 @@ class AuthRepository {
     async findUserByEmail(email) {
         try {
             const query = `
-                SELECT * FROM users WHERE email = $1;
+                SELECT id, name, email, password, role, avatar, is_verified FROM users WHERE email = $1;
             `;
             const result = await this.pool.query(query, [email]);
             return result.rows[0];
