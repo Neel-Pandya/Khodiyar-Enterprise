@@ -20,6 +20,16 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
+    // ── JSON Syntax Error ─────────────────────────────────────────────────────
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return res.status(400).json({
+            success: false,
+            statusCode: 400,
+            message: "Invalid JSON format in request body",
+            errors: { body: [err.message] },
+        });
+    }
+
     // ── Unexpected / Unhandled Error ──────────────────────────────────────────
     logger.error("Unhandled error occurred", {
         error: err.message,

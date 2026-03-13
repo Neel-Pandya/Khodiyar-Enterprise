@@ -1,9 +1,13 @@
 import authRepository from "../repositories/auth.repository.js";
+import verificationRepository from "../repositories/verification.repository.js";
+import emailService from "./email.service.js";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { generateSafeAvatar } from "../utils/avatar.generator.js";
 import ApiError from "../utils/ApiError.js";
 import logger from "../utils/logger.js";
 import jwt from "jsonwebtoken"
+
 class AuthService {
     /**
      * Initializes the AuthService with the provided authRepository.
@@ -11,6 +15,15 @@ class AuthService {
      */
     constructor(authRepository) {
         this.authRepository = authRepository;
+    }
+
+    /**
+     * Generate 6 digit OTP
+     * @returns {string} The generated OTP
+     * @private
+     */
+    generateOTP() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
     }
 
     /**
@@ -89,7 +102,27 @@ class AuthService {
                 avatar, // Add generated avatar
             });
 
-            return user;
+            // 5. Generate OTP and Token for verification
+            const otp = this.generateOTP();
+            const token = crypto.randomUUID();
+            const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes OTP expiry
+            const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours link expiry
+
+            await verificationRepository.upsertVerification({
+                userId: user.id,
+                otp,
+                token,
+                otpExpiresAt,
+                tokenExpiresAt,
+            });
+
+            // 6. Send verification email
+            await emailService.sendVerificationEmail(user.email, user.name, token, otp);
+
+            return {
+                ...user,
+                verificationToken: token // Return token for frontend redirect if needed
+            };
         } catch (error) {
             // Re-throw ApiError as-is
             if (error instanceof ApiError) {
@@ -103,6 +136,99 @@ class AuthService {
                 service: "auth-service",
             });
             throw new ApiError(500, "Failed to register user", [error.message]);
+        }
+    }
+
+    /**
+     * Verify OTP
+     * @param {string} token - The verification token
+     * @param {string} otp - The OTP to verify
+     */
+    async verifyOTP(token, otp) {
+        try {
+            const verification = await verificationRepository.findVerificationByToken(token);
+            if (!verification) {
+                throw new ApiError(404, "Invalid or expired verification link");
+            }
+
+            if (new Date() > new Date(verification.token_expires_at)) {
+                await verificationRepository.deleteVerification(verification.user_id);
+                throw new ApiError(400, "Verification link has expired. Please register again.");
+            }
+
+            if (verification.otp !== otp) {
+                throw new ApiError(400, "Invalid OTP");
+            }
+
+            if (new Date() > new Date(verification.otp_expires_at)) {
+                throw new ApiError(400, "OTP has expired. Please resend a new OTP.");
+            }
+
+            // Mark user as verified
+            await this.authRepository.markUserAsVerified(verification.user_id);
+
+            // Clean up verification data
+            await verificationRepository.deleteVerification(verification.user_id);
+
+            return { message: "Email verified successfully" };
+        } catch (error) {
+            if (error instanceof ApiError) throw error;
+            logger.error("Failed to verify OTP", { error: error.message });
+            throw new ApiError(500, "Verification failed");
+        }
+    }
+
+    /**
+     * Resend OTP
+     * @param {string} token - The verification token
+     */
+    async resendOTP(token) {
+        try {
+            const verification = await verificationRepository.findVerificationByToken(token);
+            if (!verification) {
+                throw new ApiError(404, "Verification session not found");
+            }
+
+            if (new Date() > new Date(verification.token_expires_at)) {
+                throw new ApiError(400, "Verification link has expired. Please register again.");
+            }
+
+            // Rate limit: 60 seconds
+            const lastResent = new Date(verification.last_resent_at).getTime();
+            const now = new Date().getTime();
+            const diff = (now - lastResent) / 1000;
+
+            if (diff < 60) {
+                throw new ApiError(429, `Please wait ${Math.ceil(60 - diff)} seconds before resending`);
+            }
+
+            const user = await this.authRepository.pool.query(
+                `SELECT name, email FROM users WHERE id = $1`, 
+                [verification.user_id]
+            );
+            
+            if (user.rows.length === 0) {
+                throw new ApiError(404, "User not found");
+            }
+
+            const newOtp = this.generateOTP();
+            const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+            await verificationRepository.upsertVerification({
+                userId: verification.user_id,
+                otp: newOtp,
+                token: token,
+                otpExpiresAt,
+                tokenExpiresAt: verification.token_expires_at, // Preserve original link expiry
+            });
+
+            await emailService.sendVerificationEmail(user.rows[0].email, user.rows[0].name, token, newOtp);
+
+            return { message: "OTP resent successfully" };
+        } catch (error) {
+            if (error instanceof ApiError) throw error;
+            logger.error("Failed to resend OTP", { error: error.message });
+            throw new ApiError(500, "Resend failed");
         }
     }
 
@@ -122,7 +248,7 @@ class AuthService {
 
             // 2. check if user is verified
             if (!userExists.is_verified) {
-                throw new ApiError(403, "User is not verified", ["User is not verified"]);
+                throw new ApiError(403, "User is not verified", ["Please verify your email first"]);
             }
             
             // 3. Compare password
