@@ -60,9 +60,30 @@ const resendOTP = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, result.message));
 });
 
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const result = await authService.forgotPassword(email);
+  res.status(200).json(new ApiResponse(200, result.message, result.token));
+});
+
+const verifyResetOTP = asyncHandler(async (req, res) => {
+  const { token, otp } = req.body;
+  const result = await authService.verifyResetOTP(token, otp);
+  res.status(200).json(new ApiResponse(200, result.message, result.token));
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+  const result = await authService.resetPassword(token, password);
+  res.status(200).json(new ApiResponse(200, result.message));
+});
+
 export default {
   login,
   register,
   verifyOTP,
   resendOTP,
+  forgotPassword,
+  verifyResetOTP,
+  resetPassword,
 };
