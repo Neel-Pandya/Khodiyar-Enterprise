@@ -1,9 +1,11 @@
 import { asyncHandler } from '../handlers/async.handler.js';
 import authService from '../services/auth.service.js';
+import verificationService from '../services/verification.service.js';
+import passwordResetService from '../services/password-reset.service.js';
 import ApiResponse from '../utils/ApiResponse.js';
+import ApiError from '../utils/ApiError.js';
 
 const login = asyncHandler(async (req, res) => {
-  // Implement login logic here
   const { email, password } = req.body;
 
   const { user, accessToken, refreshToken } = await authService.login({
@@ -17,6 +19,7 @@ const login = asyncHandler(async (req, res) => {
     sameSite: 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
+
   res
     .status(200)
     .json(new ApiResponse(200, 'Login successful', { user, accessToken }));
@@ -27,15 +30,11 @@ const register = asyncHandler(async (req, res) => {
 
   const user = await authService.register({ name, email, password });
 
-  res
-    .status(201)
-    .json(
-      new ApiResponse(
-        201,
-        'User registered successfully. Please verify your email.',
-        user
-      )
-    );
+  res.status(201).json(
+    new ApiResponse(201, 'User registered successfully. Please check your email for verification.', {
+      user,
+    })
+  );
 });
 
 const verifyOTP = asyncHandler(async (req, res) => {
@@ -45,7 +44,7 @@ const verifyOTP = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Token and OTP are required');
   }
 
-  const result = await authService.verifyOTP(token, otp);
+  const result = await verificationService.verifyEmailOTP(token, otp);
   res.status(200).json(new ApiResponse(200, result.message));
 });
 
@@ -56,25 +55,25 @@ const resendOTP = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Token is required');
   }
 
-  const result = await authService.resendOTP(token);
+  const result = await verificationService.resendVerificationOTP(token);
   res.status(200).json(new ApiResponse(200, result.message));
 });
 
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
-  const result = await authService.forgotPassword(email);
-  res.status(200).json(new ApiResponse(200, result.message, result.token));
+  const result = await passwordResetService.initiatePasswordReset(email);
+  res.status(200).json(new ApiResponse(200, result.message));
 });
 
 const verifyResetOTP = asyncHandler(async (req, res) => {
   const { token, otp } = req.body;
-  const result = await authService.verifyResetOTP(token, otp);
-  res.status(200).json(new ApiResponse(200, result.message, result.token));
+  const result = await passwordResetService.verifyResetOTP(token, otp);
+  res.status(200).json(new ApiResponse(200, result.message));
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
   const { token, password } = req.body;
-  const result = await authService.resetPassword(token, password);
+  const result = await passwordResetService.executePasswordReset(token, password);
   res.status(200).json(new ApiResponse(200, result.message));
 });
 

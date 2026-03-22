@@ -52,9 +52,20 @@ const logger = winston.createLogger({
   ],
 });
 
-// ✅ Add stream for Morgan
+// Combined stream for Morgan
 logger.stream = {
-  write: (message) => logger.info(message.trim()),
+  write: (message) => {
+    const msg = message.trim();
+    const statusCode = msg.split(' ')[2];
+
+    if (statusCode >= 500) {
+      logger.error(msg);       // Server errors
+    } else if (statusCode >= 400) {
+      logger.warn(msg);        // Client errors
+    } else {
+      logger.info(msg);        // Success requests
+    }
+  },
 };
 
 export default logger;
