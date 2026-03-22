@@ -81,9 +81,15 @@ class AuthService {
         throw new ApiError(404, 'User not found');
       }
 
-      if (!user.is_verified) {
-        throw new ApiError(403, 'User is not verified', [
-          'Please verify your email first',
+      if (user.status === 'inactive') {
+        throw new ApiError(403, 'Email not verified', [
+          'Please verify your email to activate your account',
+        ]);
+      }
+
+      if (user.status === 'suspended') {
+        throw new ApiError(403, 'Account suspended', [
+          'Your account has been suspended. Please contact higher authority for assistance.',
         ]);
       }
 

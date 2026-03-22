@@ -90,7 +90,7 @@ class VerificationService {
       await prisma.$transaction([
         prisma.user.update({
           where: { id: verification.user_id },
-          data: { is_verified: true },
+          data: { status: 'active' },
         }),
         prisma.verification.delete({
           where: { user_id: verification.user_id },
