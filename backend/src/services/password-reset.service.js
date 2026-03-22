@@ -16,7 +16,10 @@ class PasswordResetService {
       // Security hardending: Don't reveal if user exists
       if (!user) {
         // Return success even if user not found to prevent enumeration
-        return { message: 'If your email is registered, you will receive an OTP shortly' };
+        return {
+          message:
+            'If your email is registered, you will receive an OTP shortly',
+        };
       }
 
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -44,16 +47,25 @@ class PasswordResetService {
         },
       });
 
-      await emailService.sendPasswordResetEmail(user.email, user.name, token, otp);
+      await emailService.sendPasswordResetEmail(
+        user.email,
+        user.name,
+        token,
+        otp
+      );
       // Remove token from return object
-      return { message: 'If your email is registered, you will receive an OTP shortly' };
+      return {
+        message: 'If your email is registered, you will receive an OTP shortly',
+      };
     } catch (error) {
       logger.error('Failed to initiate password reset', {
         error: error.message,
         email,
         service: 'password-reset.service',
       });
-      throw error instanceof ApiError ? error : new ApiError(500, 'Failed to initiate password reset');
+      throw error instanceof ApiError
+        ? error
+        : new ApiError(500, 'Failed to initiate password reset');
     }
   }
 
@@ -64,7 +76,9 @@ class PasswordResetService {
    */
   async verifyResetOTP(token, otp) {
     try {
-      const resetInfo = await prisma.passwordReset.findFirst({ where: { token } });
+      const resetInfo = await prisma.passwordReset.findFirst({
+        where: { token },
+      });
       if (!resetInfo) {
         throw new ApiError(404, 'Invalid or expired reset link');
       }
@@ -107,7 +121,9 @@ class PasswordResetService {
    */
   async executePasswordReset(token, newPassword) {
     try {
-      const resetInfo = await prisma.passwordReset.findFirst({ where: { token } });
+      const resetInfo = await prisma.passwordReset.findFirst({
+        where: { token },
+      });
       if (!resetInfo) {
         throw new ApiError(404, 'Invalid or expired reset session');
       }
@@ -118,7 +134,10 @@ class PasswordResetService {
       }
 
       if (!resetInfo.is_otp_verified) {
-        throw new ApiError(403, 'OTP must be verified before resetting password');
+        throw new ApiError(
+          403,
+          'OTP must be verified before resetting password'
+        );
       }
 
       const hashedPassword = await hashService.hash(newPassword);

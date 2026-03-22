@@ -42,9 +42,9 @@ class UserService {
           status: 'active', // Admin created users are active by default
         },
         omit: {
-          password: true, 
-          created_at: true, 
-          updated_at: true
+          password: true,
+          created_at: true,
+          updated_at: true,
         },
       });
 
@@ -85,10 +85,10 @@ class UserService {
         where: { id: userId },
         data,
         omit: {
-          password: true, 
-          created_at: true, 
-          updated_at: true
-        }
+          password: true,
+          created_at: true,
+          updated_at: true,
+        },
       });
 
       return updatedUser;
@@ -151,24 +151,24 @@ class UserService {
 
   /**
    * Get user by ID
-   * @param {string} userId 
+   * @param {string} userId
    * @returns {Promise<Object>}
    */
   async getUserById(userId) {
-     const user = await prisma.user.findUnique({
-        where: { id: userId },
-        omit: {
-          password: true, 
-          created_at: true, 
-          updated_at: true
-        }
-      });
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      omit: {
+        password: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
 
-      if (!user) {
-        throw new ApiError(404, 'User not found');
-      }
+    if (!user) {
+      throw new ApiError(404, 'User not found');
+    }
 
-      return user;
+    return user;
   }
 
   /**
@@ -187,7 +187,10 @@ class UserService {
       }
 
       if (user.role === 'admin') {
-        throw new ApiError(403, 'Admins cannot be deleted/suspended by other admins');
+        throw new ApiError(
+          403,
+          'Admins cannot be deleted/suspended by other admins'
+        );
       }
 
       const updatedUser = await prisma.user.update({

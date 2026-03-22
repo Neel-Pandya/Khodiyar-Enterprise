@@ -45,7 +45,12 @@ class VerificationService {
         },
       });
 
-      await emailService.sendVerificationEmail(user.email, user.name, token, otp);
+      await emailService.sendVerificationEmail(
+        user.email,
+        user.name,
+        token,
+        otp
+      );
       // Remove token return to prevent disclosure in API response
       return;
     } catch (error) {
@@ -54,7 +59,9 @@ class VerificationService {
         userId: user.id,
         service: 'verification.service',
       });
-      throw error instanceof ApiError ? error : new ApiError(500, 'Failed to setup verification');
+      throw error instanceof ApiError
+        ? error
+        : new ApiError(500, 'Failed to setup verification');
     }
   }
 
@@ -74,8 +81,13 @@ class VerificationService {
       }
 
       if (new Date() > new Date(verification.token_expires_at)) {
-        await prisma.verification.delete({ where: { user_id: verification.user_id } });
-        throw new ApiError(400, 'Verification link has expired. Please register again.');
+        await prisma.verification.delete({
+          where: { user_id: verification.user_id },
+        });
+        throw new ApiError(
+          400,
+          'Verification link has expired. Please register again.'
+        );
       }
 
       const isOtpValid = hashService.compareOTP(otp, verification.otp);

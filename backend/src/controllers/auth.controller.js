@@ -31,9 +31,13 @@ const register = asyncHandler(async (req, res) => {
   const user = await authService.register({ name, email, password });
 
   res.status(201).json(
-    new ApiResponse(201, 'User registered successfully. Please check your email for verification.', {
-      user,
-    })
+    new ApiResponse(
+      201,
+      'User registered successfully. Please check your email for verification.',
+      {
+        user,
+      }
+    )
   );
 });
 
@@ -73,7 +77,10 @@ const verifyResetOTP = asyncHandler(async (req, res) => {
 
 const resetPassword = asyncHandler(async (req, res) => {
   const { token, password } = req.body;
-  const result = await passwordResetService.executePasswordReset(token, password);
+  const result = await passwordResetService.executePasswordReset(
+    token,
+    password
+  );
   res.status(200).json(new ApiResponse(200, result.message));
 });
 

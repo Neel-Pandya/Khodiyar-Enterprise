@@ -59,11 +59,11 @@ logger.stream = {
     const statusCode = msg.split(' ')[2];
 
     if (statusCode >= 500) {
-      logger.error(msg);       // Server errors
+      logger.error(msg); // Server errors
     } else if (statusCode >= 400) {
-      logger.warn(msg);        // Client errors
+      logger.warn(msg); // Client errors
     } else {
-      logger.info(msg);        // Success requests
+      logger.info(msg); // Success requests
     }
   },
 };

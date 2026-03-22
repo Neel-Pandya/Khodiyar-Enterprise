@@ -13,7 +13,7 @@ const router = Router();
 
 // All routes here require authentication and admin role
 router.use(authenticate);
-router.use(authorize(Roles.ADMIN) );
+router.use(authorize(Roles.ADMIN));
 
 router.get('/', validate(getUsersSchema, 'query'), userController.getAllUsers);
 router.post('/', validate(createUserSchema), userController.createUser);
