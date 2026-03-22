@@ -1,0 +1,302 @@
+export const statsData = [
+  {
+    id: 1,
+    label: 'Total Solutions Delivered',
+    value: 127,
+    prefix: '',
+    suffix: '',
+    trend: +12.5,
+    icon: 'Sun',
+    iconColor: '#1e3a5f',
+  },
+  {
+    id: 2,
+    label: 'Active Orders',
+    value: 34,
+    prefix: '',
+    suffix: '',
+    trend: +8.2,
+    icon: 'Zap',
+    iconColor: '#3b82f6',
+  },
+  {
+    id: 3,
+    label: 'Total Customers',
+    value: 289,
+    prefix: '',
+    suffix: '',
+    trend: +5.1,
+    icon: 'Users',
+    iconColor: '#8b5cf6',
+  },
+  {
+    id: 4,
+    label: 'Monthly Revenue',
+    value: 220,
+    prefix: '$',
+    suffix: 'K',
+    trend: +18.3,
+    icon: 'DollarSign',
+    iconColor: '#fbc02d',
+  },
+];
+
+export const recentOrders = [
+  {
+    id: 'KE-1021',
+    customer: 'John Smith',
+    location: 'Los Angeles, CA',
+    solution: '5kW Solar System Package',
+    amount: 12450,
+    status: 'Processing',
+    date: '2026-01-15',
+    avatar: 'JS',
+    email: 'john.smith@example.com',
+    phone: '+1 234-567-8901'
+  },
+  {
+    id: 'KE-1020',
+    customer: 'Sarah Johnson',
+    location: 'San Diego, CA',
+    solution: '10kW Commercial Solar Package',
+    amount: 24800,
+    status: 'Delivered',
+    date: '2026-01-14',
+    avatar: 'SJ',
+    email: 'sarah.j@example.com',
+    phone: '+1 234-567-8902'
+  },
+  {
+    id: 'KE-1019',
+    customer: 'Mike Davis',
+    location: 'San Francisco, CA',
+    solution: '7.5kW Hybrid Solar System',
+    amount: 18650,
+    status: 'Pending',
+    date: '2026-01-13',
+    avatar: 'MD',
+    email: 'mike.d@example.com',
+    phone: '+1 234-567-8903'
+  },
+  {
+    id: 'KE-1018',
+    customer: 'Emily Brown',
+    location: 'Sacramento, CA',
+    solution: '15kW Solar Solution + Battery',
+    amount: 35200,
+    status: 'Processing',
+    date: '2026-01-12',
+    avatar: 'EB',
+    email: 'emily.b@example.com',
+    phone: '+1 234-567-8904'
+  },
+  {
+    id: 'KE-1017',
+    customer: 'David Wilson',
+    location: 'Oakland, CA',
+    solution: '6kW Residential Solar Package',
+    amount: 15300,
+    status: 'Delivered',
+    date: '2026-01-11',
+    avatar: 'DW',
+    email: 'david.w@example.com',
+    phone: '+1 234-567-8905'
+  },
+  {
+    id: 'KE-1016',
+    customer: 'Priya Patel',
+    location: 'Fresno, CA',
+    solution: '8kW Grid-Tie Solar System',
+    amount: 19800,
+    status: 'Pending',
+    date: '2026-01-10',
+    avatar: 'PP',
+    email: 'priya.p@example.com',
+    phone: '+1 234-567-8906'
+  },
+  {
+    id: 'KE-1015',
+    customer: 'James Wilson',
+    location: 'Riverside, CA',
+    solution: '3kW Starter Solar Kit',
+    amount: 8500,
+    status: 'Delivered',
+    date: '2026-01-09',
+    avatar: 'JW',
+    email: 'james.w@example.com',
+    phone: '+1 234-567-8907'
+  },
+  {
+    id: 'KE-1014',
+    customer: 'Anna Martinez',
+    location: 'San Jose, CA',
+    solution: '12kW Premium Solar Setup',
+    amount: 28900,
+    status: 'Processing',
+    date: '2026-01-08',
+    avatar: 'AM',
+    email: 'anna.m@example.com',
+    phone: '+1 234-567-8908'
+  },
+  {
+    id: 'KE-1013',
+    customer: 'Robert Taylor',
+    location: 'Irvine, CA',
+    solution: '5kW Off-Grid System',
+    amount: 14200,
+    status: 'Pending',
+    date: '2026-01-07',
+    avatar: 'RT',
+    email: 'robert.t@example.com',
+    phone: '+1 234-567-8909'
+  }
+];
+
+export const orderStats = [
+  {
+    id: 1,
+    label: 'Total Orders',
+    value: 458,
+    icon: 'ClipboardList',
+    iconColor: '#1e3a5f',
+    bgLight: 'bg-[#1e3a5f]/5',
+  },
+  {
+    id: 2,
+    label: 'Pending Orders',
+    value: 12,
+    icon: 'Clock',
+    iconColor: '#f59e0b',
+    bgLight: 'bg-[#f59e0b]/5',
+  },
+  {
+    id: 3,
+    label: 'Completed Orders',
+    value: 421,
+    icon: 'CheckCircle',
+    iconColor: '#10b981',
+    bgLight: 'bg-[#10b981]/5',
+  },
+  {
+    id: 4,
+    label: 'Canceled Orders',
+    value: 25,
+    icon: 'XCircle',
+    iconColor: '#ef4444',
+    bgLight: 'bg-[#ef4444]/5',
+  },
+];
+
+export const customerStats = {
+  total: 8,
+  active: 6,
+  newThisMonth: 0,
+  totalRevenue: 308000,
+};
+
+export const productStats = [
+  {
+    id: 1,
+    label: 'Total Products',
+    value: 5,
+    icon: 'Package',
+    iconColor: '#1e3a5f',
+    bgLight: 'bg-[#1e3a5f]/5',
+  },
+  {
+    id: 2,
+    label: 'Active Products',
+    value: 3,
+    icon: 'CheckCircle',
+    iconColor: '#10b981',
+    bgLight: 'bg-[#10b981]/5',
+  },
+  {
+    id: 3,
+    label: 'Low Stock',
+    value: 2,
+    icon: 'AlertTriangle',
+    iconColor: '#f59e0b',
+    bgLight: 'bg-[#f59e0b]/5',
+  },
+  {
+    id: 4,
+    label: 'Total Inventory Value',
+    value: 97.6,
+    prefix: '₹',
+    suffix: 'L',
+    icon: 'CreditCard',
+    iconColor: '#8b5cf6',
+    bgLight: 'bg-[#8b5cf6]/5',
+  },
+];
+
+export const customersList = [
+  {
+    id: 'CUST-001',
+    name: 'John Smith',
+    email: 'john.smith@email.com',
+    status: 'Active',
+    avatar: 'JS',
+  },
+  {
+    id: 'CUST-002',
+    name: 'Emily Brown',
+    email: 'emily.brown@email.com',
+    status: 'Pending',
+    avatar: 'EB',
+  },
+  {
+    id: 'CUST-003',
+    name: 'David Wilson',
+    email: 'david.w@email.com',
+    status: 'Active',
+    avatar: 'DW',
+  },
+  {
+    id: 'CUST-004',
+    name: 'Sarah Jordan',
+    email: 'sarah.j@email.com',
+    status: 'Active',
+    avatar: 'SJ',
+  },
+];
+
+export const productsList = [
+  {
+    id: 1,
+    name: 'Solar Panel 300W Monocrystalline',
+    category: 'Solar Panels',
+    price: 18999,
+    stock: 145,
+    status: 'Active',
+    image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=100&h=100',
+  },
+  {
+    id: 2,
+    name: 'Inverter 5kW Hybrid',
+    category: 'Inverters',
+    price: 99999,
+    stock: 32,
+    status: 'Active',
+    image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=100&h=100',
+  },
+  {
+    id: 3,
+    name: 'Mounting System Roof Kit',
+    category: 'Mounting Systems',
+    price: 14999,
+    stock: 67,
+    status: 'Active',
+    image: 'https://images.unsplash.com/photo-1592833159155-c62df1b65634?auto=format&fit=crop&q=80&w=100&h=100',
+  },
+  {
+    id: 4,
+    name: 'Charge Controller 40A MPPT',
+    category: 'Controllers',
+    price: 26999,
+    stock: 0,
+    status: 'Out of Stock',
+    image: 'https://images.unsplash.com/photo-1592833159155-c62df1b65634?auto=format&fit=crop&q=80&w=100&h=100',
+  },
+];

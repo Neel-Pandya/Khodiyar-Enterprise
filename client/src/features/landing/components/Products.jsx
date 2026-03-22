@@ -32,7 +32,11 @@ const products = [
   },
 ];
 
+import { useNavigate } from 'react-router';
+
 const Products = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="section bg-white text-text-dark">
       <div className="container">
@@ -60,7 +64,8 @@ const Products = () => {
                   {product.description}
                 </p>
                 <button
-                  className="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-accent hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/10"
+                  onClick={() => navigate(`/product/${product.id}`)}
+                  className="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-accent hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/10 cursor-pointer"
                 >
                   View Details
                 </button>

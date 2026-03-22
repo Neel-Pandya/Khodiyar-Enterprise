@@ -1,4 +1,4 @@
-import { productStats, productsList } from '@admin/data/mockData';
+import { productStats, productsList } from '@data/adminMockData';
 import ProductHeader from '../components/ProductHeader';
 import ProductStatCard from '../components/ProductStatCard';
 import ProductTable from '../components/ProductTable';

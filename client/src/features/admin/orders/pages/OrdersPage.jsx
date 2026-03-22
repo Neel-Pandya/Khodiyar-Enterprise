@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import OrdersTable from '../components/OrdersTable';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 import OrderStatCard from '../components/OrderStatCard';
-import { recentOrders, orderStats } from '@admin/data/mockData';
+import { recentOrders, orderStats } from '@data/adminMockData';
 
 const OrdersPage = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
