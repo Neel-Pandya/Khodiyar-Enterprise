@@ -2,24 +2,30 @@ import { z } from 'zod';
 import ApiError from '../utils/ApiError.js';
 
 /**
- * Middleware to validate request body against a Zod schema.
+ * Middleware to validate request data against a Zod schema.
  * @param {z.ZodSchema} schema - The Zod schema to validate against.
- * @returns {Function} - Express middleware function.
+ * @param {string} source - The request object to validate ('body', 'query', 'params'). Default is 'body'.
+ * @returns {import("express").RequestHandler} - Express middleware function.
  */
-const validate = (schema) => (req, res, next) => {
-  const result = schema.safeParse(req.body);
+const validate = (schema, source = 'body') => (req, _res, next) => {
+  const result = schema.safeParse(req[source]);
 
   if (!result.success) {
     const flattened = z.flattenError(result.error);
     const errors = flattened.fieldErrors;
 
-    // Extract the first error message from the issues
     const message = 'Validation failed';
 
-    throw new ApiError(400, message, errors);
+    throw new ApiError(400, message, { [source]: errors });
   }
 
-  req.body = result.data;
+  if (source === 'body') {
+    req.body = result.data;
+  } else {
+    // For query and params, we update properties to avoid "only a getter" error
+    // while still benefiting from Zod's coercion (e.g., string to number)
+    Object.assign(req[source], result.data);
+  }
   next();
 };
 

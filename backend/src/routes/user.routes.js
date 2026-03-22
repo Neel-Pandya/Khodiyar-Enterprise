@@ -6,6 +6,7 @@ import validate from '../middlewares/validate.middleware.js';
 import {
   createUserSchema,
   updateUserSchema,
+  getUsersSchema,
 } from '../validations/user.validation.js';
 import { Roles } from '../configs/roles.js';
 const router = Router();
@@ -14,6 +15,7 @@ const router = Router();
 router.use(authenticate);
 router.use(authorize(Roles.ADMIN) );
 
+router.get('/', validate(getUsersSchema, 'query'), userController.getAllUsers);
 router.post('/', validate(createUserSchema), userController.createUser);
 router.get('/:id', userController.getUser);
 router.patch('/:id', validate(updateUserSchema), userController.updateUser);

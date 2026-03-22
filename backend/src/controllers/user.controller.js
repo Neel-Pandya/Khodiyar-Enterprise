@@ -23,6 +23,16 @@ const updateUser = asyncHandler(async (req, res) => {
 });
 
 /**
+ * Get all users (Admin only)
+ */
+const getAllUsers = asyncHandler(async (req, res) => {
+  const result = await userService.getAllUsers(req.query);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, 'Users retrieved successfully', result));
+});
+
+/**
  * Get user by ID (Admin only)
  */
 const getUser = asyncHandler(async (req, res) => {
@@ -45,6 +55,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 export default {
   createUser,
   updateUser,
+  getAllUsers,
   getUser,
   deleteUser,
 };

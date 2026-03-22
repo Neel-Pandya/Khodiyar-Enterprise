@@ -104,6 +104,52 @@ class UserService {
   }
 
   /**
+   * Get all users (Admin only) with pagination
+   * @param {Object} query - Query parameters {page, limit}
+   * @returns {Promise<Object>} Users and pagination metadata
+   */
+  async getAllUsers(query = {}) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    try {
+      const [users, total] = await prisma.$transaction([
+        prisma.user.findMany({
+          skip,
+          take: limit,
+          omit: {
+            password: true,
+            created_at: true,
+            updated_at: true,
+          },
+          orderBy: {
+            created_at: 'desc',
+          },
+        }),
+        prisma.user.count(),
+      ]);
+
+      return {
+        users,
+        pagination: {
+          total,
+          totalPages: Math.ceil(total / limit),
+          page,
+          limit,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      logger.error('Failed to get all users', {
+        error: error.message,
+        service: 'user-service',
+      });
+      throw new ApiError(500, 'Failed to get all users');
+    }
+  }
+
+  /**
    * Get user by ID
    * @param {string} userId 
    * @returns {Promise<Object>}
