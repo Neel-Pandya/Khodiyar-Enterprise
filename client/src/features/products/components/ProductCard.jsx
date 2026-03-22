@@ -1,6 +1,9 @@
 import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
+
   return (
     <div 
       className="bg-white rounded-[2rem] overflow-hidden shadow-xl shadow-gray-200/50 border border-gray-50 flex flex-col group hover:-translate-y-2 transition-transform duration-300"
@@ -24,7 +27,10 @@ const ProductCard = ({ product }) => {
         <p className="text-sm text-text-muted mb-8 flex-grow leading-relaxed font-medium line-clamp-2">
           {product.description}
         </p>
-        <button className="w-full py-4 bg-primary text-white rounded-2xl font-black text-sm hover:bg-accent transition-all shadow-lg shadow-primary/10 flex items-center justify-center gap-2 group/btn">
+        <button 
+          onClick={() => navigate(`/product/${product.id}`)}
+          className="w-full py-4 bg-primary text-white rounded-2xl font-black text-sm hover:bg-accent transition-all shadow-lg shadow-primary/10 flex items-center justify-center gap-2 group/btn cursor-pointer"
+        >
           View Details
           <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
         </button>

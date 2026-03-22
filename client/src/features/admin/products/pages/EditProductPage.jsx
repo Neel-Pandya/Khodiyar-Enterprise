@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import ProductForm from '../components/ProductForm';
-import { productsList } from '@admin/data/mockData';
+import { productsList } from '@data/adminMockData';
 
 const EditProductPage = () => {
     const navigate = useNavigate();

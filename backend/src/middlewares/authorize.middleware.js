@@ -1,4 +1,4 @@
-import ApiError from "../utils/ApiError.js";
+import ApiError from '../utils/ApiError.js';
 
 /**
  * Middleware to authorize user based on roles
@@ -6,17 +6,19 @@ import ApiError from "../utils/ApiError.js";
  * @returns {import("express").RequestHandler} Express middleware function
  */
 const authorize = (...allowedRoles) => {
-    return (req, _res, next) => {
-        if (!req.user) {
-            throw new ApiError(401, "Authentication required");
-        }
+  return (req, _res, next) => {
+    if (!req.user) {
+      throw new ApiError(401, 'Authentication required');
+    }
 
-        if (!allowedRoles.includes(req.user.role)) {
-            throw new ApiError(403, `Unauthorized access`, [`Role ${req.user.role} is not authorized to access this resource`]);
-        }
+    if (!allowedRoles.includes(req.user.role)) {
+      throw new ApiError(403, `Unauthorized access`, [
+        `Role ${req.user.role} is not authorized to access this resource`,
+      ]);
+    }
 
-        next();
-    };
+    next();
+  };
 };
 
 export default authorize;
