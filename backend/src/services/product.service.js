@@ -3,6 +3,7 @@ import ApiError from '../utils/ApiError.js';
 import logger from '../utils/logger.js';
 import cloudinaryService from './cloudinary.service.js';
 import fs from 'node:fs/promises';
+import { fileTypeFromFile } from 'file-type';
 
 class ProductService {
   /**
@@ -23,17 +24,16 @@ class ProductService {
         throw new ApiError(404, 'Category not found');
       }
 
-      // 0.1 Check if product name already exists (Early Exit)
-      const existingProduct = await prisma.product.findUnique({
-        where: { name: productData.name },
-      });
-
-      if (existingProduct) {
-        throw new ApiError(400, 'Product already exists');
-      }
-
       // 1. Upload images to Cloudinary
       if (files && files.length > 0) {
+        // Post-upload magic byte validation (Security enhancement)
+        for (const file of files) {
+          const type = await fileTypeFromFile(file.path);
+          if (!type || !type.mime.startsWith('image/')) {
+            throw new ApiError(400, `File ${file.originalname} is not a valid image`);
+          }
+        }
+
         const uploadPromises = files.map((file) =>
           cloudinaryService.uploadFile(file.path, 'products')
         );
@@ -80,6 +80,9 @@ class ProductService {
         }
       }
 
+      if (error.code === 'P2002') {
+        throw new ApiError(400, 'Product name already exists');
+      }
       if (error.code === 'P2003') {
         throw new ApiError(400, 'Invalid category ID');
       }
@@ -201,41 +204,34 @@ class ProductService {
         }
       }
 
-      // 0.1 Check if new product name already exists (Early Exit)
-      if (updateData.name) {
-        const existingProduct = await prisma.product.findFirst({
-          where: {
-            name: updateData.name,
-            NOT: { id: productId },
-          },
-        });
-
-        if (existingProduct) {
-          throw new ApiError(400, 'Product name already exists');
-        }
-      }
-
-      let imageUrls = updateData.images;
+      const updatePayload = { ...updateData };
 
       // Handle new image uploads if provided
       if (files && files.length > 0) {
+        // Post-upload magic byte validation (Security enhancement)
+        for (const file of files) {
+          const type = await fileTypeFromFile(file.path);
+          if (!type || !type.mime.startsWith('image/')) {
+            throw new ApiError(400, `File ${file.originalname} is not a valid image`);
+          }
+        }
+
         const uploadPromises = files.map((file) =>
           cloudinaryService.uploadFile(file.path, 'products')
         );
         const results = await Promise.all(uploadPromises);
-        imageUrls = results.map((result) => result.secure_url);
+        const imageUrls = results.map((result) => result.secure_url);
 
         // Delete local files
         const deletePromises = files.map((file) => fs.unlink(file.path));
         await Promise.all(deletePromises);
+
+        updatePayload.images = imageUrls;
       }
 
       const product = await prisma.product.update({
         where: { id: productId },
-        data: {
-          ...updateData,
-          images: imageUrls,
-        },
+        data: updatePayload,
         include: {
           category: {
             select: {
@@ -256,6 +252,9 @@ class ProductService {
         }
       }
 
+      if (error.code === 'P2002') {
+        throw new ApiError(400, 'Product name already exists');
+      }
       if (error.code === 'P2025') {
         throw new ApiError(404, 'Product not found');
       }
