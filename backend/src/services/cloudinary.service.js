@@ -1,6 +1,6 @@
-import cloudinary from '../configs/cloudinary.config';
-import ApiError from '../utils/ApiError';
-import logger from '../utils/logger';
+import cloudinary from '../configs/cloudinary.config.js';
+import ApiError from '../utils/ApiError.js';
+import logger from '../utils/logger.js';
 
 /**
  * Service class for handling Cloudinary operations.
@@ -18,13 +18,14 @@ class CloudinaryService {
   /**
    * Uploads a file to Cloudinary
    * @param {string} filePath - The path of the file to upload
+   * @param {string} folder - The folder to upload to (defaults to user_uploads)
    * @returns {Promise<import("cloudinary").UploadApiResponse>} The result of the upload operation
    * @throws {Error} Throws an error if the upload fails
    */
-  async uploadFile(filePath) {
+  async uploadFile(filePath, folder = 'user_uploads') {
     try {
       const result = await this.cloudinary.uploader.upload(filePath, {
-        folder: 'user_uploads',
+        folder: folder,
       });
       return result;
     } catch (error) {

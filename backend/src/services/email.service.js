@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 import logger from '../utils/logger.js';
-import ApiError from '../utils/ApiError.js';
 
 class EmailService {
   constructor() {
