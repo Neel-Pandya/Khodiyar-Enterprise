@@ -31,16 +31,45 @@ class ProductService {
         for (const file of files) {
           const type = await fileTypeFromFile(file.path);
           if (!type || !type.mime.startsWith('image/')) {
-            throw new ApiError(400, `File ${file.originalname} is not a valid image`);
+            throw new ApiError(
+              400,
+              `File ${file.originalname} is not a valid image`
+            );
           }
         }
 
         const uploadPromises = files.map((file) =>
           cloudinaryService.uploadFile(file.path, 'products')
         );
-        const results = await Promise.all(uploadPromises);
-        imageUrls = results.map((result) => result.secure_url);
-        uploadedPublicIds = results.map((result) => result.public_id);
+        const settledResults = await Promise.allSettled(uploadPromises);
+
+        imageUrls = [];
+        uploadedPublicIds = [];
+
+        for (const settledResult of settledResults) {
+          if (settledResult.status === 'fulfilled' && settledResult.value) {
+            const { secure_url, public_id } = settledResult.value;
+            if (secure_url && public_id) {
+              imageUrls.push(secure_url);
+              uploadedPublicIds.push(public_id);
+            }
+          }
+        }
+
+        const hasFailedUploads = settledResults.some(
+          (result) => result.status === 'rejected'
+        );
+
+        if (hasFailedUploads) {
+          const deletePromises = uploadedPublicIds.map((publicId) =>
+            cloudinaryService.deleteFile(publicId)
+          );
+          await Promise.all(deletePromises);
+          throw new ApiError(
+            500,
+            'Some image uploads failed, rolled back all uploaded images'
+          );
+        }
 
         // 2. Delete local files
         const deletePromises = files.map((file) => fs.unlink(file.path));
@@ -240,7 +269,10 @@ class ProductService {
         for (const file of files) {
           const type = await fileTypeFromFile(file.path);
           if (!type || !type.mime.startsWith('image/')) {
-            throw new ApiError(400, `File ${file.originalname} is not a valid image`);
+            throw new ApiError(
+              400,
+              `File ${file.originalname} is not a valid image`
+            );
           }
         }
 
