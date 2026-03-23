@@ -40,6 +40,29 @@ class CloudinaryService {
       ]);
     }
   }
+
+  /**
+   * Deletes a file from Cloudinary
+   * @param {string} publicId - The public_id of the file to delete
+   * @returns {Promise<import("cloudinary").DeleteApiResponse>} The result of the delete operation
+   * @throws {Error} Throws an error if the delete fails
+   */
+  async deleteFile(publicId) {
+    try {
+      const result = await this.cloudinary.uploader.destroy(publicId);
+      return result;
+    } catch (error) {
+      logger.error('Failed to delete file from Cloudinary', {
+        error: error.message,
+        stack: error.stack,
+        publicId,
+        service: 'cloudinary-delete',
+      });
+      throw new ApiError(500, 'Failed to delete file from Cloudinary', [
+        error.message,
+      ]);
+    }
+  }
 }
 
 export default new CloudinaryService(cloudinary);

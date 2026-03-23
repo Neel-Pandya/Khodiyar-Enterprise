@@ -62,7 +62,10 @@ export const getProductsSchema = z.object({
   status: z.enum(['active', 'inactive']).optional(),
   category_id: z.uuid('Invalid category ID format').optional(),
   search: z.string().trim().optional(),
-  sortBy: z.string().optional(),
+  sortBy: z
+    .enum(['id', 'name', 'price', 'status', 'created_at', 'updated_at'])
+    .default('created_at')
+    .optional(),
   sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),
 });
 

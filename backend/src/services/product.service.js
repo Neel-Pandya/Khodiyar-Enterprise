@@ -14,6 +14,7 @@ class ProductService {
    */
   async createProduct(productData, files) {
     let imageUrls = [];
+    let uploadedPublicIds = [];
     try {
       // 0. Early exit if category_id is invalid
       const category = await prisma.category.findUnique({
@@ -39,6 +40,7 @@ class ProductService {
         );
         const results = await Promise.all(uploadPromises);
         imageUrls = results.map((result) => result.secure_url);
+        uploadedPublicIds = results.map((result) => result.public_id);
 
         // 2. Delete local files
         const deletePromises = files.map((file) => fs.unlink(file.path));
@@ -69,6 +71,21 @@ class ProductService {
 
       return product;
     } catch (error) {
+      // Cleanup Cloudinary uploads if they exist
+      if (uploadedPublicIds.length > 0) {
+        for (const publicId of uploadedPublicIds) {
+          try {
+            await cloudinaryService.deleteFile(publicId);
+          } catch (e) {
+            logger.error('Failed to cleanup Cloudinary image', {
+              publicId,
+              error: e.message,
+              service: 'product-service',
+            });
+          }
+        }
+      }
+
       // Cleanup local files if they weren't deleted
       if (files && files.length > 0) {
         for (const file of files) {
@@ -202,6 +219,7 @@ class ProductService {
    * @returns {Promise<Object>}
    */
   async updateProduct(productId, updateData, files) {
+    let uploadedPublicIds = [];
     try {
       // 0. Early exit if category_id is being updated and is invalid
       if (updateData.category_id) {
@@ -231,6 +249,7 @@ class ProductService {
         );
         const results = await Promise.all(uploadPromises);
         const imageUrls = results.map((result) => result.secure_url);
+        uploadedPublicIds = results.map((result) => result.public_id);
 
         // Delete local files
         const deletePromises = files.map((file) => fs.unlink(file.path));
@@ -254,6 +273,22 @@ class ProductService {
 
       return product;
     } catch (error) {
+      // Cleanup Cloudinary uploads if they exist
+      if (uploadedPublicIds.length > 0) {
+        for (const publicId of uploadedPublicIds) {
+          try {
+            await cloudinaryService.deleteFile(publicId);
+          } catch (e) {
+            logger.error('Failed to cleanup Cloudinary image', {
+              publicId,
+              error: e.message,
+              service: 'product-service',
+            });
+          }
+        }
+      }
+
+      // Cleanup local files if they weren't deleted
       if (files && files.length > 0) {
         for (const file of files) {
           try {
