@@ -165,23 +165,33 @@ class ProductService {
    * @returns {Promise<Object>}
    */
   async getProductById(productId) {
-    const product = await prisma.product.findUnique({
-      where: { id: productId },
-      include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
+    try {
+      const product = await prisma.product.findUnique({
+        where: { id: productId },
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    if (!product || product.deleted_at) {
-      throw new ApiError(404, 'Product not found');
+      if (!product || product.deleted_at) {
+        throw new ApiError(404, 'Product not found');
+      }
+
+      return product;
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      logger.error('Failed to get product', {
+        error: error.message,
+        productId,
+        service: 'product-service',
+      });
+      throw new ApiError(500, 'Failed to get product');
     }
-
-    return product;
   }
 
   /**
