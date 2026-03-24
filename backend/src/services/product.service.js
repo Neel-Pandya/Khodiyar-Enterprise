@@ -1,9 +1,7 @@
 import prisma from '../db/prisma.js';
 import ApiError from '../utils/ApiError.js';
 import logger from '../utils/logger.js';
-import cloudinaryService from './cloudinary.service.js';
-import fs from 'node:fs/promises';
-import { fileTypeFromFile } from 'file-type';
+import imageService from './image.service.js';
 
 class ProductService {
   /**
@@ -13,8 +11,6 @@ class ProductService {
    * @returns {Promise<Object>}
    */
   async createProduct(productData, files) {
-    let imageUrls = [];
-    let uploadedPublicIds = [];
     try {
       // 0. Early exit if category_id is invalid
       const category = await prisma.category.findUnique({
@@ -25,58 +21,10 @@ class ProductService {
         throw new ApiError(404, 'Category not found');
       }
 
-      // 1. Upload images to Cloudinary
-      if (files && files.length > 0) {
-        // Post-upload magic byte validation (Security enhancement)
-        for (const file of files) {
-          const type = await fileTypeFromFile(file.path);
-          if (!type || !type.mime.startsWith('image/')) {
-            throw new ApiError(
-              400,
-              `File ${file.originalname} is not a valid image`
-            );
-          }
-        }
+      // 1. Upload images using image service
+      const { imageUrls } = await imageService.uploadImages(files, 'products');
 
-        const uploadPromises = files.map((file) =>
-          cloudinaryService.uploadFile(file.path, 'products')
-        );
-        const settledResults = await Promise.allSettled(uploadPromises);
-
-        imageUrls = [];
-        uploadedPublicIds = [];
-
-        for (const settledResult of settledResults) {
-          if (settledResult.status === 'fulfilled' && settledResult.value) {
-            const { secure_url, public_id } = settledResult.value;
-            if (secure_url && public_id) {
-              imageUrls.push(secure_url);
-              uploadedPublicIds.push(public_id);
-            }
-          }
-        }
-
-        const hasFailedUploads = settledResults.some(
-          (result) => result.status === 'rejected'
-        );
-
-        if (hasFailedUploads) {
-          const deletePromises = uploadedPublicIds.map((publicId) =>
-            cloudinaryService.deleteFile(publicId)
-          );
-          await Promise.all(deletePromises);
-          throw new ApiError(
-            500,
-            'Some image uploads failed, rolled back all uploaded images'
-          );
-        }
-
-        // 2. Delete local files
-        const deletePromises = files.map((file) => fs.unlink(file.path));
-        await Promise.all(deletePromises);
-      }
-
-      // 3. Create product in DB
+      // 2. Create product in DB
       const product = await prisma.product.create({
         data: {
           name: productData.name,
@@ -100,32 +48,6 @@ class ProductService {
 
       return product;
     } catch (error) {
-      // Cleanup Cloudinary uploads if they exist
-      if (uploadedPublicIds.length > 0) {
-        for (const publicId of uploadedPublicIds) {
-          try {
-            await cloudinaryService.deleteFile(publicId);
-          } catch (e) {
-            logger.error('Failed to cleanup Cloudinary image', {
-              publicId,
-              error: e.message,
-              service: 'product-service',
-            });
-          }
-        }
-      }
-
-      // Cleanup local files if they weren't deleted
-      if (files && files.length > 0) {
-        for (const file of files) {
-          try {
-            await fs.unlink(file.path);
-          } catch (e) {
-            // Already deleted or doesn't exist
-          }
-        }
-      }
-
       if (error.code === 'P2002') {
         throw new ApiError(400, 'Product name already exists');
       }
@@ -248,7 +170,6 @@ class ProductService {
    * @returns {Promise<Object>}
    */
   async updateProduct(productId, updateData, files) {
-    let uploadedPublicIds = [];
     try {
       // 0. Early exit if category_id is being updated and is invalid
       if (updateData.category_id) {
@@ -265,28 +186,10 @@ class ProductService {
 
       // Handle new image uploads if provided
       if (files && files.length > 0) {
-        // Post-upload magic byte validation (Security enhancement)
-        for (const file of files) {
-          const type = await fileTypeFromFile(file.path);
-          if (!type || !type.mime.startsWith('image/')) {
-            throw new ApiError(
-              400,
-              `File ${file.originalname} is not a valid image`
-            );
-          }
-        }
-
-        const uploadPromises = files.map((file) =>
-          cloudinaryService.uploadFile(file.path, 'products')
+        const { imageUrls } = await imageService.uploadImages(
+          files,
+          'products'
         );
-        const results = await Promise.all(uploadPromises);
-        const imageUrls = results.map((result) => result.secure_url);
-        uploadedPublicIds = results.map((result) => result.public_id);
-
-        // Delete local files
-        const deletePromises = files.map((file) => fs.unlink(file.path));
-        await Promise.all(deletePromises);
-
         updatePayload.images = imageUrls;
       }
 
@@ -305,30 +208,6 @@ class ProductService {
 
       return product;
     } catch (error) {
-      // Cleanup Cloudinary uploads if they exist
-      if (uploadedPublicIds.length > 0) {
-        for (const publicId of uploadedPublicIds) {
-          try {
-            await cloudinaryService.deleteFile(publicId);
-          } catch (e) {
-            logger.error('Failed to cleanup Cloudinary image', {
-              publicId,
-              error: e.message,
-              service: 'product-service',
-            });
-          }
-        }
-      }
-
-      // Cleanup local files if they weren't deleted
-      if (files && files.length > 0) {
-        for (const file of files) {
-          try {
-            await fs.unlink(file.path);
-          } catch (e) {}
-        }
-      }
-
       if (error.code === 'P2002') {
         throw new ApiError(400, 'Product name already exists');
       }
