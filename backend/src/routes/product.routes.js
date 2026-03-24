@@ -65,9 +65,11 @@ router.post(
 router.patch(
   '/:id',
   uploadProductImages,
+  validateImageCount,
   validate(productIdSchema, 'params'),
   validate(updateProductSchema),
   productController.updateProduct
+);
 );
 
 /**

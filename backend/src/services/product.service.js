@@ -291,7 +291,7 @@ class ProductService {
       }
 
       const product = await prisma.product.update({
-        where: { id: productId },
+        where: { id: productId, deleted_at: null },
         data: updatePayload,
         include: {
           category: {
@@ -331,6 +331,9 @@ class ProductService {
 
       if (error.code === 'P2002') {
         throw new ApiError(400, 'Product name already exists');
+      }
+      if (error.code === 'P2003') {
+        throw new ApiError(400, 'Invalid category ID');
       }
       if (error.code === 'P2025') {
         throw new ApiError(404, 'Product not found');
