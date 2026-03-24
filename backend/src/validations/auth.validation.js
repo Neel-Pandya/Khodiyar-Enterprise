@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { passwordField } from './common.validation.js';
 
 export const registerSchema = z.strictObject(
   {
@@ -8,15 +9,7 @@ export const registerSchema = z.strictObject(
       .min(2, 'Name must be at least 2 characters long')
       .max(50),
     email: z.string().trim().email('Invalid email format'),
-    password: z
-      .string()
-      .trim()
-      .min(8, 'Password must be at least 8 characters long')
-      .max(100, 'Password must not exceed 100 characters')
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
-      ),
+    password: passwordField,
   },
   { error: 'Invalid registration credentials' }
 );
@@ -62,15 +55,7 @@ export const verifyResetOTPSchema = z.strictObject(
 export const resetPasswordSchema = z.strictObject(
   {
     token: z.string().trim().min(1, 'Token is required'),
-    password: z
-      .string()
-      .trim()
-      .min(8, 'Password must be at least 8 characters long')
-      .max(100, 'Password must not exceed 100 characters')
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
-      ),
+    password: passwordField,
   },
   { error: 'Invalid password reset credentials' }
 );

@@ -47,6 +47,11 @@ const upload = multer({
 export const uploadProductImages = upload.array('images', 4);
 
 /**
+ * Middleware to handle single avatar image upload
+ */
+export const uploadAvatar = upload.single('avatar');
+
+/**
  * Middleware to validate the number of uploaded images (min 1, max 4)
  */
 export const validateImageCount = (req, _res, next) => {
