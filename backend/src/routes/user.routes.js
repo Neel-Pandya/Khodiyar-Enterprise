@@ -15,10 +15,39 @@ const router = Router();
 router.use(authenticate);
 router.use(authorize(Roles.ADMIN));
 
+/**
+ * @route GET /api/users
+ * @desc Get all users with pagination
+ * @access Admin
+ */
 router.get('/', validate(getUsersSchema, 'query'), userController.getAllUsers);
+
+/**
+ * @route POST /api/users
+ * @desc Create a new user
+ * @access Admin
+ */
 router.post('/', validate(createUserSchema), userController.createUser);
+
+/**
+ * @route GET /api/users/:id
+ * @desc Get user by ID
+ * @access Admin
+ */
 router.get('/:id', userController.getUser);
+
+/**
+ * @route PATCH /api/users/:id
+ * @desc Update user details
+ * @access Admin
+ */
 router.patch('/:id', validate(updateUserSchema), userController.updateUser);
+
+/**
+ * @route DELETE /api/users/:id
+ * @desc Delete user (soft delete)
+ * @access Admin
+ */
 router.delete('/:id', userController.deleteUser);
 
 export default router;

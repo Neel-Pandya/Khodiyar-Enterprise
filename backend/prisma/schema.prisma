@@ -58,8 +58,27 @@ model Category {
   created_at DateTime       @default(now()) @db.Timestamptz(6)
   updated_at DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
   deleted_at DateTime?      @db.Timestamptz(6)
+  products   Product[]
 
   @@map("categories")
+}
+
+model Product {
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String        @unique @db.VarChar(255)
+  price         Decimal       @db.Decimal(10, 2)
+  status        ProductStatus @default(active)
+  category_id   String        @db.Uuid
+  description   String
+  included      String
+  specification String
+  images        String[]
+  created_at    DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+  deleted_at    DateTime?     @db.Timestamptz(6)
+  category      Category      @relation(fields: [category_id], references: [id])
+
+  @@map("products")
 }
 
 enum Role {
@@ -74,6 +93,11 @@ enum UserStatus {
 }
 
 enum CategoryStatus {
+  active
+  inactive
+}
+
+enum ProductStatus {
   active
   inactive
 }
