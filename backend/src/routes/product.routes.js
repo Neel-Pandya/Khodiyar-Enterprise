@@ -70,7 +70,7 @@ router.patch(
   validate(updateProductSchema),
   productController.updateProduct
 );
-);
+
 
 /**
  * @route DELETE /api/products/:id
