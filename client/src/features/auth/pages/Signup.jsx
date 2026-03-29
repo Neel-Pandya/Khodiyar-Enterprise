@@ -16,7 +16,7 @@ const Signup = () => {
       await signup(data);
       toast.success('Signup successful! Check your email.');
     } catch (error) {
-      toast.error(error || 'Something went wrong');
+      toast.error(error?.message || 'Something went wrong');
     }
   };
 

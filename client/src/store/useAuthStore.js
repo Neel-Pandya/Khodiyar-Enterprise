@@ -20,9 +20,8 @@ const useAuthStore = create((set, get) => ({
   verifyOTP: async (data) => {
     set({ isLoading: true });
     try {
-      const res = await authApi.verifyOTP(data);
-      localStorage.setItem('token', res.data.accessToken);
-      set({ user: res.data.user, token: res.data.accessToken, isLoading: false });
+      await authApi.verifyOTP(data);
+      set({ isLoading: false });
     } catch (error) {
       set({ isLoading: false });
       throw error;

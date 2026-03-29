@@ -1,14 +1,24 @@
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import useCustomerStore from '@/store/useCustomerStore';
 import CustomerForm from '../components/CustomerForm';
+import * as toast from '@/utils/toast';
 
 const AddCustomerPage = () => {
     const navigate = useNavigate();
+    const { createCustomer, isLoading, error } = useCustomerStore();
 
-    const handleSubmit = (data) => {
-        // TODO: wire to API — for now navigate back to customers list
-        console.log('New customer:', data);
-        navigate('/admin/customers');
+    const handleSubmit = async (data) => {
+        try {
+            await createCustomer(data);
+            toast.success('Customer created successfully!');
+            // Wait 1.5 seconds before navigating to show the success message
+            setTimeout(() => {
+                navigate('/admin/customers');
+            }, 1500);
+        } catch (err) {
+            toast.error(err?.message || 'Failed to create customer');
+        }
     };
 
     return (
@@ -39,6 +49,18 @@ const AddCustomerPage = () => {
 
 
             </div>
+
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium rounded-xl px-4 py-3">
+                    {error}
+                </div>
+            )}
+
+            {isLoading && (
+                <div className="bg-blue-50 border border-blue-200 text-blue-600 text-sm font-medium rounded-xl px-4 py-3">
+                    Creating customer...
+                </div>
+            )}
 
             {/* ─── Form ─────────────────────────────────────────────────── */}
             <CustomerForm onSubmit={handleSubmit} />

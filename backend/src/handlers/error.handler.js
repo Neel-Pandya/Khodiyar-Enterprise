@@ -12,6 +12,13 @@ import logger from '../utils/logger.js';
 const errorHandler = (err, req, res, next) => {
   // ── Known ApiError ────────────────────────────────────────────────────────
   if (err instanceof ApiError) {
+    logger.warn(err.message, {
+      error: err.message,
+      stack: err.stack,
+      ip: req.ip,
+      errors: err.errors,
+      message: err.message,
+    });
     return res.status(err.statusCode).json({
       success: false,
       statusCode: err.statusCode,

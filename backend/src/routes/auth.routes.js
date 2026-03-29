@@ -25,7 +25,8 @@ const loginLimiter = rateLimit({
 const verifyOTPLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // limit each IP to 5 OTP verification attempts per windowMs
-  message: 'Too many OTP verification attempts from this IP, please try again later.',
+  message:
+    'Too many OTP verification attempts from this IP, please try again later.',
 });
 
 const resendOTPLimiter = rateLimit({
@@ -37,19 +38,22 @@ const resendOTPLimiter = rateLimit({
 const forgotPasswordLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 3, // limit each IP to 3 forgot password requests per windowMs
-  message: 'Too many password reset requests from this IP, please try again later.',
+  message:
+    'Too many password reset requests from this IP, please try again later.',
 });
 
 const verifyResetOTPLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 10, // limit each IP to 10 OTP verification attempts per windowMs
-  message: 'Too many OTP verification attempts from this IP, please try again later.',
+  message:
+    'Too many OTP verification attempts from this IP, please try again later.',
 });
 
 const resetPasswordLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // limit each IP to 5 password reset attempts per windowMs
-  message: 'Too many password reset attempts from this IP, please try again later.',
+  message:
+    'Too many password reset attempts from this IP, please try again later.',
 });
 
 /**
@@ -64,21 +68,36 @@ router.post('/register', validate(registerSchema), authController.register);
  * @desc Login a user
  * @access Public
  */
-router.post('/login', loginLimiter, validate(loginSchema), authController.login);
+router.post(
+  '/login',
+  loginLimiter,
+  validate(loginSchema),
+  authController.login
+);
 
 /**
  * @route POST /api/auth/verify-otp
  * @desc Verify account email OTP
  * @access Public
  */
-router.post('/verify-otp', verifyOTPLimiter, validate(verifyOTPSchema), authController.verifyOTP);
+router.post(
+  '/verify-otp',
+  verifyOTPLimiter,
+  validate(verifyOTPSchema),
+  authController.verifyOTP
+);
 
 /**
  * @route POST /api/auth/resend-otp
  * @desc Resend account verification OTP
  * @access Public
  */
-router.post('/resend-otp', resendOTPLimiter, validate(resendOTPSchema), authController.resendOTP);
+router.post(
+  '/resend-otp',
+  resendOTPLimiter,
+  validate(resendOTPSchema),
+  authController.resendOTP
+);
 
 /**
  * @route POST /api/auth/forgot-password

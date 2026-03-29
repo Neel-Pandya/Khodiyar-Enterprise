@@ -105,7 +105,9 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, 'User not found');
   }
 
-  res.status(200).json(new ApiResponse(200, 'User data retrieved successfully', { user }));
+  res
+    .status(200)
+    .json(new ApiResponse(200, 'User data retrieved successfully', { user }));
 });
 
 export default {

@@ -55,6 +55,10 @@ class ApiClient {
     return this.client.put(url, data, config);
   }
 
+  patch(url, data, config = {}) {
+    return this.client.patch(url, data, config);
+  }
+
   delete(url, config = {}) {
     return this.client.delete(url, config);
   }

@@ -41,7 +41,7 @@ export const updateUserSchema = z.strictObject(
       )
       .optional(),
     role: z.enum(['admin', 'user']).optional(),
-    status: z.enum(['active', 'inactive']).optional(),
+    status: z.enum(['active', 'inactive', 'suspended']).optional(),
   },
   { error: 'Invalid user update data' }
 );
@@ -50,6 +50,7 @@ export const getUsersSchema = z.object(
   {
     page: z.coerce.number().int().positive().default(1),
     limit: z.coerce.number().int().positive().max(100).default(10),
+    role: z.enum(['admin', 'user']).optional(),
   },
   { error: 'Invalid pagination parameters' }
 );

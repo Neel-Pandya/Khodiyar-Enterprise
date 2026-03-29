@@ -1,25 +1,55 @@
-import React, { useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import CustomerForm from '../components/CustomerForm';
-import { customersList } from '@data/adminMockData';
+import useCustomerStore from '@/store/useCustomerStore';
+import * as toast from '@/utils/toast';
 
 const EditCustomerPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
+    const { customer, isLoading, error, fetchCustomer, updateCustomer } = useCustomerStore();
 
-    // Find customer in mock data
-    const customerData = useMemo(() => {
-        return customersList.find(c => c.id === id);
-    }, [id]);
+    useEffect(() => {
+        if (id) {
+            fetchCustomer(id);
+        }
+    }, [id, fetchCustomer]);
 
-    const handleSubmit = (data) => {
-        console.log('Update customer:', id, data);
-        // TODO: API call to update
-        navigate('/admin/customers');
+    const handleSubmit = async (data) => {
+        try {
+            await updateCustomer(id, data);
+            toast.success('Customer updated successfully!');
+            
+            navigate('/admin/customers');
+        } catch (error) {
+            toast.error(error?.message || 'Failed to update customer');
+        }
     };
 
-    if (!customerData) {
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center p-20 space-y-4">
+                <p className="text-gray-500 font-medium">Loading customer...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center p-20 space-y-4">
+                <p className="text-red-500 font-medium">Error: {error}</p>
+                <button 
+                  onClick={() => navigate('/admin/customers')}
+                  className="text-[#1e3a5f] hover:underline"
+                >
+                  Return to Customers
+                </button>
+            </div>
+        );
+    }
+
+    if (!customer) {
         return (
             <div className="flex flex-col items-center justify-center p-20 space-y-4">
                 <p className="text-gray-500 font-medium">Customer not found.</p>
@@ -32,21 +62,6 @@ const EditCustomerPage = () => {
             </div>
         );
     }
-
-    // Adapt mock data to form structure if necessary
-    // customersList in mockData: { id, name, email, status, avatar }
-    // INITIAL_FORM: { fullName, email, phone, password, street, city, state, zip }
-    const adaptedData = {
-        fullName: customerData.name,
-        email: customerData.email,
-        phone: '', // Not in mock data
-        password: '', 
-        street: '',
-        city: '',
-        state: '',
-        zip: '',
-        photo: customerData.image || null, // Mock data might use image or avatar
-    };
 
     return (
         <div className="space-y-6 max-w-[1400px] mx-auto pb-10 px-4 md:px-0">
@@ -74,7 +89,7 @@ const EditCustomerPage = () => {
 
             {/* Main Form */}
             <CustomerForm 
-                initialData={adaptedData} 
+                initialData={customer} 
                 onSubmit={handleSubmit} 
                 onCancel={() => navigate('/admin/customers')}
             />

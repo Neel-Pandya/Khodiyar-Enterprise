@@ -27,7 +27,7 @@ const VerifyEmail = () => {
       toast.success('Email verified successfully!');
       navigate('/login');
     } catch (error) {
-      toast.error(error || 'Something went wrong');
+      toast.error(error?.message || 'Something went wrong');
     }
   };
 

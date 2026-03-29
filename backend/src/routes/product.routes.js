@@ -71,7 +71,6 @@ router.patch(
   productController.updateProduct
 );
 
-
 /**
  * @route DELETE /api/products/:id
  * @desc Delete a product (soft delete)

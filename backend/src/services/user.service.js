@@ -114,8 +114,14 @@ class UserService {
     const skip = (page - 1) * limit;
 
     try {
+      const where = {};
+      if (query.role) {
+        where.role = query.role;
+      }
+
       const [users, total] = await prisma.$transaction([
         prisma.user.findMany({
+          where,
           skip,
           take: limit,
           omit: {
@@ -127,7 +133,7 @@ class UserService {
             created_at: 'desc',
           },
         }),
-        prisma.user.count(),
+        prisma.user.count({ where }),
       ]);
 
       return {
