@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
+import { Toaster } from 'react-hot-toast'
 
 // Routes
 import PublicRoutes from './routes/PublicRoutes'
@@ -25,6 +26,7 @@ const App = () => {
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <Toaster />
     </BrowserRouter>
   )
 }

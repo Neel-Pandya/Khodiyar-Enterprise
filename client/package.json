@@ -12,12 +12,15 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "@tinymce/tinymce-react": "^6.3.0",
+    "axios": "^1.14.0",
     "lucide-react": "^0.575.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.72.0",
     "react-hot-toast": "^2.6.0",
     "react-router": "^7.13.0",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

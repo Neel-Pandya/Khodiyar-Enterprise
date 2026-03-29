@@ -1,24 +1,24 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import Input from '@common/Input';
 import Button from '@common/Button';
 import AuthLayout from '../components/AuthLayout';
 import { Link, useNavigate } from 'react-router';
+import useAuthStore from '@/store/useAuthStore';
+import * as toast from '@/utils/toast';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { login, isLoading } = useAuthStore();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Login attempt:', { email, password });
-    
-    // Simulate successful login
-    sessionStorage.setItem('isLoggedIn', 'true');
-    
-    // Redirect to home
-    navigate('/');
-    
+  const onSubmit = async (data) => {
+    try {
+      await login(data);
+      toast.success('Login successful!');
+      navigate('/');
+    } catch (error) {
+      toast.error(error || 'Something went wrong');
+    }
   };
 
   return (
@@ -27,7 +27,7 @@ const Login = () => {
       subtitle="Log in to your account"
     >
       <form 
-        onSubmit={handleSubmit} 
+        onSubmit={handleSubmit(onSubmit)} 
         className="w-full flex flex-col gap-6"
       >
         <div>
@@ -36,9 +36,14 @@ const Login = () => {
             label="Email address"
             type="email"
             placeholder="Enter Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            register={register('email', { 
+              required: 'Email is required',
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: 'Invalid email address'
+              }
+            })}
+            error={errors.email?.message}
           />
         </div>
 
@@ -48,9 +53,8 @@ const Login = () => {
             label="Password"
             type="password"
             placeholder="Enter Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            register={register('password', { required: 'Password is required' })}
+            error={errors.password?.message}
           />
           <div className="flex justify-end mt-2">
             <Link to="/forgot-password" 
@@ -62,7 +66,7 @@ const Login = () => {
         </div>
 
         <div>
-          <Button type="submit" className="shadow-lg shadow-primary/20">
+          <Button type="submit" className="shadow-lg shadow-primary/20" loading={isLoading} disabled={isLoading}>
             Log In
           </Button>
         </div>

@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { errorHandler } from './handlers/error.handler.js';
 import routes from './routes/index.routes.js';
 import logger from './utils/logger.js';
@@ -8,6 +9,7 @@ const app = express();
 // ── Core Middleware ───────────────────────────────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 
 // -- Logger ──────────────────────────────────────────────────────────────
 app.use(

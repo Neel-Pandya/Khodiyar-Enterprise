@@ -5,3 +5,4 @@ import ResetPassword from "./ResetPassword";
 import ChangePasswordPage from "./ChangePasswordPage";
 
 export { Login, Signup, ForgotPassword, ResetPassword, ChangePasswordPage };
+export { default as VerifyEmail } from './VerifyEmail';

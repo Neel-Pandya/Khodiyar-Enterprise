@@ -5,9 +5,12 @@ const Button = ({
   type = 'button', 
   className = '', 
   disabled = false,
-  variant = 'primary'
+  variant = 'primary',
+  loading = false
 }) => {
   const baseStyles = "w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+  
+  const isDisabled = disabled || loading;
   
   const variants = {
     primary: "bg-[#1e3a5f] hover:bg-[#162d4a] text-white focus:ring-[#1e3a5f]/50 hover:cursor-pointer",
@@ -18,10 +21,10 @@ const Button = ({
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={isDisabled}
       className={`${baseStyles} ${variants[variant]} ${className}`}
     >
-      {children}
+      {loading ? "Loading..." : children}
     </button>
   );
 };

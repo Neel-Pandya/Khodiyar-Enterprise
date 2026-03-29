@@ -51,8 +51,8 @@ class VerificationService {
         token,
         otp
       );
-      // Remove token return to prevent disclosure in API response
-      return;
+      // Return token for frontend to use in verification flow
+      return { token };
     } catch (error) {
       logger.error('Failed to create verification', {
         error: error.message,

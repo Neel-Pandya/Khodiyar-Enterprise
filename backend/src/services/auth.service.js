@@ -51,11 +51,9 @@ class AuthService {
         },
       });
 
-      await verificationService.createVerification(user);
+      const { token } = await verificationService.createVerification(user);
 
-      return {
-        ...user,
-      };
+      return user;
     } catch (error) {
       if (error instanceof ApiError) throw error;
       logger.error('Failed to register user', {
