@@ -15,7 +15,14 @@ const Login = () => {
     try {
       await login(data);
       toast.success('Login successful!');
-      navigate('/');
+      
+      // Get the updated user from store after login
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser?.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       toast.error(error?.message || 'Something went wrong');
     }

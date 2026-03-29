@@ -13,7 +13,7 @@ const ProductsPage = () => {
             <div
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
             >
-                {productStats.map((stat, i) => (
+                {productStats.map((stat) => (
                     <ProductStatCard
                         key={stat.id}
                         label={stat.label}

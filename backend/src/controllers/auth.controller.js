@@ -1,4 +1,5 @@
 import { asyncHandler } from '../handlers/async.handler.js';
+import prisma from '../db/prisma.js';
 import authService from '../services/auth.service.js';
 import verificationService from '../services/verification.service.js';
 import passwordResetService from '../services/password-reset.service.js';
@@ -84,6 +85,29 @@ const resetPassword = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, result.message));
 });
 
+const getCurrentUser = asyncHandler(async (req, res) => {
+  // User data is attached by authenticate middleware (contains id, email, role from JWT)
+  const userId = req.user.id;
+
+  // Fetch complete user data from database
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      avatar: true,
+    },
+  });
+
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  res.status(200).json(new ApiResponse(200, 'User data retrieved successfully', { user }));
+});
+
 export default {
   login,
   register,
@@ -92,4 +116,5 @@ export default {
   forgotPassword,
   verifyResetOTP,
   resetPassword,
+  getCurrentUser,
 };

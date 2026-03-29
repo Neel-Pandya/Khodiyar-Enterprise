@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router';
 import { Home, Package, Info, Phone } from 'lucide-react';
 import logo from '../assets/Khodiyar_Enterprise.svg';

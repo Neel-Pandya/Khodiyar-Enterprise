@@ -1,4 +1,3 @@
-import { useParams } from 'react-router';
 import ProductImages from '../components/ProductImages';
 import ProductInfo from '../components/ProductInfo';
 import ProductTabs from '../components/ProductTabs';
@@ -6,8 +5,6 @@ import DeliveryInfoCard from '../components/DeliveryInfoCard';
 import { MOCK_PRODUCT } from '@data/mockProduct';
 
 const ProductDetailsPage = () => {
-  const { id } = useParams();
-
   // Using imported mock data (can be replaced with fetch logic later)
   const product = MOCK_PRODUCT;
 

@@ -1,5 +1,7 @@
 import { NavLink } from 'react-router';
-import { X, LayoutDashboard, Users, Package, ClipboardList, Settings, LogOut, Zap } from 'lucide-react';
+import { X, LayoutDashboard, Users, Package, ClipboardList, Settings, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import useAuthStore from '@/store/useAuthStore';
 
 const navItems = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
@@ -9,7 +11,23 @@ const navItems = [
   { label: 'Settings', path: '/admin/settings', icon: Settings },
 ];
 
-const SidebarContent = ({ onClose }) => (
+const SidebarContent = ({ onClose }) => {
+  const { user } = useAuthStore();
+  const { logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    const parts = name.split(' ');
+    return parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0][0];
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  return (
   <div className="flex flex-col h-full bg-[#1e3a5f] text-white">
     {/* Logo */}
     <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
@@ -32,7 +50,7 @@ const SidebarContent = ({ onClose }) => (
 
     {/* Nav Items */}
     <nav className="flex-1 overflow-y-auto px-3 py-6 space-y-1">
-      {navItems.map((item, i) => (
+      {navItems.map((item) => (
         <div key={item.label}>
           <NavLink
             to={item.path}
@@ -67,19 +85,27 @@ const SidebarContent = ({ onClose }) => (
 
     {/* User Profile Footer */}
     <div className="px-4 py-4 border-t border-white/10">
-      <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/8 cursor-pointer transition-colors group">
+      <div 
+        onClick={handleLogout}
+        className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/8 cursor-pointer transition-colors group"
+      >
         <div className="w-9 h-9 rounded-full bg-[#fbc02d] flex items-center justify-center text-[#1e3a5f] font-bold text-sm flex-shrink-0">
-          NP
+          {user?.avatar ? (
+            <img src={user.avatar} alt="User avatar" className="w-full h-full rounded-full object-cover" />
+          ) : (
+            getInitials(user?.name)
+          )}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white truncate">Neel Pandya</p>
-          <p className="text-xs text-white/40 truncate">npandya2601@gmail.com</p>
+          <p className="text-sm font-semibold text-white truncate">{user?.name || 'User'}</p>
+          <p className="text-xs text-white/40 truncate">{user?.email || ''}</p>
         </div>
         <LogOut size={15} className="text-white/30 group-hover:text-white/60 flex-shrink-0 transition-colors" />
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const AdminSidebar = ({ mobileOpen, onClose }) => (
   <>

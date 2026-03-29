@@ -18,7 +18,7 @@ const FavoriteCardImage = ({ src, alt, category }) => (
   </div>
 );
 
-const FavoriteCardContent = ({ name, description, category, onRemove, onAddToCart }) => (
+const FavoriteCardContent = ({ name, description, onRemove, onAddToCart }) => (
   <div className="p-6 sm:p-8 flex flex-col flex-grow bg-white">
     <div className="flex justify-between items-start mb-3">
       <h3 className="text-xl font-black text-[#1e3a5f] transition-colors line-clamp-1">

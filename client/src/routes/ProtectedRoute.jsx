@@ -2,10 +2,10 @@ import { Navigate, Outlet } from 'react-router';
 
 /**
  * ProtectedRoute component that guards routes based on authentication status.
- * It checks sessionStorage for the 'isLoggedIn' flag.
+ * It checks localStorage for the 'token'.
  */
 const ProtectedRoute = () => {
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+    const isLoggedIn = !!localStorage.getItem('token');
 
     if (!isLoggedIn) {
         // Redirect to login if not authenticated

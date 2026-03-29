@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { Edit2, Trash2 } from 'lucide-react';
 
-const ProductTableRow = ({ product, index }) => {
+const ProductTableRow = ({ product }) => {
     return (
         <tr
             className="hover:bg-slate-50/50 transition-colors group border-b border-slate-200 last:border-0"

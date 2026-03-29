@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { authApi } from '../api/authApi';
-import * as toast from '../utils/toast';
 
 const useAuthStore = create((set, get) => ({
   user: null,
@@ -24,7 +23,6 @@ const useAuthStore = create((set, get) => ({
       const res = await authApi.verifyOTP(data);
       localStorage.setItem('token', res.data.accessToken);
       set({ user: res.data.user, token: res.data.accessToken, isLoading: false });
-      sessionStorage.setItem('isLoggedIn', 'true');
     } catch (error) {
       set({ isLoading: false });
       throw error;
@@ -36,7 +34,6 @@ const useAuthStore = create((set, get) => ({
       const res = await authApi.login(data);
       localStorage.setItem('token', res.data.accessToken);
       set({ user: res.data.user, token: res.data.accessToken, isLoading: false });
-      sessionStorage.setItem('isLoggedIn', 'true');
     } catch (error) {
       set({ isLoading: false });
       throw error;
@@ -83,9 +80,20 @@ const useAuthStore = create((set, get) => ({
       throw error;
     }
   },
+  getCurrentUser: async () => {
+    set({ isLoading: true });
+    try {
+      const res = await authApi.getCurrentUser();
+      set({ user: res.data.user, isLoading: false });
+    } catch (error) {
+      // Token might be invalid, clear it
+      localStorage.removeItem('token');
+      set({ user: null, token: null, isLoading: false });
+      throw error;
+    }
+  },
   logout: () => {
     localStorage.removeItem('token');
-    sessionStorage.removeItem('isLoggedIn');
     set({ user: null, token: null });
   },
 }));

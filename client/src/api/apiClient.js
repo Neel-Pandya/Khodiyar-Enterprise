@@ -1,5 +1,4 @@
 import axios from 'axios';
-import useAuthStore from '../store/useAuthStore';
 
 class ApiClient {
   constructor() {

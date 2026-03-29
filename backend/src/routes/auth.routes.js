@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import authController from '../controllers/auth.controller.js';
+import authenticate from '../middlewares/jwt.middleware.js';
 import validate from '../middlewares/validate.middleware.js';
 import {
   registerSchema,
@@ -114,5 +115,12 @@ router.post(
   validate(resetPasswordSchema),
   authController.resetPassword
 );
+
+/**
+ * @route GET /api/auth/me
+ * @desc Get current user data
+ * @access Private
+ */
+router.get('/me', authenticate, authController.getCurrentUser);
 
 export default router;

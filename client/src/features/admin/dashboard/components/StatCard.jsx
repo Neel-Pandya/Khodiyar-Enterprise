@@ -7,7 +7,7 @@ const iconMap = {
   DollarSign,
 };
 
-const StatCard = ({ stat, index }) => {
+const StatCard = ({ stat }) => {
   const Icon = iconMap[stat.icon] || DollarSign;
 
   return (

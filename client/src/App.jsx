@@ -10,12 +10,26 @@ import UserRoutes from './routes/UserRoutes'
 import useAuthStore from './store/useAuthStore'
 
 const AppContent = () => {
+  const { getCurrentUser, user } = useAuthStore();
   const navigate = useNavigate();
-  const setNavigate = useAuthStore(state => state.setNavigate);
 
   useEffect(() => {
-    setNavigate(navigate);
-  }, [navigate, setNavigate]);
+    // Check for existing token and restore user state on app load
+    const token = localStorage.getItem('token');
+    if (token) {
+      getCurrentUser().catch(() => {
+        // Silently handle token validation failure
+        console.log('Token validation failed, user needs to login again');
+      });
+    }
+  }, [getCurrentUser]);
+
+  useEffect(() => {
+    // Redirect admin users to dashboard on app load
+    if (user?.role === 'admin') {
+      navigate('/admin/dashboard');
+    }
+  }, [user, navigate]);
 
   return (
     <Routes>
@@ -25,11 +39,12 @@ const AppContent = () => {
       {/* Auth Routes */}
       {AuthRoutes()}
 
-      {/* Admin Routes */}
-      {AdminRoutes()}
 
       {/* User Routes */}
       {UserRoutes()}
+
+      {/* Admin Routes */}
+      {AdminRoutes()}
 
       {/* Catch-all */}
       <Route path="*" element={<Navigate to="/" replace />} />
