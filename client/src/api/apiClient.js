@@ -12,7 +12,7 @@ class ApiClient {
   setupInterceptors() {
     this.client.interceptors.request.use(
       (config) => {
-        const token = useAuthStore.getState().token;
+        const token = localStorage.getItem('token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -24,7 +24,22 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response.data,
       (error) => {
-        throw error;
+        // Standardize error messaging
+        let message = 'An error occurred.';
+        if (error.response && error.response.data) {
+          if (typeof error.response.data === 'string') {
+            message = error.response.data;
+          } else if (error.response.data.message) {
+            message = error.response.data.message;
+          } else if (error.response.data.error) {
+            message = error.response.data.error;
+          }
+        } else if (error.message) {
+          message = error.message;
+        }
+        const err = new Error(message);
+        err.original = error;
+        throw err;
       }
     );
   }

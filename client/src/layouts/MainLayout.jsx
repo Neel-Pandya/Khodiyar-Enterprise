@@ -7,17 +7,19 @@ import logo from '../assets/Khodiyar_Enterprise.svg';
 import Navbar from './components/Navbar';
 import MobileSidebar from './components/MobileSidebar';
 import Footer from './components/Footer';
+import useAuthStore from '../store/useAuthStore';
 
 const MainLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(sessionStorage.getItem('isLoggedIn') === 'true');
+  const { user, logout } = useAuthStore();
+
+  const isLoggedIn = !!user;
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   
   const handleLogout = () => {
-    sessionStorage.removeItem('isLoggedIn');
-    setIsLoggedIn(false);
+    logout();
     setIsUserMenuOpen(false);
   };
 

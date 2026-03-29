@@ -17,7 +17,7 @@ const Login = () => {
       toast.success('Login successful!');
       navigate('/');
     } catch (error) {
-      toast.error(error || 'Something went wrong');
+      toast.error(error?.message || 'Something went wrong');
     }
   };
 

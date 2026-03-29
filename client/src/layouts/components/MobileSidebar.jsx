@@ -1,5 +1,6 @@
 import { NavLink, Link } from 'react-router';
 import { X, ChevronRight, Heart, ShoppingCart, User, Lock, LogOut, ArrowRight, Mail, Phone, MapPin } from 'lucide-react';
+import useAuthStore from '../../store/useAuthStore';
 
 const MobileSidebar = ({ 
   isOpen, 
@@ -7,8 +8,9 @@ const MobileSidebar = ({
   logo, 
   navLinks, 
   isLoggedIn, 
-  handleLogout 
+  handleLogout
 }) => {
+  const { user } = useAuthStore();
   return (
     <>
       {/* Backdrop */}
@@ -61,7 +63,16 @@ const MobileSidebar = ({
               <div className="space-y-3">
                 <div className="px-4 mb-4">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Profile</p>
-                  <p className="text-lg font-bold text-slate-800">Neel Pandya</p>
+                  <div className="flex items-center gap-3">
+                    {user?.avatar ? (
+                      <img src={user.avatar} alt="Avatar" className="w-8 h-8 rounded-full" />
+                    ) : (
+                      <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
+                        <User size={16} />
+                      </div>
+                    )}
+                    <p className="text-lg font-bold text-slate-800">{user?.name || user?.email || "User"}</p>
+                  </div>
                 </div>
                 <Link to="/favorites" onClick={onClose} className="flex items-center gap-4 p-4 rounded-2xl text-slate-800 hover:bg-slate-50 hover:text-primary transition-all font-semibold">
                   <div className="p-2 bg-slate-100 rounded-xl"><Heart size={20} /></div> Favorites

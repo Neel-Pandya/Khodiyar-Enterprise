@@ -1,5 +1,6 @@
 import { Link, NavLink } from 'react-router';
 import { Heart, ShoppingCart, ShoppingBag, User, ChevronDown, LogOut, Settings, Lock } from 'lucide-react';
+import useAuthStore from '../../store/useAuthStore';
 
 const Navbar = ({ 
   logo, 
@@ -8,8 +9,9 @@ const Navbar = ({
   isUserMenuOpen, 
   setIsUserMenuOpen, 
   handleLogout,
-  toggleMenu 
+  toggleMenu
 }) => {
+  const { user } = useAuthStore();
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 py-4">
       <div className="container mx-auto px-6 flex justify-between items-center">
@@ -63,7 +65,11 @@ const Navbar = ({
                   className="flex items-center gap-2 p-1.5 rounded-full hover:bg-slate-50 transition-all border border-transparent hover:border-slate-200"
                 >
                   <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                    <User size={20} />
+                    {user?.avatar ? (
+                      <img src={user.avatar} alt="User avatar" className="h-full w-full rounded-full object-cover" />
+                    ) : (
+                      <User size={20} />
+                    )}
                   </div>
                   <ChevronDown size={16} className={`text-slate-400 transition-transform duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -74,7 +80,7 @@ const Navbar = ({
                     <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50 animate-fade-in origin-top-right">
                       <div className="px-4 py-3 border-b border-slate-50 mb-1">
                         <p className="text-sm font-medium text-slate-500 uppercase tracking-wider text-[10px]">Logged in as</p>
-                        <p className="font-bold text-slate-800">Neel Pandya</p>
+                        <p className="font-bold text-slate-800">{user?.name || user?.email || "User"}</p>
                       </div>
                       <Link to="/profile" className="flex items-center gap-3 w-full px-4 py-2.5 text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors text-sm font-medium">
                         <User size={18} className="text-slate-400" /> Edit Profile
@@ -101,7 +107,11 @@ const Navbar = ({
           className="md:hidden text-slate-800 focus:outline-none z-50 p-2 hover:bg-slate-100 rounded-full transition-colors"
           onClick={toggleMenu}
         >
-          <User size={28} />
+          {user?.avatar ? (
+            <img src={user.avatar} alt="User avatar" className="h-7 w-7 rounded-full object-cover" />
+          ) : (
+            <User size={28} />
+          )}
         </button>
       </div>
     </header>
