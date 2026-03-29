@@ -1,10 +1,13 @@
 import { create } from 'zustand';
 import { authApi } from '../api/authApi';
+import * as toast from '../utils/toast';
 
-const useAuthStore = create((set) => ({
+const useAuthStore = create((set, get) => ({
   user: null,
   token: null,
   isLoading: false,
+  navigate: null,
+  setNavigate: (nav) => set({ navigate: nav }),
   signup: async (data) => {
     set({ isLoading: true });
     try {
@@ -43,6 +46,37 @@ const useAuthStore = create((set) => ({
     set({ isLoading: true });
     try {
       await authApi.resendOTP(data);
+      set({ isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+      throw error;
+    }
+  },
+  forgotPassword: async (email) => {
+    set({ isLoading: true });
+    try {
+      await authApi.forgotPassword(email);
+      set({ isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+      throw error;
+    }
+  },
+  verifyResetOTP: async (data) => {
+    set({ isLoading: true });
+    try {
+      await authApi.verifyResetOTP(data);
+      set({ isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+      throw error;
+    }
+  },
+  resetPassword: async (data) => {
+    set({ isLoading: true });
+    try {
+      await authApi.resetPassword(data);
+      get().navigate('/login');
       set({ isLoading: false });
     } catch (error) {
       set({ isLoading: false });

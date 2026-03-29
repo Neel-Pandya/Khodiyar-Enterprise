@@ -1,16 +1,22 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import Input from '@common/Input';
 import Button from '@common/Button';
 import AuthLayout from '../components/AuthLayout';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
+import useAuthStore from '@/store/useAuthStore';
+import * as toast from '@/utils/toast';
 
 const ForgotPassword = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { forgotPassword, isLoading } = useAuthStore();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    navigate('/reset-password');
+  const onSubmit = async (data) => {
+    try {
+      await forgotPassword(data.email);
+      toast.success("Reset email sent");
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -19,7 +25,7 @@ const ForgotPassword = () => {
       subtitle="Enter your email to receive a reset link"
     >
       <form 
-        onSubmit={handleSubmit} 
+        onSubmit={handleSubmit(onSubmit)} 
         className="w-full flex flex-col gap-6"
       >
         <div>
@@ -28,14 +34,19 @@ const ForgotPassword = () => {
             label="Email address"
             type="email"
             placeholder="Enter Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            register={register('email', { 
+              required: 'Email is required',
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: 'Invalid email address'
+              }
+            })}
+            error={errors.email?.message}
           />
         </div>
 
         <div>
-          <Button type="submit" className="shadow-lg shadow-primary/20">
+          <Button type="submit" className="shadow-lg shadow-primary/20" loading={isLoading} disabled={isLoading}>
             Send Reset Link
           </Button>
         </div>

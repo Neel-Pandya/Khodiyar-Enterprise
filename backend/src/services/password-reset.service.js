@@ -22,7 +22,7 @@ class PasswordResetService {
         };
       }
 
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = crypto.randomInt(100000, 999999).toString();
       const hashedOtp = hashService.hashOTP(otp);
       const token = crypto.randomUUID();
       const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
