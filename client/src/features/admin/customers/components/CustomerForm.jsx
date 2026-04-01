@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
-    User, Mail, Lock, UserPlus, RotateCcw, ChevronDown,
+    User, Mail, Lock, UserPlus, RotateCcw, ChevronDown, Loader2,
 } from 'lucide-react';
 
 import FormSectionCard from '@admin/shared/components/FormSectionCard';
@@ -17,8 +17,9 @@ const INITIAL_FORM = {
 
 const PASSWORD_COMPLEXITY_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/;
 
-const CustomerForm = ({ initialData, onSubmit, onCancel }) => {
-    const [photoPreview, setPhotoPreview] = useState(initialData?.photo || null);
+const CustomerForm = ({ initialData, onSubmit, onCancel, isSubmitting = false }) => {
+    const [avatarPreview, setAvatarPreview] = useState(initialData?.avatar || null);
+    const [avatarFile, setAvatarFile] = useState(null);
     const [submitted, setSubmitted] = useState(false);
 
     const isEdit = !!initialData;
@@ -44,13 +45,14 @@ const CustomerForm = ({ initialData, onSubmit, onCancel }) => {
             password: initialData?.password || '',
             status: (initialData?.status || 'active').toLowerCase(), // Normalize status on reset
         });
-        setPhotoPreview(initialData?.photo || null);
+        setAvatarPreview(initialData?.avatar || null);
         setSubmitted(false);
     }, [initialData, reset]);
 
-    const handlePhotoChange = (file) => {
+    const handleAvatarChange = (file) => {
         const url = URL.createObjectURL(file);
-        setPhotoPreview(url);
+        setAvatarPreview(url);
+        setAvatarFile(file);
     };
 
     const handleReset = () => {
@@ -59,7 +61,8 @@ const CustomerForm = ({ initialData, onSubmit, onCancel }) => {
             return;
         }
         reset(INITIAL_FORM);
-        setPhotoPreview(null);
+        setAvatarPreview(null);
+        setAvatarFile(null);
         setSubmitted(false);
     };
 
@@ -75,8 +78,38 @@ const CustomerForm = ({ initialData, onSubmit, onCancel }) => {
             payload.password = data.password.trim();
         }
 
+        // Include avatar file if a new one was selected
+        if (avatarFile) {
+            payload.avatar = avatarFile;
+        }
+
         setSubmitted(true);
         if (onSubmit) onSubmit(payload);
+    };
+
+    const getButtonContent = () => {
+        if (isSubmitting) {
+            return (
+                <>
+                    <Loader2 size={16} strokeWidth={2.5} className="animate-spin" />
+                    {isEdit ? 'Saving...' : 'Adding...'}
+                </>
+            );
+        }
+        if (submitted) {
+            return (
+                <>
+                    {isEdit ? <RotateCcw size={16} strokeWidth={2.5} /> : <UserPlus size={16} strokeWidth={2.5} />}
+                    {isEdit ? 'Changes Saved!' : 'Customer Added!'}
+                </>
+            );
+        }
+        return (
+            <>
+                {isEdit ? <RotateCcw size={16} strokeWidth={2.5} /> : <UserPlus size={16} strokeWidth={2.5} />}
+                {isEdit ? 'Save Changes' : 'Add Customer'}
+            </>
+        );
     };
 
     return (
@@ -89,8 +122,8 @@ const CustomerForm = ({ initialData, onSubmit, onCancel }) => {
                         {/* Photo Upload — centered on mobile, left-aligned on large */}
                         <div className="flex justify-center lg:justify-start lg:pt-1 flex-shrink-0">
                             <PhotoUpload
-                                preview={photoPreview}
-                                onFileChange={handlePhotoChange}
+                                preview={avatarPreview}
+                                onFileChange={handleAvatarChange}
                             />
                         </div>
 
@@ -254,16 +287,18 @@ const CustomerForm = ({ initialData, onSubmit, onCancel }) => {
                     {/* Submit — amber solid, same style as CustomerHeader "Add New Customer" button */}
                     <button
                         type="submit"
+                        disabled={isSubmitting}
                         className={`
                             flex items-center justify-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-200 shadow-sm hover:scale-105 active:scale-95
-                            ${submitted
-                                ? 'bg-emerald-500 text-white shadow-emerald-500/20'
-                                : 'bg-[#fbc02d] hover:bg-[#fbbf24] text-[#1e3a5f] shadow-[#fbc02d]/20'
+                            ${isSubmitting
+                                ? 'bg-gray-400 text-white cursor-not-allowed'
+                                : submitted
+                                    ? 'bg-emerald-500 text-white shadow-emerald-500/20'
+                                    : 'bg-[#fbc02d] hover:bg-[#fbbf24] text-[#1e3a5f] shadow-[#fbc02d]/20'
                             }
                         `}
                     >
-                        {isEdit ? <RotateCcw size={16} strokeWidth={2.5} /> : <UserPlus size={16} strokeWidth={2.5} />}
-                        {submitted ? (isEdit ? 'Changes Saved!' : 'Customer Added!') : (isEdit ? 'Save Changes' : 'Add Customer')}
+                        {getButtonContent()}
                     </button>
                 </div>
             </div>

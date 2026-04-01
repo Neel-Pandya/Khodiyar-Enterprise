@@ -58,3 +58,8 @@ export const validateImageCount = (req, _res, next) => {
   }
   next();
 };
+
+/**
+ * Middleware to handle user avatar upload
+ */
+export const uploadAvatar = upload.single('avatar');

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import CustomerForm from '../components/CustomerForm';
@@ -9,6 +9,7 @@ const EditCustomerPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const { customer, isLoading, error, fetchCustomer, updateCustomer } = useCustomerStore();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -17,13 +18,14 @@ const EditCustomerPage = () => {
     }, [id, fetchCustomer]);
 
     const handleSubmit = async (data) => {
+        setIsSubmitting(true);
         try {
             await updateCustomer(id, data);
             toast.success('Customer updated successfully!');
-            
-            navigate('/admin/customers');
         } catch (error) {
             toast.error(error?.message || 'Failed to update customer');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -92,6 +94,7 @@ const EditCustomerPage = () => {
                 initialData={customer} 
                 onSubmit={handleSubmit} 
                 onCancel={() => navigate('/admin/customers')}
+                isSubmitting={isSubmitting}
             />
         </div>
     );

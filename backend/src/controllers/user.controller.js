@@ -1,5 +1,6 @@
 import { asyncHandler } from '../handlers/async.handler.js';
 import userService from '../services/user.service.js';
+import imageService from '../services/image.service.js';
 import ApiResponse from '../utils/ApiResponse.js';
 
 /**
@@ -16,7 +17,15 @@ const createUser = asyncHandler(async (req, res) => {
  * Update an existing user (Admin only)
  */
 const updateUser = asyncHandler(async (req, res) => {
-  const user = await userService.updateUser(req.params.id, req.body);
+  const updateData = { ...req.body };
+
+  // Handle avatar upload if file is present
+  if (req.file) {
+    const uploadResult = await imageService.uploadFile(req.file.path, 'avatars');
+    updateData.avatar = uploadResult.secure_url;
+  }
+
+  const user = await userService.updateUser(req.params.id, updateData);
   return res
     .status(200)
     .json(new ApiResponse(200, 'User updated successfully', user));

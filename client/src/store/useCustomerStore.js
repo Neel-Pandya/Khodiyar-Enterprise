@@ -4,6 +4,7 @@ import { customerApi } from '../api/customerApi';
 const useCustomerStore = create((set, get) => ({
   customers: [],
   customer: null,
+  hasFetched: false,
   stats: {
     total: 0,
     active: 0,
@@ -28,6 +29,7 @@ const useCustomerStore = create((set, get) => ({
         customers: response.data.users,
         pagination: response.data.pagination,
         isLoading: false,
+        hasFetched: true,
       });
     } catch (error) {
       set({
@@ -62,9 +64,11 @@ const useCustomerStore = create((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await customerApi.createCustomer(customerData);
-      set({ isLoading: false });
-      // Refresh the customers list
-      await get().fetchCustomers();
+      set(state => ({
+        customers: [response.data, ...state.customers],
+        pagination: { ...state.pagination, total: state.pagination.total + 1 },
+        isLoading: false,
+      }));
       return response.data;
     } catch (error) {
       set({
@@ -77,38 +81,33 @@ const useCustomerStore = create((set, get) => ({
 
   // Update customer
   updateCustomer: async (id, customerData) => {
-    set({ isLoading: true, error: null });
     try {
       const response = await customerApi.updateCustomer(id, customerData);
       set(state => ({
-        isLoading: false,
         customer: response.data,
         customers: state.customers.map(c => c.id === id ? response.data : c)
       }));
-      // Refresh the customers list
-      await get().fetchCustomers();
       return response.data;
     } catch (error) {
       set({
         error: error?.message || 'Failed to update customer',
-        isLoading: false,
       });
       throw error;
     }
   },
 
-  // Delete customer
+  // Delete customer (mark as suspended)
   deleteCustomer: async (id) => {
-    set({ isLoading: true, error: null });
     try {
       await customerApi.deleteCustomer(id);
-      set({ isLoading: false });
-      // Refresh the customers list
-      await get().fetchCustomers();
+      set(state => ({
+        customers: state.customers.map(c => c.id === id ? { ...c, status: 'suspended' } : c),
+        customer: state.customer && state.customer.id === id ? { ...state.customer, status: 'suspended' } : state.customer,
+      }));
+      return true;
     } catch (error) {
       set({
         error: error?.message || 'Failed to delete customer',
-        isLoading: false,
       });
       throw error;
     }
@@ -121,6 +120,7 @@ const useCustomerStore = create((set, get) => ({
   reset: () => set({
     customers: [],
     customer: null,
+    hasFetched: false,
     isLoading: false,
     error: null,
     pagination: {

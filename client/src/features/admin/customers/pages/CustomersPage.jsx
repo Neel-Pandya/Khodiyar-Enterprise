@@ -11,11 +11,14 @@ const CustomersPage = () => {
     const pagination = useCustomerStore((state) => state.pagination);
     const isLoading = useCustomerStore((state) => state.isLoading);
     const error = useCustomerStore((state) => state.error);
+    const hasFetched = useCustomerStore((state) => state.hasFetched);
     const fetchCustomers = useCustomerStore((state) => state.fetchCustomers);
 
     useEffect(() => {
-        fetchCustomers({ page: currentPage, limit: pagination.limit || 10 });
-    }, [currentPage, pagination.limit]);
+        if (!hasFetched) {
+            fetchCustomers({ page: currentPage, limit: pagination.limit || 10 });
+        }
+    }, [currentPage, pagination.limit, hasFetched, fetchCustomers]);
 
     const normalizedCustomers = useMemo(() => {
         const toDisplayStatus = (status) => {

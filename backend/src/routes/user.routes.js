@@ -9,6 +9,8 @@ import {
   getUsersSchema,
 } from '../validations/user.validation.js';
 import { Roles } from '../configs/roles.js';
+import { uploadAvatar } from '../middlewares/upload.middleware.js';
+
 const router = Router();
 
 // All routes here require authentication and admin role
@@ -41,7 +43,7 @@ router.get('/:id', userController.getUser);
  * @desc Update user details
  * @access Admin
  */
-router.patch('/:id', validate(updateUserSchema), userController.updateUser);
+router.patch('/:id', uploadAvatar, validate(updateUserSchema), userController.updateUser);
 
 /**
  * @route DELETE /api/users/:id

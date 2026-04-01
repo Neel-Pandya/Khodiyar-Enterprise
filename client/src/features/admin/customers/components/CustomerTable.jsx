@@ -1,14 +1,115 @@
 import { Search } from 'lucide-react';
+import { useState } from 'react';
 import CustomerTableRow from './CustomerTableRow';
 import FilterButton from '@admin/shared/components/FilterButton';
 import ExportButton from '@admin/shared/components/ExportButton';
+import ExportModal from './ExportModal';
+import * as toast from '@/utils/toast';
+import { exportToPDF, exportToExcel, exportToCSV } from '@/utils/exportUtils';
+import logoSrc from '@/assets/Khodiyar_Enterprise.svg?raw';
 
 const CustomerTable = ({ customers }) => {
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
     const filterOptions = [
         { label: 'By Name' },
         { label: 'By Email' },
         { label: 'By Status' },
     ];
+
+    const handleExport = (format) => {
+        const timestamp = new Date().toISOString().split('T')[0];
+        const filename = `customers-${timestamp}`;
+
+        switch (format) {
+            case 'pdf':
+                handleExportPDF(filename);
+                break;
+            case 'excel':
+                handleExportExcel(filename);
+                break;
+            case 'csv':
+                handleExportCSV(filename);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handleExportPDF = async (filename) => {
+        try {
+            const headers = [['Name', 'Email Address', 'Status']];
+            const data = customers.map(c => [
+                c.name || '',
+                c.email || '',
+                c.status?.toUpperCase() || ''
+            ]);
+
+            await exportToPDF({
+                filename,
+                title: 'Customers Report',
+                subtitle: `Total Records: ${customers.length}`,
+                headers,
+                data,
+                logoSrc,
+                footerText: 'Khodiyar Enterprise - Customer Management System',
+                columnStyles: {
+                    2: { halign: 'center', fontStyle: 'bold' }
+                },
+                cellCallback: (data) => {
+                    // Apply color styling to status column
+                    if (data.column.index === 2 && data.row.section === 'body') {
+                        const status = data.cell.raw?.toLowerCase();
+                        if (status === 'active') {
+                            data.cell.styles.textColor = [5, 150, 105];
+                        } else if (status === 'suspended') {
+                            data.cell.styles.textColor = [100, 100, 100];
+                        } else if (status === 'inactive') {
+                            data.cell.styles.textColor = [220, 38, 38];
+                        }
+                    }
+                }
+            });
+            
+            toast.success('PDF exported successfully!');
+        } catch (error) {
+            console.error('PDF Export Error:', error);
+            toast.error('Failed to export PDF');
+        }
+    };
+
+    const handleExportExcel = (filename) => {
+        try {
+            const data = customers.map(c => ({
+                Name: c.name,
+                Email: c.email,
+                Status: c.status,
+            }));
+            
+            exportToExcel({ filename, sheetName: 'Customers', data });
+            toast.success('Excel exported successfully!');
+        } catch (error) {
+            toast.error('Failed to export Excel');
+        }
+    };
+
+    const handleExportCSV = (filename) => {
+        try {
+            const data = customers.map(c => ({
+                Name: c.name,
+                Email: c.email,
+                Status: c.status,
+            }));
+            
+            exportToCSV({ filename, data });
+            toast.success('CSV exported successfully!');
+        } catch (error) {
+            toast.error('Failed to export CSV');
+        }
+    };
+
+    const openExportModal = () => {
+        setIsExportModalOpen(true);
+    };
 
     return (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-8">
@@ -18,7 +119,7 @@ const CustomerTable = ({ customers }) => {
                     <h2 className="text-lg font-semibold text-[#111827]">All Customers</h2>
                     <div className="flex items-center gap-3">
                         <FilterButton options={filterOptions} className="flex-1 sm:flex-none" />
-                        <ExportButton onExport={() => console.log('Exporting customers...')} className="flex-1 sm:flex-none" />
+                        <ExportButton onExport={openExportModal} className="flex-1 sm:flex-none" />
                     </div>
                 </div>
 
@@ -69,6 +170,13 @@ const CustomerTable = ({ customers }) => {
                     </button>
                 </div>
             </div>
+
+            {/* Export Modal */}
+            <ExportModal
+                isOpen={isExportModalOpen}
+                onClose={() => setIsExportModalOpen(false)}
+                onExport={handleExport}
+            />
         </div>
     );
 };

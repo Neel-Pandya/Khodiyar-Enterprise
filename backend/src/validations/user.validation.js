@@ -42,6 +42,7 @@ export const updateUserSchema = z.strictObject(
       .optional(),
     role: z.enum(['admin', 'user']).optional(),
     status: z.enum(['active', 'inactive', 'suspended']).optional(),
+    avatar: z.string().trim().optional(),
   },
   { error: 'Invalid user update data' }
 );

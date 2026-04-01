@@ -29,11 +29,11 @@ const CustomerTableRow = ({ customer }) => {
             >
                 <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-[#1e293b] text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
-                            {customer.avatar.startsWith('data:') ? (
-                                <img src={customer.avatar} className="w-10 h-10 rounded-full" alt="Avatar" />
+                        <div className="w-10 h-10 rounded-full bg-[#1e293b] text-white flex items-center justify-center font-bold text-xs flex-shrink-0 overflow-hidden">
+                            {customer.avatar && (customer.avatar.startsWith('data:') || customer.avatar.startsWith('http')) ? (
+                                <img src={customer.avatar} className="w-10 h-10 rounded-full object-cover" alt="Avatar" />
                             ) : (
-                                customer.avatar
+                                <span className="text-sm">{customer.name?.charAt(0)?.toUpperCase() || '?'}</span>
                             )}
                         </div>
                         <p className="font-semibold text-slate-800 text-sm">{customer.name}</p>
