@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { Filter } from 'lucide-react';
 
-const FilterButton = ({ options = [], className = "" }) => {
+const FilterButton = ({ options = [], onFilter, className = "" }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [activeFilter, setActiveFilter] = useState('All');
+
+    const handleFilterClick = (opt) => {
+        setActiveFilter(opt.label);
+        if (onFilter) onFilter(opt.value || opt.label);
+        setIsOpen(false);
+    };
 
     return (
         <div className={`relative ${className}`}>
@@ -16,7 +23,7 @@ const FilterButton = ({ options = [], className = "" }) => {
         `}
             >
                 <Filter size={14} strokeWidth={2.5} />
-                Filter
+                {activeFilter === 'All' ? 'Filter' : activeFilter}
             </button>
 
             {isOpen && (
@@ -32,8 +39,10 @@ const FilterButton = ({ options = [], className = "" }) => {
                         {options.map((opt) => (
                             <button
                                 key={opt.label}
-                                onClick={() => setIsOpen(false)}
-                                className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-[#1e3a5f] transition-colors"
+                                onClick={() => handleFilterClick(opt)}
+                                className={`w-full flex items-center gap-2.5 px-4 py-2 text-sm hover:bg-slate-50 hover:text-[#1e3a5f] transition-colors ${
+                                    activeFilter === opt.label ? 'text-[#1e3a5f] font-semibold bg-slate-50' : 'text-slate-600'
+                                }`}
                             >
                                 <Filter size={14} className="opacity-60" />
                                 {opt.label}

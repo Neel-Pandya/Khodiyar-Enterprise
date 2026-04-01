@@ -8,6 +8,9 @@ import DashboardPage from '@admin/dashboard/pages/DashboardPage';
 import CustomersPage from '@admin/customers/pages/CustomersPage';
 import AddCustomerPage from '@admin/customers/pages/AddCustomerPage';
 import EditCustomerPage from '@admin/customers/pages/EditCustomerPage';
+import CategoriesPage from '@admin/categories/pages/CategoriesPage';
+import AddCategoryPage from '@admin/categories/pages/AddCategoryPage';
+import EditCategoryPage from '@admin/categories/pages/EditCategoryPage';
 import ProductsPage from '@admin/products/pages/ProductsPage';
 import AddProductPage from '@admin/products/pages/AddProductPage';
 import EditProductPage from '@admin/products/pages/EditProductPage';
@@ -24,6 +27,9 @@ const AdminRoutes = () => {
                 <Route path="customers" element={<CustomersPage />} />
                 <Route path="customers/add" element={<AddCustomerPage />} />
                 <Route path="customers/edit/:id" element={<EditCustomerPage />} />
+                <Route path="categories" element={<CategoriesPage />} />
+                <Route path="categories/add" element={<AddCategoryPage />} />
+                <Route path="categories/edit/:id" element={<EditCategoryPage />} />
                 <Route path="products" element={<ProductsPage />} />
                 <Route path="products/add" element={<AddProductPage />} />
                 <Route path="products/edit/:id" element={<EditProductPage />} />

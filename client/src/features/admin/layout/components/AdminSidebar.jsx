@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router';
-import { X, LayoutDashboard, Users, Package, ClipboardList, Settings, LogOut } from 'lucide-react';
+import { X, LayoutDashboard, Users, Package, Folder, ClipboardList, Settings, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import useAuthStore from '@/store/useAuthStore';
 
 const navItems = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
   { label: 'Customers', path: '/admin/customers', icon: Users },
+  { label: 'Categories', path: '/admin/categories', icon: Folder },
   { label: 'Products', path: '/admin/products', icon: Package },
   { label: 'Orders', path: '/admin/orders', icon: ClipboardList },
   { label: 'Settings', path: '/admin/settings', icon: Settings },
