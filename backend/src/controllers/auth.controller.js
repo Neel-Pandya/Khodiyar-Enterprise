@@ -3,6 +3,7 @@ import prisma from '../db/prisma.js';
 import authService from '../services/auth.service.js';
 import verificationService from '../services/verification.service.js';
 import passwordResetService from '../services/password-reset.service.js';
+import imageService from '../services/image.service.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import ApiError from '../utils/ApiError.js';
 
@@ -110,6 +111,38 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, 'User data retrieved successfully', { user }));
 });
 
+const updateProfile = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const updateData = { ...req.body };
+
+  // Handle avatar upload if file is present
+  if (req.file) {
+    const uploadResult = await imageService.uploadFile(req.file.path, 'avatars');
+    updateData.avatar = uploadResult.secure_url;
+  }
+
+  // Only allow updating name and avatar
+  const allowedUpdates = {};
+  if (updateData.name !== undefined) allowedUpdates.name = updateData.name;
+  if (updateData.avatar !== undefined) allowedUpdates.avatar = updateData.avatar;
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: allowedUpdates,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      avatar: true,
+    },
+  });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, 'Profile updated successfully', { user: updatedUser }));
+});
+
 export default {
   login,
   register,
@@ -119,4 +152,5 @@ export default {
   verifyResetOTP,
   resetPassword,
   getCurrentUser,
+  updateProfile,
 };

@@ -91,6 +91,16 @@ const useAuthStore = create((set, get) => ({
       throw error;
     }
   },
+  updateProfile: async (formData) => {
+    set({ isLoading: true });
+    try {
+      const res = await authApi.updateProfile(formData);
+      set({ user: res.data.user, isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+      throw error;
+    }
+  },
   logout: () => {
     localStorage.removeItem('token');
     set({ user: null, token: null });

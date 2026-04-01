@@ -9,4 +9,7 @@ export const authApi = {
   verifyResetOTP: (data) => apiClient.post('/auth/verify-reset-otp', data),
   resetPassword: (data) => apiClient.post('/auth/reset-password', data),
   getCurrentUser: () => apiClient.get('/auth/me'),
+  updateProfile: (data) => apiClient.patch('/auth/me', data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
 };

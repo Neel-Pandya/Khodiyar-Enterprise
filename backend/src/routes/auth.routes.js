@@ -3,6 +3,7 @@ import rateLimit from 'express-rate-limit';
 import authController from '../controllers/auth.controller.js';
 import authenticate from '../middlewares/jwt.middleware.js';
 import validate from '../middlewares/validate.middleware.js';
+import { uploadAvatar } from '../middlewares/upload.middleware.js';
 import {
   registerSchema,
   loginSchema,
@@ -11,6 +12,7 @@ import {
   forgotPasswordSchema,
   verifyResetOTPSchema,
   resetPasswordSchema,
+  updateProfileSchema,
 } from '../validations/auth.validation.js';
 
 const router = Router();
@@ -141,5 +143,12 @@ router.post(
  * @access Private
  */
 router.get('/me', authenticate, authController.getCurrentUser);
+
+/**
+ * @route PATCH /api/auth/me
+ * @desc Update current user profile
+ * @access Private
+ */
+router.patch('/me', authenticate, uploadAvatar, validate(updateProfileSchema), authController.updateProfile);
 
 export default router;

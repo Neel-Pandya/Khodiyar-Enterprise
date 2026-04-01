@@ -74,3 +74,16 @@ export const resetPasswordSchema = z.strictObject(
   },
   { error: 'Invalid password reset credentials' }
 );
+
+export const updateProfileSchema = z.strictObject(
+  {
+    name: z
+      .string()
+      .trim()
+      .min(2, 'Name must be at least 2 characters long')
+      .max(50)
+      .optional(),
+    avatar: z.string().trim().optional(),
+  },
+  { error: 'Invalid profile update data' }
+);

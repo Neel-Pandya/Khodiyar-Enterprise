@@ -64,7 +64,7 @@ const Navbar = ({
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center gap-2 p-1.5 rounded-full hover:bg-slate-50 transition-all border border-transparent hover:border-slate-200"
                 >
-                  <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                  <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary border-2 border-[#fbc02d] overflow-hidden">
                     {user?.avatar ? (
                       <img src={user.avatar} alt="User avatar" className="h-full w-full rounded-full object-cover" />
                     ) : (
