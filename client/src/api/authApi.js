@@ -12,4 +12,5 @@ export const authApi = {
   updateProfile: (data) => apiClient.patch('/auth/me', data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+  changePassword: (data) => apiClient.post('/auth/change-password', data),
 };

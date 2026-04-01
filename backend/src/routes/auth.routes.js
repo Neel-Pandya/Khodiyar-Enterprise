@@ -13,6 +13,7 @@ import {
   verifyResetOTPSchema,
   resetPasswordSchema,
   updateProfileSchema,
+  changePasswordSchema,
 } from '../validations/auth.validation.js';
 
 const router = Router();
@@ -150,5 +151,12 @@ router.get('/me', authenticate, authController.getCurrentUser);
  * @access Private
  */
 router.patch('/me', authenticate, uploadAvatar, validate(updateProfileSchema), authController.updateProfile);
+
+/**
+ * @route POST /api/auth/change-password
+ * @desc Change current user password
+ * @access Private
+ */
+router.post('/change-password', authenticate, validate(changePasswordSchema), authController.changePassword);
 
 export default router;

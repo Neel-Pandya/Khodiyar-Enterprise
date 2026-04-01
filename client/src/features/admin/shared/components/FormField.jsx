@@ -8,6 +8,7 @@ const FormField = ({
     placeholder = '',
     value,
     onChange,
+    disabled = false,
     className = '',
 }) => {
     const [showPassword, setShowPassword] = useState(false);
@@ -32,6 +33,8 @@ const FormField = ({
                     placeholder={placeholder}
                     value={value}
                     onChange={onChange}
+                    disabled={disabled}
+                    readOnly={disabled}
                     className={`
                         w-full ${Icon ? 'pl-10' : 'pl-4'} ${isPassword ? 'pr-10' : 'pr-4'}
                         py-3 bg-white border border-gray-200 rounded-xl text-sm text-[#111827]
@@ -39,6 +42,7 @@ const FormField = ({
                         transition-all duration-200 outline-none
                         focus:ring-2 focus:ring-[#fbc02d]/25 focus:border-[#fbc02d]
                         hover:border-gray-300
+                        ${disabled ? 'bg-gray-50 cursor-not-allowed opacity-60' : ''}
                     `}
                 />
 

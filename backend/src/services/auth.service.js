@@ -125,6 +125,52 @@ class AuthService {
       throw new ApiError(500, 'Failed to login user');
     }
   }
+
+  /**
+   * Change password for logged-in user
+   * @param {string} userId - User ID
+   * @param {string} currentPassword - Current password
+   * @param {string} newPassword - New password
+   * @returns {Promise<Object>} Success message
+   */
+  async changePassword(userId, currentPassword, newPassword) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new ApiError(404, 'User not found');
+      }
+
+      // Verify current password
+      const isPasswordValid = await hashService.compare(
+        currentPassword,
+        user.password
+      );
+
+      if (!isPasswordValid) {
+        throw new ApiError(401, 'Current password is incorrect');
+      }
+
+      // Hash and update new password
+      const hashedPassword = await hashService.hash(newPassword);
+      await prisma.user.update({
+        where: { id: userId },
+        data: { password: hashedPassword },
+      });
+
+      return { message: 'Password changed successfully' };
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      logger.error('Failed to change password', {
+        error: error.message,
+        userId,
+        service: 'auth-service',
+      });
+      throw new ApiError(500, 'Failed to change password');
+    }
+  }
 }
 
 export default new AuthService();

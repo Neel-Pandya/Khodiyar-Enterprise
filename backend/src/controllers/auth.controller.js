@@ -143,6 +143,15 @@ const updateProfile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, 'Profile updated successfully', { user: updatedUser }));
 });
 
+const changePassword = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { currentPassword, newPassword } = req.body;
+
+  const result = await authService.changePassword(userId, currentPassword, newPassword);
+
+  res.status(200).json(new ApiResponse(200, result.message));
+});
+
 export default {
   login,
   register,
@@ -153,4 +162,5 @@ export default {
   resetPassword,
   getCurrentUser,
   updateProfile,
+  changePassword,
 };

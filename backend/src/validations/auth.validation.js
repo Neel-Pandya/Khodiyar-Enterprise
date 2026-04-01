@@ -87,3 +87,19 @@ export const updateProfileSchema = z.strictObject(
   },
   { error: 'Invalid profile update data' }
 );
+
+export const changePasswordSchema = z.strictObject(
+  {
+    currentPassword: z.string().trim().min(1, 'Current password is required'),
+    newPassword: z
+      .string()
+      .trim()
+      .min(8, 'New password must be at least 8 characters long')
+      .max(100, 'New password must not exceed 100 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+        'New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+      ),
+  },
+  { error: 'Invalid password change data' }
+);

@@ -101,6 +101,17 @@ const useAuthStore = create((set, get) => ({
       throw error;
     }
   },
+  changePassword: async (data) => {
+    set({ isLoading: true });
+    try {
+      const res = await authApi.changePassword(data);
+      set({ isLoading: false });
+      return res.data;
+    } catch (error) {
+      set({ isLoading: false });
+      throw error;
+    }
+  },
   logout: () => {
     localStorage.removeItem('token');
     set({ user: null, token: null });
