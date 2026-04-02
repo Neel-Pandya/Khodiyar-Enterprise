@@ -21,15 +21,26 @@ class ProductService {
         throw new ApiError(404, 'Category not found');
       }
 
-      // 1. Upload images using image service
+      // Only allow active categories
+      if (category.status !== 'active' || category.deleted_at) {
+        throw new ApiError(400, 'Category is not active');
+      }
+
+      // Calculate status based on stock quantity (already coerced to number by Zod)
+      const stockQuantity = productData.stock_quantity || 0;
+      const status = stockQuantity > 0 ? 'available' : 'out_of_stock';
+
+      // 2. Upload images using image service
       const { imageUrls } = await imageService.uploadImages(files, 'products');
 
-      // 2. Create product in DB
+      // 3. Create product in DB
       const product = await prisma.product.create({
         data: {
           name: productData.name,
           price: productData.price,
-          status: productData.status || 'active',
+          status: status,
+          is_active: productData.is_active ?? true,
+          stock_quantity: stockQuantity,
           category_id: productData.category_id,
           description: productData.description,
           included: productData.included,
@@ -75,9 +86,7 @@ class ProductService {
 
     const { status, category_id, search, sortBy, sortOrder } = query;
 
-    const where = {
-      deleted_at: null,
-    };
+    const where = {};
 
     if (status) where.status = status;
     if (category_id) where.category_id = category_id;
@@ -146,7 +155,7 @@ class ProductService {
         },
       });
 
-      if (!product || product.deleted_at) {
+      if (!product) {
         throw new ApiError(404, 'Product not found');
       }
 
@@ -180,21 +189,57 @@ class ProductService {
         if (!category) {
           throw new ApiError(404, 'Category not found');
         }
+
+        // Only allow active categories
+        if (category.status !== 'active' || category.deleted_at) {
+          throw new ApiError(400, 'Category is not active');
+        }
       }
 
       const updatePayload = { ...updateData };
 
-      // Handle new image uploads if provided
+      // Calculate status if stock_quantity is being updated (already coerced to number by Zod)
+      if (updateData.stock_quantity !== undefined) {
+        // Remove status from payload if provided - it's auto-calculated
+        delete updatePayload.status;
+        const stockQuantity = updateData.stock_quantity || 0;
+        updatePayload.stock_quantity = stockQuantity;
+        updatePayload.status = stockQuantity > 0 ? 'available' : 'out_of_stock';
+      }
+
+      // Handle is_active toggle if provided
+      if (updateData.is_active !== undefined) {
+        updatePayload.is_active = updateData.is_active;
+      }
+
+      // Handle image updates - merge existing URLs with new uploads
+      let existingImages = [];
+      if (updateData.existing_images) {
+        try {
+          existingImages = JSON.parse(updateData.existing_images);
+        } catch (e) {
+          // Invalid JSON, ignore existing images
+        }
+      }
+      delete updatePayload.existing_images; // Remove from payload before DB update
+      
+      let newImageUrls = [];
       if (files && files.length > 0) {
         const { imageUrls } = await imageService.uploadImages(
           files,
           'products'
         );
-        updatePayload.images = imageUrls;
+        newImageUrls = imageUrls;
+      }
+      
+      // Merge existing + new images (only if there are any images)
+      const totalImages = [...existingImages, ...newImageUrls];
+      if (totalImages.length > 0) {
+        updatePayload.images = totalImages;
       }
 
       const product = await prisma.product.update({
-        where: { id: productId, deleted_at: null },
+        where: { id: productId },
         data: updatePayload,
         include: {
           category: {
@@ -228,7 +273,7 @@ class ProductService {
   }
 
   /**
-   * Delete product (Soft delete)
+   * Delete product (Set is_active to false)
    * @param {string} productId
    * @returns {Promise<Object>}
    */
@@ -237,8 +282,7 @@ class ProductService {
       const product = await prisma.product.update({
         where: { id: productId },
         data: {
-          status: 'inactive',
-          deleted_at: new Date(),
+          is_active: false,
         },
       });
 

@@ -1,9 +1,131 @@
 import { Search } from 'lucide-react';
+import { useState } from 'react';
 import ProductTableRow from './ProductTableRow';
 import FilterButton from '@admin/shared/components/FilterButton';
 import ExportButton from '@admin/shared/components/ExportButton';
+import ExportModal from '@admin/shared/components/ExportModal';
+import * as toast from '@/utils/toast';
+import { exportToPDF, exportToExcel, exportToCSV } from '@/utils/exportUtils';
+import logoSrc from '@/assets/Khodiyar_Enterprise.svg?raw';
 
 const ProductTable = ({ products }) => {
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const handleExport = (format) => {
+        const timestamp = new Date().toISOString().split('T')[0];
+        const filename = `products-${timestamp}`;
+
+        switch (format) {
+            case 'pdf':
+                handleExportPDF(filename);
+                break;
+            case 'excel':
+                handleExportExcel(filename);
+                break;
+            case 'csv':
+                handleExportCSV(filename);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handleExportPDF = async (filename) => {
+        try {
+            const headers = [['Product Name', 'Category', 'Price', 'Stock', 'Status', 'Stock Status']];
+            const data = products.map(p => [
+                p.name || '',
+                p.category?.name || 'N/A',
+                `INR ${Number(p.price).toLocaleString()}`,
+                String(p.stock_quantity || 0),
+                p.is_active !== false ? 'Active' : 'Inactive',
+                p.status === 'available' ? 'Available' : 'Out of Stock'
+            ]);
+
+            await exportToPDF({
+                filename,
+                title: 'Products Report',
+                subtitle: `Total Records: ${products.length}`,
+                headers,
+                data,
+                logoSrc,
+                footerText: 'Khodiyar Enterprise - Product Management System',
+                columnStyles: {
+                    4: { halign: 'center', fontStyle: 'bold' },
+                    5: { halign: 'center', fontStyle: 'bold' }
+                },
+                cellCallback: (data) => {
+                    // Apply color styling to status columns
+                    if (data.row.section === 'body') {
+                        if (data.column.index === 4) {
+                            // Status column (Active/Inactive)
+                            const status = data.cell.raw?.toLowerCase();
+                            if (status === 'active') {
+                                data.cell.styles.textColor = [5, 150, 105];
+                            } else {
+                                data.cell.styles.textColor = [100, 100, 100];
+                            }
+                        } else if (data.column.index === 5) {
+                            // Stock Status column (Available/Out of Stock)
+                            const stockStatus = data.cell.raw?.toLowerCase();
+                            if (stockStatus === 'available') {
+                                data.cell.styles.textColor = [5, 150, 105];
+                            } else {
+                                data.cell.styles.textColor = [220, 38, 38];
+                            }
+                        }
+                    }
+                }
+            });
+
+            toast.success('PDF exported successfully!');
+        } catch (error) {
+            console.error('PDF Export Error:', error);
+            toast.error('Failed to export PDF');
+        }
+    };
+
+    const handleExportExcel = (filename) => {
+        try {
+            const data = products.map(p => ({
+                'Product Name': p.name,
+                'Category': p.category?.name || 'N/A',
+                'Price': Number(p.price),
+                'Stock': p.stock_quantity || 0,
+                'Status': p.is_active !== false ? 'Active' : 'Inactive',
+                'Stock Status': p.status === 'available' ? 'Available' : 'Out of Stock',
+            }));
+
+            exportToExcel({ filename, sheetName: 'Products', data });
+            toast.success('Excel exported successfully!');
+        } catch (error) {
+            console.error('Excel Export Error:', error);
+            toast.error('Failed to export Excel');
+        }
+    };
+
+    const handleExportCSV = (filename) => {
+        try {
+            const data = products.map(p => ({
+                'Product Name': p.name,
+                'Category': p.category?.name || 'N/A',
+                'Price': Number(p.price),
+                'Stock': p.stock_quantity || 0,
+                'Status': p.is_active !== false ? 'Active' : 'Inactive',
+                'Stock Status': p.status === 'available' ? 'Available' : 'Out of Stock',
+            }));
+
+            exportToCSV({ filename, data });
+            toast.success('CSV exported successfully!');
+        } catch (error) {
+            console.error('CSV Export Error:', error);
+            toast.error('Failed to export CSV');
+        }
+    };
+
+    const openExportModal = () => {
+        setIsExportModalOpen(true);
+    };
+
     const filterOptions = [
         { label: 'By Name' },
         { label: 'By Category' },
@@ -19,7 +141,7 @@ const ProductTable = ({ products }) => {
                     <h2 className="text-lg font-bold text-[#111827]">All Products</h2>
                     <div className="flex items-center gap-3">
                         <FilterButton options={filterOptions} className="flex-1 sm:flex-none" />
-                        <ExportButton onExport={() => console.log('Exporting products...')} className="flex-1 sm:flex-none" />
+                        <ExportButton onExport={openExportModal} className="flex-1 sm:flex-none" />
                     </div>
                 </div>
 
@@ -48,9 +170,17 @@ const ProductTable = ({ products }) => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {products.map((product, i) => (
-                            <ProductTableRow key={product.id} product={product} index={i} />
-                        ))}
+                        {products.length === 0 ? (
+                            <tr>
+                                <td colSpan={6} className="px-6 py-16 text-center">
+                                    <p className="text-sm font-medium text-slate-400">No Products Available</p>
+                                </td>
+                            </tr>
+                        ) : (
+                            products.map((product, i) => (
+                                <ProductTableRow key={product.id} product={product} index={i} />
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -72,6 +202,14 @@ const ProductTable = ({ products }) => {
                     </button>
                 </div>
             </div>
+
+            {/* Export Modal */}
+            <ExportModal
+                isOpen={isExportModalOpen}
+                onClose={() => setIsExportModalOpen(false)}
+                onExport={handleExport}
+                title="Export Products"
+            />
         </div>
     );
 };

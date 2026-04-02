@@ -13,6 +13,7 @@ import { Roles } from '../configs/roles.js';
 import {
   uploadProductImages,
   validateImageCount,
+  uploadAny,
 } from '../middlewares/upload.middleware.js';
 
 const router = Router();
@@ -64,7 +65,7 @@ router.post(
  */
 router.patch(
   '/:id',
-  uploadProductImages,
+  uploadAny,
   validateImageCount,
   validate(productIdSchema, 'params'),
   validate(updateProductSchema),

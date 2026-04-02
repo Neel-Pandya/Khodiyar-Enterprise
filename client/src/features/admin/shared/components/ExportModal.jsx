@@ -1,6 +1,6 @@
 import { X, FileText, FileSpreadsheet, FileCode } from 'lucide-react';
 
-const ExportModal = ({ isOpen, onClose, onExport, title = 'Export Customers' }) => {
+const ExportModal = ({ isOpen, onClose, onExport, title = 'Export Data' }) => {
     if (!isOpen) return null;
 
     const handleExport = (format) => {

@@ -9,8 +9,12 @@ export const createProductSchema = z.object({
   price: z.coerce
     .number({ required_error: 'Price is required' })
     .positive('Price must be a positive number'),
-  status: z.enum(['active', 'inactive']).default('active').optional(),
-  category_id: z.uuid({ error: 'Invalid category ID format' }),
+  stock_quantity: z.coerce
+    .number({ required_error: 'Stock quantity is required' })
+    .int('Stock quantity must be an integer')
+    .min(0, 'Stock quantity cannot be negative'),
+  category_id: z.string().uuid({ message: 'Invalid category ID format' }),
+  is_active: z.enum(['true', 'false']).optional().transform((val) => val === 'true'),
   description: z
     .string({ required_error: 'Description is required' })
     .trim()
@@ -36,7 +40,11 @@ export const updateProductSchema = z.object({
     .number()
     .positive('Price must be a positive number')
     .optional(),
-  status: z.enum(['active', 'inactive']).optional(),
+  stock_quantity: z.coerce
+    .number()
+    .int('Stock quantity must be an integer')
+    .min(0, 'Stock quantity cannot be negative')
+    .optional(),
   category_id: z.string().uuid('Invalid category ID format').optional(),
   description: z
     .string()
@@ -54,13 +62,16 @@ export const updateProductSchema = z.object({
     .min(2, 'Specification must be at least 2 characters long')
     .optional(),
   images: z.array(z.string().url()).min(1).max(4).optional(),
+  existing_images: z.string().optional(), // JSON string of existing image URLs
+  is_active: z.enum(['true', 'false']).optional().transform((val) => val === 'true'),
 });
 
 export const getProductsSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(10),
-  status: z.enum(['active', 'inactive']).optional(),
-  category_id: z.uuid('Invalid category ID format').optional(),
+  status: z.enum(['available', 'out_of_stock']).optional(),
+  is_active: z.enum(['true', 'false']).optional().transform((val) => val === 'true'),
+  category_id: z.string().uuid('Invalid category ID format').optional(),
   search: z.string().trim().optional(),
   sortBy: z
     .enum(['id', 'name', 'price', 'status', 'created_at', 'updated_at'])

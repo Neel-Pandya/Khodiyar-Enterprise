@@ -3,7 +3,7 @@ import { useState } from 'react';
 import CustomerTableRow from './CustomerTableRow';
 import FilterButton from '@admin/shared/components/FilterButton';
 import ExportButton from '@admin/shared/components/ExportButton';
-import ExportModal from './ExportModal';
+import ExportModal from '@admin/shared/components/ExportModal';
 import * as toast from '@/utils/toast';
 import { exportToPDF, exportToExcel, exportToCSV } from '@/utils/exportUtils';
 import logoSrc from '@/assets/Khodiyar_Enterprise.svg?raw';
@@ -176,6 +176,7 @@ const CustomerTable = ({ customers }) => {
                 isOpen={isExportModalOpen}
                 onClose={() => setIsExportModalOpen(false)}
                 onExport={handleExport}
+                title="Export Customers"
             />
         </div>
     );

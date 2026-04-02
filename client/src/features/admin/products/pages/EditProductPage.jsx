@@ -1,28 +1,62 @@
-import React, { useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import ProductForm from '../components/ProductForm';
-import { productsList } from '@data/adminMockData';
+import useProductStore from '@/store/useProductStore';
+import * as toast from '@/utils/toast';
 
 const EditProductPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
+    const { 
+        product, 
+        fetchProduct, 
+        updateProduct, 
+        isLoading, 
+        error, 
+        clearError 
+    } = useProductStore();
 
-    // Find product in mock data
-    const productData = useMemo(() => {
-        return productsList.find(p => p.id === parseInt(id));
-    }, [id]);
+    // Watch for errors and show toast
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+            clearError();
+        }
+    }, [error, clearError]);
 
-    const handleSubmit = (data) => {
-        console.log('Update product:', id, data);
-        // TODO: API call to update
-        navigate('/admin/products');
+    // Fetch product data on mount
+    useEffect(() => {
+        if (id) {
+            fetchProduct(id);
+        }
+    }, [id, fetchProduct]);
+
+    const handleSubmit = async (data) => {
+        try {
+            await updateProduct(id, data);
+            toast.success('Product updated successfully!');
+            navigate('/admin/products');
+        } catch (err) {
+            // Error is already set in store
+            console.error('Error updating product:', err);
+        }
     };
 
-    if (!productData) {
+    if (isLoading && !product) {
+        return (
+            <div className="flex items-center justify-center p-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#fbc02d]"></div>
+            </div>
+        );
+    }
+
+    if (!product || error) {
         return (
             <div className="flex flex-col items-center justify-center p-20 space-y-4">
-                <p className="text-gray-500 font-medium">Product not found.</p>
+                <p className="text-gray-500 font-medium">
+                    {error || 'Product not found.'}
+                </p>
                 <button 
                   onClick={() => navigate('/admin/products')}
                   className="text-[#1e3a5f] hover:underline"
@@ -59,9 +93,10 @@ const EditProductPage = () => {
 
             {/* Main Form */}
             <ProductForm 
-                initialData={productData} 
+                initialData={product} 
                 onSubmit={handleSubmit} 
                 onCancel={() => navigate('/admin/products')}
+                isLoading={isLoading}
             />
         </div>
     );

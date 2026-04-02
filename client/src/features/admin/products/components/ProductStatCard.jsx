@@ -1,10 +1,10 @@
-import { Package, CheckCircle, AlertTriangle, CreditCard } from 'lucide-react';
+import { Package, CheckCircle, XCircle, TrendingUp } from 'lucide-react';
 
 const iconMap = {
-    Package: { icon: Package, color: 'text-[#1e3a5f]', bg: 'bg-[#1e3a5f]/5' },
-    CheckCircle: { icon: CheckCircle, color: 'text-[#10b981]', bg: 'bg-[#10b981]/5' },
-    AlertTriangle: { icon: AlertTriangle, color: 'text-[#f59e0b]', bg: 'bg-[#f59e0b]/5' },
-    CreditCard: { icon: CreditCard, color: 'text-[#8b5cf6]', bg: 'bg-[#8b5cf6]/5' },
+    Package: { icon: Package, color: 'text-[#1e3a5f]', bg: 'bg-[#f0f4f8]' },
+    CheckCircle: { icon: CheckCircle, color: 'text-[#059669]', bg: 'bg-[#ecfdf5]' },
+    XCircle: { icon: XCircle, color: 'text-[#d97706]', bg: 'bg-[#fffbeb]' },
+    TrendingUp: { icon: TrendingUp, color: 'text-[#7c3aed]', bg: 'bg-[#f5f3ff]' },
 };
 
 const ProductStatCard = ({ label, value, icon, prefix = '', suffix = '' }) => {

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import CategoryTableRow from './CategoryTableRow';
 import FilterButton from '@/features/admin/shared/components/FilterButton';
 import ExportButton from '@/features/admin/shared/components/ExportButton';
-import ExportModal from '@/features/admin/customers/components/ExportModal';
+import ExportModal from '@/features/admin/shared/components/ExportModal';
 import * as toast from '@/utils/toast';
 import { exportToPDF, exportToExcel, exportToCSV } from '@/utils/exportUtils';
 import logoSrc from '@/assets/Khodiyar_Enterprise.svg?raw';

@@ -47,13 +47,55 @@ const upload = multer({
 export const uploadProductImages = upload.array('images', 4);
 
 /**
+ * Clean multer instance for updates - no file restrictions
+ */
+const uploadUpdate = multer({
+  storage: storage,
+  limits: {
+    fileSize: 500 * 1024, // 500 KB limit per image
+  },
+});
+
+/**
+ * Middleware to handle any files (for updates with optional new images)
+ * This parses body fields and files for multipart/form-data
+ */
+export const uploadAny = (req, res, next) => {
+  // Use clean upload instance without file filter - parse files only
+  uploadUpdate.any()(req, res, (err) => {
+    if (err) {
+      return next(err);
+    }
+    
+    // Normalize req.files to always be an array
+    if (!req.files) {
+      req.files = [];
+    }
+    next();
+  });
+};
+
+/**
  * Middleware to validate the number of uploaded images (min 1, max 4)
  */
 export const validateImageCount = (req, _res, next) => {
-  if (!req.files || req.files.length === 0) {
+  // Check for existing images from request body (for updates)
+  let existingImages = [];
+  if (req.body.existing_images) {
+    try {
+      existingImages = JSON.parse(req.body.existing_images);
+    } catch (_e) {
+      return next(new ApiError(400, 'Invalid existing_images format'));
+    }
+  }
+  
+  const newFiles = req.files || [];
+  const totalImages = existingImages.length + newFiles.length;
+  
+  if (totalImages === 0) {
     return next(new ApiError(400, 'Minimum 1 product image is required'));
   }
-  if (req.files.length > 4) {
+  if (totalImages > 4) {
     return next(new ApiError(400, 'Maximum 4 product images allowed'));
   }
   next();

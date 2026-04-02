@@ -1,14 +1,37 @@
+import React, { useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import ProductForm from '../components/ProductForm';
+import useProductStore from '@/store/useProductStore';
+import * as toast from '@/utils/toast';
 
 const AddProductPage = () => {
     const navigate = useNavigate();
+    const { createProduct, isLoading, error, clearError } = useProductStore();
 
-    const handleSubmit = (data) => {
-        console.log('New product:', data);
-        // TODO: API call
-        navigate('/admin/products');
+    // Watch for errors and show toast
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+            clearError();
+        }
+    }, [error, clearError]);
+
+    const handleSubmit = async (data) => {
+        // Validate at least one image
+        if (!data.images || data.images.length === 0) {
+            toast.error('Please upload at least one product image');
+            return;
+        }
+        
+        try {
+            await createProduct(data);
+            toast.success('Product created successfully!');
+            navigate('/admin/products');
+        } catch (err) {
+            // Error is already set in store
+            console.error('Error creating product:', err);
+        }
     };
 
     return (
@@ -36,7 +59,7 @@ const AddProductPage = () => {
             </div>
 
             {/* Main Form */}
-            <ProductForm onSubmit={handleSubmit} />
+            <ProductForm onSubmit={handleSubmit} isLoading={isLoading} />
         </div>
     );
 };
