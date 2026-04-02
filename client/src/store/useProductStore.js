@@ -18,7 +18,11 @@ const useProductStore = create((set) => ({
   fetchProducts: async (params = {}) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await productApi.getAllProducts(params);
+      // Filter out empty params to avoid validation errors
+      const cleanParams = Object.fromEntries(
+        Object.entries(params).filter(([_, value]) => value !== '' && value !== undefined && value !== null)
+      );
+      const response = await productApi.getAllProducts(cleanParams);
       set({
         products: response.data?.products || [],
         pagination: response.data?.pagination || { total: 0, totalPages: 0, page: 1, limit: 10 },

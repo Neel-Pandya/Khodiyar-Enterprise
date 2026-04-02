@@ -1,8 +1,19 @@
 import { useState } from 'react';
 
+const getImageUrl = (img) => {
+  if (!img) return null;
+  // If already a full URL, return as-is
+  if (img.startsWith('http://') || img.startsWith('https://')) {
+    return img;
+  }
+  // If relative path, prepend backend URL
+  return `http://localhost:5000${img.startsWith('/') ? '' : '/'}${img}`;
+};
+
 const ProductImages = ({ images = [] }) => {
   const defaultImage = "https://5.imimg.com/data5/AO/TC/MY-4745117/solar-photovoltaic-panel-500x500.jpg";
-  const initialImage = images.length > 0 ? `http://localhost:5000${images[0]}` : defaultImage;
+  const processedImages = images.map(getImageUrl).filter(Boolean);
+  const initialImage = processedImages.length > 0 ? processedImages[0] : defaultImage;
   const [mainImage, setMainImage] = useState(initialImage);
 
   return (
@@ -22,10 +33,9 @@ const ProductImages = ({ images = [] }) => {
       </div>
 
       {/* Thumbnails */}
-      {images.length > 0 && (
+      {processedImages.length > 0 && (
         <div className="flex gap-4 overflow-x-auto pb-2 scroller-hide">
-          {images.map((img, index) => {
-            const imgSrc = `http://localhost:5000${img}`;
+          {processedImages.map((imgSrc, index) => {
             const isActive = mainImage === imgSrc;
             
             return (

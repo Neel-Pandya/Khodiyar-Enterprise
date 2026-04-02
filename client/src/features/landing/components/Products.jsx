@@ -1,41 +1,64 @@
-
-const products = [
-  {
-    id: 1,
-    name: 'Earthing Cable',
-    description: 'Protective grounding cable for safe installations.',
-    image: 'https://images.unsplash.com/photo-1558449028-b53a39d100fc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: 2,
-    name: 'DC Cable',
-    description: 'High-quality grounding earth cable for DC systems.',
-    image: 'https://images.unsplash.com/photo-1526649661456-89c7ed4d00e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: 3,
-    name: 'AC Cable',
-    description: 'Solar panel AC power cable for efficient grid connection.',
-    image: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: 4,
-    name: 'Earthing Kit',
-    description: 'Complete solar panel grounding kit for maximum security.',
-    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: 5,
-    name: 'Solar Inverter',
-    description: 'Solar inverter converts DC to AC for home use.',
-    image: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-  },
-];
-
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import useProductStore from '../../../store/useProductStore';
 
 const Products = () => {
   const navigate = useNavigate();
+  const { products, isLoading, hasFetched, fetchProducts } = useProductStore();
+
+  useEffect(() => {
+    if (!hasFetched) {
+      fetchProducts({ limit: 8, is_active: true });
+    }
+  }, [hasFetched, fetchProducts]);
+
+  // Show skeleton cards while loading
+  if (isLoading) {
+    return (
+      <section className="section bg-white text-text-dark">
+        <div className="container">
+          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-16 text-center">
+            Solar Products
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {[...Array(4)].map((_, index) => (
+              <div
+                key={index}
+                className="bg-bg-light rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col"
+              >
+                <div className="h-48 bg-gray-200 animate-pulse" />
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="h-6 bg-gray-200 rounded animate-pulse mb-6" />
+                  <div className="h-12 bg-gray-200 rounded-xl animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Show message when no products available
+  if (!isLoading && products.length === 0) {
+    return (
+      <section className="section bg-white text-text-dark">
+        <div className="container">
+          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-16 text-center">
+            Solar Products
+          </h2>
+          <div className="text-center py-20">
+            <p className="text-xl text-text-muted font-medium">
+              No Products Available
+            </p>
+            <p className="text-text-muted mt-2">
+              Check back later for our latest solar products
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="section bg-white text-text-dark">
@@ -52,19 +75,16 @@ const Products = () => {
             >
               <div className="h-48 overflow-hidden relative">
                 <img
-                  src={product.image}
+                  src={product.images?.[0] || 'https://placehold.co/400x300?text=No+Image'}
                   alt={product.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold text-primary mb-2">{product.name}</h3>
-                <p className="text-sm text-text-muted mb-8 flex-grow leading-relaxed font-medium">
-                  {product.description}
-                </p>
+                <h3 className="text-xl font-bold text-primary mb-6">{product.name}</h3>
                 <button
-                  onClick={() => navigate(`/product/${product.id}`)}
+                  onClick={() => navigate('/products')}
                   className="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-accent hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/10 cursor-pointer"
                 >
                   View Details

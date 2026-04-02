@@ -84,9 +84,15 @@ class ProductService {
     const limit = parseInt(query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const { status, category_id, search, sortBy, sortOrder } = query;
+    const { status, category_id, search, sortBy, sortOrder, is_active } = query;
 
     const where = {};
+
+    // Only show active products by default for public API
+    // Admin can explicitly pass is_active=false to see all
+    if (is_active !== undefined) {
+      where.is_active = is_active === 'true' || is_active === true;
+    } 
 
     if (status) where.status = status;
     if (category_id) where.category_id = category_id;

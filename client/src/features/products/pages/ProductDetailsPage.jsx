@@ -1,12 +1,86 @@
+import { useEffect, useState } from 'react';
+import { useParams, useLocation, Navigate } from 'react-router';
 import ProductImages from '../components/ProductImages';
 import ProductInfo from '../components/ProductInfo';
 import ProductTabs from '../components/ProductTabs';
 import DeliveryInfoCard from '../components/DeliveryInfoCard';
-import { MOCK_PRODUCT } from '@data/mockProduct';
+import useProductStore from '../../../store/useProductStore';
 
 const ProductDetailsPage = () => {
-  // Using imported mock data (can be replaced with fetch logic later)
-  const product = MOCK_PRODUCT;
+  const { id } = useParams();
+  const location = useLocation();
+  const { fetchProduct, isLoading, error } = useProductStore();
+  
+  const [product, setProduct] = useState(location.state?.product || null);
+  const [loading, setLoading] = useState(!location.state?.product);
+
+  useEffect(() => {
+    // If no product in navigation state, fetch from API
+    if (!product && id) {
+      const loadProduct = async () => {
+        setLoading(true);
+        try {
+          const data = await fetchProduct(id);
+          setProduct(data);
+        } catch (err) {
+          console.error('Failed to load product:', err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadProduct();
+    }
+  }, [id, product, fetchProduct]);
+
+  // Show loading skeleton
+  if (loading || isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50/50 pt-8 pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-[2.5rem] p-6 sm:p-10 shadow-sm border border-gray-100 mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+              <div className="h-[500px] bg-gray-200 animate-pulse rounded-3xl" />
+              <div className="space-y-4">
+                <div className="h-8 bg-gray-200 animate-pulse rounded w-1/3" />
+                <div className="h-12 bg-gray-200 animate-pulse rounded w-3/4" />
+                <div className="h-10 bg-gray-200 animate-pulse rounded w-1/4" />
+                <div className="h-16 bg-gray-200 animate-pulse rounded w-full mt-8" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error if product not found
+  if (!product && (error || !loading)) {
+    return (
+      <div className="min-h-screen bg-slate-50/50 pt-8 pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
+          <p className="text-xl text-text-muted font-medium">Product not found</p>
+          <a href="/products" className="mt-4 inline-block text-primary hover:underline">
+            Back to Products
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) return null;
+
+  // Map API fields to component props
+  const productData = {
+    id: product.id,
+    Name: product.name,
+    Category: product.category?.name || 'Solar Products',
+    Price: parseFloat(product.price),
+    Images: product.images || [],
+    Description: product.description || '<p>No description available.</p>',
+    Specifications: product.specification || '<p>No specifications available.</p>',
+    Included: product.included || '',
+    StockStatus: product.stock_quantity > 0 ? 'In Stock' : 'Out of Stock',
+  };
 
   return (
     <div className="min-h-screen bg-slate-50/50 pt-8 pb-20">
@@ -31,7 +105,7 @@ const ProductDetailsPage = () => {
                 <svg className="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
                 </svg>
-                <span className="text-gray-900 ml-1 md:ml-2 font-semibold">{product.Name}</span>
+                <span className="text-gray-900 ml-1 md:ml-2 font-semibold">{productData.Name}</span>
               </div>
             </li>
           </ol>
@@ -42,15 +116,16 @@ const ProductDetailsPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
             {/* LEFT SIDE: Images */}
             <div className="lg:pr-8">
-              <ProductImages images={product.Images} />
+              <ProductImages images={productData.Images} />
             </div>
 
             {/* RIGHT SIDE: Info */}
             <div className="flex flex-col">
               <ProductInfo 
-                category={product.Category}
-                name={product.Name}
-                price={product.Price}
+                category={productData.Category}
+                name={productData.Name}
+                price={productData.Price}
+                stockStatus={productData.StockStatus}
               />
             </div>
           </div>
@@ -62,8 +137,9 @@ const ProductDetailsPage = () => {
           {/* LEFT TAB CONTENT */}
           <div className="lg:col-span-8">
             <ProductTabs 
-              description={product.Description}
-              specifications={product.Specifications}
+              description={productData.Description}
+              specifications={productData.Specifications}
+              included={productData.Included}
             />
           </div>
 

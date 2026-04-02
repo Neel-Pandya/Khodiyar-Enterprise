@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const ProductTabs = ({ description, specifications }) => {
+const ProductTabs = ({ description, specifications, included }) => {
   const [activeTab, setActiveTab] = useState('details');
 
   return (
@@ -32,6 +32,21 @@ const ProductTabs = ({ description, specifications }) => {
             <span className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-full shadow-sm" />
           )}
         </button>
+        {included && (
+          <button
+            onClick={() => setActiveTab('included')}
+            className={`pb-5 whitespace-nowrap transition-all duration-300 font-bold text-lg cursor-pointer relative tracking-wide ${
+              activeTab === 'included'
+                ? 'text-primary'
+                : 'text-gray-400 hover:text-gray-900'
+            }`}
+          >
+            What's Included
+            {activeTab === 'included' && (
+              <span className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-full shadow-sm" />
+            )}
+          </button>
+        )}
       </div>
 
       <div className="mt-10 min-h-[300px]">
@@ -47,6 +62,13 @@ const ProductTabs = ({ description, specifications }) => {
              {/* A subtle gradient decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary rounded-full mix-blend-multiply filter blur-[80px] opacity-[0.05] -mr-20 -mt-20 pointer-events-none"></div>
             <div className="relative z-10" dangerouslySetInnerHTML={{ __html: specifications }} />
+          </div>
+        )}
+
+        {activeTab === 'included' && included && (
+          <div className="bg-slate-50/80 rounded-2xl p-6 sm:p-10 border border-slate-200/60 prose prose-lg max-w-none relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary rounded-full mix-blend-multiply filter blur-[80px] opacity-[0.05] -mr-20 -mt-20 pointer-events-none"></div>
+            <div className="relative z-10" dangerouslySetInnerHTML={{ __html: included }} />
           </div>
         )}
       </div>

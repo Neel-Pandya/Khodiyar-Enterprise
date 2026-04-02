@@ -2,8 +2,9 @@ import { useNavigate } from 'react-router';
 import Button from '@common/Button';
 import { Heart, ShieldCheck, CreditCard, Zap } from 'lucide-react';
 
-const ProductInfo = ({ category, name, price }) => {
+const ProductInfo = ({ category, name, price, stockStatus }) => {
   const navigate = useNavigate();
+  const isInStock = stockStatus === 'In Stock';
 
   return (
     <div className="flex flex-col">
@@ -12,8 +13,12 @@ const ProductInfo = ({ category, name, price }) => {
         <span className="px-3 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider rounded-md">
           {category}
         </span>
-        <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
-          <Zap className="w-3 h-3" /> In Stock
+        <span className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-md border ${
+          isInStock 
+            ? 'text-emerald-600 bg-emerald-50 border-emerald-100' 
+            : 'text-red-600 bg-red-50 border-red-100'
+        }`}>
+          <Zap className="w-3 h-3" /> {stockStatus || 'In Stock'}
         </span>
       </div>
 
