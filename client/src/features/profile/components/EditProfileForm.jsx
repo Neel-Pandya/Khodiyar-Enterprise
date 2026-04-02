@@ -1,13 +1,58 @@
-import { User, Mail, Phone, Lock, MapPin, Building2, Hash, Save, RotateCcw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, Mail, Save, RotateCcw } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 import Input from '@common/Input';
 import Button from '@common/Button';
 import ProfileImageUpload from './ProfileImageUpload';
+import useAuthStore from '@/store/useAuthStore';
+import * as toast from '@/utils/toast';
 
 const EditProfileForm = () => {
+    const { user, updateProfile, isLoading } = useAuthStore();
+    const [selectedAvatar, setSelectedAvatar] = useState(null);
+
+    const { register, handleSubmit, formState: {errors}, reset, setValue } = useForm({
+        defaultValues: {
+            name: '',
+        }
+    });
+
+    // Set form values when user data is available
+    useEffect(() => {
+        if (user) {
+            setValue('name', user.name || '');
+        }
+    }, [user, setValue]);
+
+    const onSubmit = async (data) => {
+        const formData = new FormData();
+        formData.append('name', data.name);
+        
+        if (selectedAvatar) {
+            formData.append('avatar', selectedAvatar);
+        }
+
+        try {
+            await updateProfile(formData);
+            toast.success('Profile updated successfully!');
+        } catch (error) {
+            toast.error(error?.message || 'Failed to update profile');
+        }
+    };
+
+    const handleReset = () => {
+        if (user) {
+            reset({ name: user.name || '' });
+        }
+        setSelectedAvatar(null);
+    };
     return (
         <div className="bg-white w-full max-w-2xl rounded-[2rem] shadow-2xl shadow-primary/10 p-8 md:p-12 border border-slate-50">
             {/* Profile Image Section */}
-            <ProfileImageUpload />
+            <ProfileImageUpload 
+                value={user?.avatar} 
+                onChange={setSelectedAvatar} 
+            />
 
             {/* Title */}
             <div className="text-center mb-10">
@@ -19,85 +64,45 @@ const EditProfileForm = () => {
                 </p>
             </div>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                 {/* Full Name */}
                 <Input
-                    id="fullName"
+                    id="name"
                     label="Full Name"
                     placeholder="Enter Full Name"
                     icon={User}
-                    required
+                    register={register('name', { 
+                        required: 'Name is required', 
+                        minLength: { value: 2, message: 'Name must be at least 2 characters' },
+                        maxLength: { value: 50, message: 'Name must not exceed 50 characters' }
+                    })}
+                    error={errors.name?.message}
                 />
 
-                {/* Email + Phone */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input
-                        id="email"
-                        label="Email Address"
-                        type="email"
-                        placeholder="Enter Email ID"
-                        icon={Mail}
-                        required
-                    />
-                    <Input
-                        id="phone"
-                        label="Phone Number"
-                        placeholder="1234567801"
-                        icon={Phone}
-                        required
-                    />
-                </div>
-
-                {/* Password */}
-                <Input
-                    id="password"
-                    label="Password"
-                    type="password"
-                    placeholder="Enter Password to confirm changes"
-                    icon={Lock}
-                    required
-                />
-
-                {/* Street Address */}
-                <Input
-                    id="address"
-                    label="Street Address"
-                    placeholder="Enter Address"
-                    icon={MapPin}
-                    required
-                />
-
-                {/* City, State, Zip */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Input
-                        id="city"
-                        label="City"
-                        placeholder="Enter City"
-                        icon={Building2}
-                        required
-                    />
-                    <Input
-                        id="state"
-                        label="State"
-                        placeholder="Enter State"
-                        icon={MapPin}
-                        required
-                    />
-                    <Input
-                        id="zip"
-                        label="ZIP Code"
-                        placeholder="Enter ZIP Code"
-                        icon={Hash}
-                        required
-                    />
+                {/* Email - Read Only */}
+                <div className="flex flex-col gap-1.5 w-full">
+                    <label className="text-sm font-medium text-slate-700">Email Address</label>
+                    <div className="relative">
+                        <input
+                            type="email"
+                            value={user?.email || ''}
+                            disabled
+                            className="w-full py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-500 placeholder:text-slate-400 pl-11 pr-4 cursor-not-allowed"
+                        />
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                            <Mail size={18} />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Buttons */}
                 <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6 border-t border-slate-100">
                     <Button 
-                        type="reset" 
+                        type="button"
                         variant="outline"
+                        onClick={handleReset}
                         className="flex items-center justify-center gap-2 hover:bg-slate-100 text-slate-500 font-semibold"
+                        disabled={isLoading}
                     >
                         <RotateCcw size={18} />
                         Reset
@@ -105,6 +110,8 @@ const EditProfileForm = () => {
                     <Button 
                         type="submit" 
                         className="px-8 flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+                        loading={isLoading}
+                        disabled={isLoading}
                     >
                         <Save size={18} />
                         Save Changes

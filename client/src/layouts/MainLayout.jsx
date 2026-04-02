@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { Home, Package, Info, Phone } from 'lucide-react';
 import logo from '../assets/Khodiyar_Enterprise.svg';
 
@@ -13,6 +13,7 @@ const MainLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
 
   const isLoggedIn = !!user;
 
@@ -20,6 +21,7 @@ const MainLayout = () => {
   
   const handleLogout = () => {
     logout();
+    navigate('/');
     setIsUserMenuOpen(false);
   };
 
