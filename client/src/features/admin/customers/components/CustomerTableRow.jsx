@@ -2,11 +2,11 @@ import { Link } from 'react-router';
 import { Edit2, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import * as toast from '@/utils/toast';
-import useCustomerStore from '@/store/useCustomerStore';
+import { useDeleteCustomerMutation } from '@/hooks/useCustomerQueries';
 import ConfirmationModal from '@/components/ConfirmationModal';
 
 const CustomerTableRow = ({ customer }) => {
-    const { deleteCustomer } = useCustomerStore();
+    const { mutateAsync: deleteCustomer, isPending } = useDeleteCustomerMutation();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleDelete = () => {
@@ -66,7 +66,8 @@ const CustomerTableRow = ({ customer }) => {
                         </Link>
                         <button 
                             onClick={handleDelete}
-                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all hover:scale-110 active:scale-95"
+                            disabled={isPending}
+                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all hover:scale-110 active:scale-95 disabled:opacity-50"
                         >
                             <Trash2 size={16} />
                         </button>

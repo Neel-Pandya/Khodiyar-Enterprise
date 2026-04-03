@@ -4,47 +4,29 @@ import ProductImages from '../components/ProductImages';
 import ProductInfo from '../components/ProductInfo';
 import ProductTabs from '../components/ProductTabs';
 import DeliveryInfoCard from '../components/DeliveryInfoCard';
-import useProductStore from '../../../store/useProductStore';
-import useFavoriteStore from '../../../store/useFavoriteStore';
+import { useProductQuery } from '@/hooks/useProductQueries';
+import { useCheckFavoriteQuery } from '@/hooks/useFavoriteQueries';
 import useAuthStore from '../../../store/useAuthStore';
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const location = useLocation();
-  const { fetchProduct, isLoading, error } = useProductStore();
-  const { checkFavorite } = useFavoriteStore();
   const { user } = useAuthStore();
-
   const [product, setProduct] = useState(location.state?.product || null);
-  const [loading, setLoading] = useState(!location.state?.product);
 
-  useEffect(() => {
-    // If no product in navigation state, fetch from API
-    if (!product && id) {
-      const loadProduct = async () => {
-        setLoading(true);
-        try {
-          const data = await fetchProduct(id);
-          setProduct(data);
-        } catch (err) {
-          console.error('Failed to load product:', err);
-        } finally {
-          setLoading(false);
-        }
-      };
-      loadProduct();
-    }
-  }, [id, product, fetchProduct]);
-
+  const { data: fetchedProduct, isLoading, error } = useProductQuery(id);
+  
   // Check favorite status when product is loaded and user is logged in
+  useCheckFavoriteQuery(product?.id);
+
   useEffect(() => {
-    if (product?.id && user) {
-      checkFavorite(product.id);
+    if (fetchedProduct) {
+      setProduct(fetchedProduct);
     }
-  }, [product?.id, user, checkFavorite]);
+  }, [fetchedProduct]);
 
   // Show loading skeleton
-  if (loading || isLoading) {
+  if (isLoading && !product) {
     return (
       <div className="min-h-screen bg-slate-50/50 pt-8 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,7 +47,7 @@ const ProductDetailsPage = () => {
   }
 
   // Show error if product not found
-  if (!product && (error || !loading)) {
+  if (!product && error) {
     return (
       <div className="min-h-screen bg-slate-50/50 pt-8 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">

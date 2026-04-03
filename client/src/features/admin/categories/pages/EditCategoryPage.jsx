@@ -1,35 +1,32 @@
-import React, { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import CategoryForm from '../components/CategoryForm';
+import { useCategoryQuery, useUpdateCategoryMutation } from '@/hooks/useCategoryQueries';
 import useCategoryStore from '@/store/useCategoryStore';
 import * as toast from '@/utils/toast';
 
 const EditCategoryPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const { category, isLoading, error, fetchCategory, updateCategory } = useCategoryStore();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    useEffect(() => {
-        if (id) {
-            fetchCategory(id);
-        }
-    }, [id, fetchCategory]);
+    const { data: category, isLoading: isFetching, error } = useCategoryQuery(id);
+    const { mutateAsync: updateCategory, isPending: isUpdating } = useUpdateCategoryMutation();
+    const { category: storeCategory } = useCategoryStore();
+    
+    const currentCategory = category || storeCategory;
+    const isLoading = isFetching || isUpdating;
 
     const handleSubmit = async (data) => {
-        setIsSubmitting(true);
         try {
-            await updateCategory(id, data);
+            await updateCategory({ id, categoryData: data });
             toast.success('Category updated successfully!');
-        } catch (error) {
-            toast.error(error?.message || 'Failed to update category');
-        } finally {
-            setIsSubmitting(false);
+            navigate('/admin/categories');
+        } catch (err) {
+            const errorMessage = err?.response?.data?.message || err?.message || 'Failed to update category';
+            toast.error(errorMessage);
         }
     };
 
-    if (isLoading) {
+    if (isFetching && !currentCategory) {
         return (
             <div className="flex flex-col items-center justify-center p-20 space-y-4">
                 <p className="text-gray-500 font-medium">Loading category...</p>
@@ -40,7 +37,7 @@ const EditCategoryPage = () => {
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center p-20 space-y-4">
-                <p className="text-red-500 font-medium">Error: {error}</p>
+                <p className="text-red-500 font-medium">Error: {error.message || 'Failed to load category'}</p>
                 <button 
                   onClick={() => navigate('/admin/categories')}
                   className="text-[#1e3a5f] hover:underline"
@@ -51,7 +48,7 @@ const EditCategoryPage = () => {
         );
     }
 
-    if (!category) {
+    if (!currentCategory) {
         return (
             <div className="flex flex-col items-center justify-center p-20 space-y-4">
                 <p className="text-gray-500 font-medium">Category not found.</p>
@@ -91,10 +88,10 @@ const EditCategoryPage = () => {
 
             {/* Main Form */}
             <CategoryForm 
-                initialData={category} 
+                initialData={currentCategory} 
                 onSubmit={handleSubmit} 
                 onCancel={() => navigate('/admin/categories')}
-                isSubmitting={isSubmitting}
+                isSubmitting={isLoading}
             />
         </div>
     );

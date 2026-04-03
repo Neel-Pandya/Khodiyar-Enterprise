@@ -5,13 +5,14 @@ import * as toast from '@/utils/toast';
 import AuthLayout from '../components/AuthLayout';
 import Input from '@common/Input';
 import Button from '@common/Button';
-import useAuthStore from '../../../store/useAuthStore';
+import { useVerifyOTPMutation, useResendOTPMutation } from '@/hooks/useAuthQueries';
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { verifyOTP, resendOTP, isLoading } = useAuthStore();
+  const { mutateAsync: verifyOTP, isPending: isVerifyPending } = useVerifyOTPMutation();
+  const { mutateAsync: resendOTP, isPending: isResendPending } = useResendOTPMutation();
   const navigate = useNavigate();
   const [cooldown, setCooldown] = useState(0);
 
@@ -59,12 +60,12 @@ const VerifyEmail = () => {
           register={register('otp', { required: 'OTP is required', pattern: { value: /^\d{6}$/, message: 'OTP must be 6 digits' } })}
           error={errors.otp?.message}
         />
-        <Button type="submit" loading={isLoading} disabled={isLoading}>Verify</Button>
+        <Button type="submit" loading={isVerifyPending} disabled={isVerifyPending}>Verify</Button>
       </form>
 
       <div className="flex justify-end mt-4">
         <Link to="#" onClick={(e) => { e.preventDefault(); if (cooldown === 0) handleResend(); }} className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
-          Resend OTP {cooldown > 0 && `(${cooldown}s)`}
+          Resend OTP {cooldown > 0 && `(${cooldown}s)`} {isResendPending && 'Sending...'}
         </Link>
       </div>
     </AuthLayout>

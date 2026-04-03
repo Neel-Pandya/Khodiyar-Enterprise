@@ -3,12 +3,12 @@ import Input from '@common/Input';
 import Button from '@common/Button';
 import { Link } from 'react-router';
 import { useForm } from 'react-hook-form';
-import useAuthStore from '../../../store/useAuthStore';
+import { useSignupMutation } from '@/hooks/useAuthQueries';
 import * as toast from '@/utils/toast';
 
 const Signup = () => {
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
-  const { signup, isLoading } = useAuthStore();
+  const { mutateAsync: signup, isPending } = useSignupMutation();
 
   const onSubmit = async (data) => {
     delete data.confirmPassword;
@@ -88,7 +88,7 @@ const Signup = () => {
         </div>
 
         <div>
-          <Button type="submit" className="shadow-lg shadow-primary/20" loading={isLoading} disabled={isLoading}>
+          <Button type="submit" className="shadow-lg shadow-primary/20" loading={isPending} disabled={isPending}>
             Sign Up
           </Button>
         </div>

@@ -2,11 +2,13 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Lock, ShieldCheck, KeyRound, RefreshCw, Loader2 } from 'lucide-react';
 import FormField from '@admin/shared/components/FormField';
+import { useChangePasswordMutation } from '@/hooks/useAuthQueries';
 import useAuthStore from '../../../../store/useAuthStore';
 import * as toast from '@/utils/toast';
 
 const SecuritySettings = () => {
-    const { changePassword, logout, isLoading } = useAuthStore();
+    const { logout } = useAuthStore();
+    const { mutateAsync: changePassword, isPending } = useChangePasswordMutation();
 
     const {
         control,
@@ -154,18 +156,18 @@ const SecuritySettings = () => {
                     <div className="pt-8 border-t border-gray-50 flex justify-end">
                         <button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={isPending}
                             className={`
                                 flex items-center justify-center gap-2 px-8 py-3 rounded-xl text-sm font-semibold
                                 transition-all hover:scale-105 active:scale-95 shadow-lg
                                 w-full sm:w-auto
-                                ${isLoading
+                                ${isPending
                                     ? 'bg-gray-400 text-white cursor-not-allowed'
                                     : 'bg-[#1e3a5f] text-white shadow-[#1e3a5f]/20 hover:bg-[#152943]'
                                 }
                             `}
                         >
-                            {isLoading ? (
+                            {isPending ? (
                                 <>
                                     <Loader2 size={18} className="animate-spin" />
                                     Updating...

@@ -4,11 +4,13 @@ import { useForm } from 'react-hook-form';
 import Input from '@common/Input';
 import Button from '@common/Button';
 import ProfileImageUpload from './ProfileImageUpload';
+import { useUpdateProfileMutation } from '@/hooks/useAuthQueries';
 import useAuthStore from '@/store/useAuthStore';
 import * as toast from '@/utils/toast';
 
 const EditProfileForm = () => {
-    const { user, updateProfile, isLoading } = useAuthStore();
+    const { user } = useAuthStore();
+    const { mutateAsync: updateProfile, isPending } = useUpdateProfileMutation();
     const [selectedAvatar, setSelectedAvatar] = useState(null);
 
     const { register, handleSubmit, formState: {errors}, reset, setValue } = useForm({
@@ -102,7 +104,7 @@ const EditProfileForm = () => {
                         variant="outline"
                         onClick={handleReset}
                         className="flex items-center justify-center gap-2 hover:bg-slate-100 text-slate-500 font-semibold"
-                        disabled={isLoading}
+                        disabled={isPending}
                     >
                         <RotateCcw size={18} />
                         Reset
@@ -110,8 +112,8 @@ const EditProfileForm = () => {
                     <Button 
                         type="submit" 
                         className="px-8 flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
-                        loading={isLoading}
-                        disabled={isLoading}
+                        loading={isPending}
+                        disabled={isPending}
                     >
                         <Save size={18} />
                         Save Changes

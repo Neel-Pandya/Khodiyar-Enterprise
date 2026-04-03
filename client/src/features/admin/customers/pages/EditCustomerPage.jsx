@@ -1,35 +1,32 @@
-import React, { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import CustomerForm from '../components/CustomerForm';
+import { useCustomerQuery, useUpdateCustomerMutation } from '@/hooks/useCustomerQueries';
 import useCustomerStore from '@/store/useCustomerStore';
 import * as toast from '@/utils/toast';
 
 const EditCustomerPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const { customer, isLoading, error, fetchCustomer, updateCustomer } = useCustomerStore();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    useEffect(() => {
-        if (id) {
-            fetchCustomer(id);
-        }
-    }, [id, fetchCustomer]);
+    const { data: customer, isLoading: isFetching, error } = useCustomerQuery(id);
+    const { mutateAsync: updateCustomer, isPending: isUpdating } = useUpdateCustomerMutation();
+    const { customer: storeCustomer } = useCustomerStore();
+    
+    const currentCustomer = customer || storeCustomer;
+    const isLoading = isFetching || isUpdating;
 
     const handleSubmit = async (data) => {
-        setIsSubmitting(true);
         try {
-            await updateCustomer(id, data);
+            await updateCustomer({ id, customerData: data });
             toast.success('Customer updated successfully!');
-        } catch (error) {
-            toast.error(error?.message || 'Failed to update customer');
-        } finally {
-            setIsSubmitting(false);
+            navigate('/admin/customers');
+        } catch (err) {
+            const errorMessage = err?.response?.data?.message || err?.message || 'Failed to update customer';
+            toast.error(errorMessage);
         }
     };
 
-    if (isLoading) {
+    if (isFetching && !currentCustomer) {
         return (
             <div className="flex flex-col items-center justify-center p-20 space-y-4">
                 <p className="text-gray-500 font-medium">Loading customer...</p>
@@ -40,7 +37,7 @@ const EditCustomerPage = () => {
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center p-20 space-y-4">
-                <p className="text-red-500 font-medium">Error: {error}</p>
+                <p className="text-red-500 font-medium">Error: {error.message || 'Failed to load customer'}</p>
                 <button 
                   onClick={() => navigate('/admin/customers')}
                   className="text-[#1e3a5f] hover:underline"
@@ -51,7 +48,7 @@ const EditCustomerPage = () => {
         );
     }
 
-    if (!customer) {
+    if (!currentCustomer) {
         return (
             <div className="flex flex-col items-center justify-center p-20 space-y-4">
                 <p className="text-gray-500 font-medium">Customer not found.</p>
@@ -91,10 +88,10 @@ const EditCustomerPage = () => {
 
             {/* Main Form */}
             <CustomerForm 
-                initialData={customer} 
+                initialData={currentCustomer} 
                 onSubmit={handleSubmit} 
                 onCancel={() => navigate('/admin/customers')}
-                isSubmitting={isSubmitting}
+                isSubmitting={isLoading}
             />
         </div>
     );

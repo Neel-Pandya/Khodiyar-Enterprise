@@ -1,16 +1,17 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import useProductStore from '../../../store/useProductStore';
+import { useProductsQuery } from '@/hooks/useProductQueries';
 
 const Products = () => {
   const navigate = useNavigate();
-  const { products, isLoading, hasFetched, fetchProducts } = useProductStore();
-
-  useEffect(() => {
-    if (!hasFetched) {
-      fetchProducts({ limit: 8, is_active: true });
-    }
-  }, [hasFetched, fetchProducts]);
+  const { products, hasFetched } = useProductStore();
+  const { isLoading } = useProductsQuery({
+    limit: 8,
+    is_active: true,
+  }, {
+    enabled: !hasFetched,
+  });
 
   // Show skeleton cards while loading
   if (isLoading) {

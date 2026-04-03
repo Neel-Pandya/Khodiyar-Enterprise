@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { favoriteApi } from '../api/favoriteApi';
 
 const useFavoriteStore = create((set, get) => ({
+  // Client-only state
   favorites: [],
   favoriteIds: new Set(),
   pagination: {
@@ -10,73 +10,38 @@ const useFavoriteStore = create((set, get) => ({
     page: 1,
     limit: 10,
   },
-  isLoading: false,
-  error: null,
   togglingIds: new Set(), // Track which products are being toggled
 
-  // Fetch all favorites with pagination
-  fetchFavorites: async (params = {}) => {
-    set({ isLoading: true, error: null });
-    try {
-      const response = await favoriteApi.getFavorites(params);
-      const { favorites, pagination } = response.data;
-
-      // Extract product IDs for quick lookup
-      const favoriteIds = new Set(
-        favorites.map((f) => f.product_id || f.product?.id)
-      );
-
-      set({
-        favorites,
-        favoriteIds,
-        pagination,
-        isLoading: false,
-      });
-
-      return { favorites, pagination };
-    } catch (error) {
-      set({
-        error: error?.message || 'Failed to fetch favorites',
-        isLoading: false,
-      });
-      throw error;
+  // Setter methods for query hooks to sync data
+  setFavorites: (favorites) => set({ favorites }),
+  setFavoriteIds: (favoriteIds) => set({ favoriteIds }),
+  setPagination: (pagination) => set({ pagination }),
+  setFavoriteId: (productId, isFavorite) => {
+    const { favoriteIds } = get();
+    const newFavoriteIds = new Set(favoriteIds);
+    if (isFavorite) {
+      newFavoriteIds.add(productId);
+    } else {
+      newFavoriteIds.delete(productId);
     }
+    set({ favoriteIds: newFavoriteIds });
   },
 
-  // Check if a product is favorited
-  checkFavorite: async (productId) => {
-    try {
-      const response = await favoriteApi.checkFavorite(productId);
-      const { isFavorite } = response.data;
-
-      // Update the local Set
-      const { favoriteIds } = get();
-      const newFavoriteIds = new Set(favoriteIds);
-
-      if (isFavorite) {
-        newFavoriteIds.add(productId);
-      } else {
-        newFavoriteIds.delete(productId);
-      }
-
-      set({ favoriteIds: newFavoriteIds });
-      return isFavorite;
-    } catch (error) {
-      // Silently fail - product might not be favorited
-      return false;
-    }
+  // Check if a product is currently favorited (local state)
+  isFavorite: (productId) => {
+    return get().favoriteIds.has(productId);
   },
 
-  // Toggle favorite status with optimistic update
-  toggleFavorite: async (productId, productData = null) => {
-    const { favoriteIds, togglingIds, favorites } = get();
+  // Check if a product is currently being toggled
+  isToggling: (productId) => {
+    return get().togglingIds.has(productId);
+  },
 
-    // Prevent double-clicks
-    if (togglingIds.has(productId)) {
-      return null;
-    }
+  // Optimistic toggle favorite (used by components for instant UI feedback)
+  optimisticToggle: (productId) => {
+    const { favoriteIds, togglingIds } = get();
+    if (togglingIds.has(productId)) return null;
 
-    // Optimistic update - immediately update UI
     const wasFavorited = favoriteIds.has(productId);
     const newFavoriteIds = new Set(favoriteIds);
     const newTogglingIds = new Set(togglingIds);
@@ -93,72 +58,66 @@ const useFavoriteStore = create((set, get) => ({
       togglingIds: newTogglingIds,
     });
 
-    try {
-      const response = await favoriteApi.toggleFavorite(productId);
-      const { isFavorite, product } = response.data;
+    return { wasFavorited, newFavoriteIds, newTogglingIds };
+  },
 
-      // Update favorites list if needed
-      let newFavorites = favorites;
-      if (isFavorite && product) {
-        // Add to favorites list (with product data if available)
-        const favoriteItem = productData
-          ? { id: `${productId}-fav`, product_id: productId, product: productData }
-          : { id: `${productId}-fav`, product_id: productId, product };
-        newFavorites = [favoriteItem, ...favorites];
-      } else if (!isFavorite) {
-        // Remove from favorites list
-        newFavorites = favorites.filter(
-          (f) => f.product_id !== productId && f.product?.id !== productId
-        );
-      }
+  // Complete toggle (after API call)
+  completeToggle: (productId, isFavorite, productData = null) => {
+    const { favorites, togglingIds } = get();
+    let newFavorites = favorites;
 
-      // Remove from toggling set
-      const finalTogglingIds = new Set(newTogglingIds);
-      finalTogglingIds.delete(productId);
-
-      set({
-        favorites: newFavorites,
-        togglingIds: finalTogglingIds,
-        pagination: {
-          ...get().pagination,
-          total: isFavorite
-            ? get().pagination.total + 1
-            : Math.max(0, get().pagination.total - 1),
-        },
-      });
-
-      return isFavorite;
-    } catch (error) {
-      // Rollback on error - revert to original state
-      const rollbackFavoriteIds = new Set(favoriteIds);
-      const rollbackTogglingIds = new Set(togglingIds);
-      rollbackTogglingIds.delete(productId);
-
-      set({
-        favoriteIds: rollbackFavoriteIds,
-        togglingIds: rollbackTogglingIds,
-        error: error?.message || 'Failed to toggle favorite',
-      });
-
-      throw error;
+    if (isFavorite && productData) {
+      const favoriteItem = {
+        id: `${productId}-fav`,
+        product_id: productId,
+        product: productData,
+      };
+      newFavorites = [favoriteItem, ...favorites];
+    } else if (!isFavorite) {
+      newFavorites = favorites.filter(
+        (f) => f.product_id !== productId && f.product?.id !== productId
+      );
     }
+
+    const finalTogglingIds = new Set(togglingIds);
+    finalTogglingIds.delete(productId);
+
+    set({
+      favorites: newFavorites,
+      togglingIds: finalTogglingIds,
+      pagination: {
+        ...get().pagination,
+        total: isFavorite
+          ? get().pagination.total + 1
+          : Math.max(0, get().pagination.total - 1),
+      },
+    });
   },
 
-  // Check if a product is currently favorited (local state)
-  isFavorite: (productId) => {
-    return get().favoriteIds.has(productId);
+  // Rollback toggle on error
+  rollbackToggle: (productId, wasFavorited) => {
+    const { favoriteIds, togglingIds } = get();
+    const rollbackFavoriteIds = new Set(favoriteIds);
+    const rollbackTogglingIds = new Set(togglingIds);
+
+    // Restore original state
+    if (wasFavorited) {
+      rollbackFavoriteIds.add(productId);
+    } else {
+      rollbackFavoriteIds.delete(productId);
+    }
+    rollbackTogglingIds.delete(productId);
+
+    set({
+      favoriteIds: rollbackFavoriteIds,
+      togglingIds: rollbackTogglingIds,
+    });
   },
 
-  // Check if a product is currently being toggled
-  isToggling: (productId) => {
-    return get().togglingIds.has(productId);
-  },
-
-  // Remove a favorite from the list (used in FavoritesPage)
-  removeFavorite: async (productId) => {
+  // Optimistic remove favorite
+  optimisticRemove: (productId) => {
     const { favorites, favoriteIds, pagination } = get();
 
-    // Optimistic update
     const newFavoriteIds = new Set(favoriteIds);
     newFavoriteIds.delete(productId);
 
@@ -175,19 +134,17 @@ const useFavoriteStore = create((set, get) => ({
       },
     });
 
-    // Make API call
-    try {
-      await favoriteApi.toggleFavorite(productId);
-    } catch (error) {
-      // Rollback on error
-      set({
-        favorites,
-        favoriteIds,
-        pagination,
-        error: error?.message || 'Failed to remove favorite',
-      });
-      throw error;
-    }
+    // Return previous state for rollback
+    return { favorites, favoriteIds, pagination };
+  },
+
+  // Rollback remove on error
+  rollbackRemove: (previousState) => {
+    set({
+      favorites: previousState.favorites,
+      favoriteIds: previousState.favoriteIds,
+      pagination: previousState.pagination,
+    });
   },
 
   // Clear all favorites (used on logout)
@@ -201,11 +158,9 @@ const useFavoriteStore = create((set, get) => ({
         page: 1,
         limit: 10,
       },
+      togglingIds: new Set(),
     });
   },
-
-  // Clear error
-  clearError: () => set({ error: null }),
 }));
 
 export default useFavoriteStore;

@@ -2,12 +2,14 @@ import { useNavigate } from 'react-router';
 import Button from '@common/Button';
 import { Heart, ShieldCheck, CreditCard, Zap } from 'lucide-react';
 import useFavoriteStore from '@/store/useFavoriteStore';
+import { useToggleFavoriteMutation } from '@/hooks/useFavoriteQueries';
 import useAuthStore from '@/store/useAuthStore';
 
 const ProductInfo = ({ productId, category, name, price, stockStatus, isFavorite: initialIsFavorite = false }) => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { toggleFavorite, isToggling } = useFavoriteStore();
+  const { optimisticToggle, completeToggle, rollbackToggle, isFavorite, isToggling } = useFavoriteStore();
+  const { mutateAsync: toggleFavoriteApi } = useToggleFavoriteMutation();
   const isInStock = stockStatus === 'In Stock';
 
   const handleFavoriteClick = async () => {
@@ -18,17 +20,23 @@ const ProductInfo = ({ productId, category, name, price, stockStatus, isFavorite
 
     if (!productId || isToggling(productId)) return;
 
+    // Optimistic update
+    const previousState = optimisticToggle(productId);
+    if (!previousState) return; // Already toggling
+
     try {
-      await toggleFavorite(productId, { id: productId, name, price, category: { name: category } });
+      const result = await toggleFavoriteApi(productId);
+      // Complete the toggle with server result
+      completeToggle(productId, result.isFavorite, { id: productId, name, price, category: { name: category } });
     } catch (error) {
-      // Error is handled in store with rollback
+      // Rollback on error
+      rollbackToggle(productId, previousState.wasFavorited);
       console.error('Failed to toggle favorite:', error);
     }
   };
 
   // Get current favorite state from store (for optimistic updates)
-  const { isFavorite: checkIsFavorite } = useFavoriteStore();
-  const currentIsFavorite = productId ? checkIsFavorite(productId) : initialIsFavorite;
+  const currentIsFavorite = productId ? isFavorite(productId) : initialIsFavorite;
   const isLoading = productId ? isToggling(productId) : false;
 
   return (

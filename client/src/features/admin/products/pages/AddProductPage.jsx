@@ -1,21 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import ProductForm from '../components/ProductForm';
-import useProductStore from '@/store/useProductStore';
+import { useCreateProductMutation } from '@/hooks/useProductQueries';
 import * as toast from '@/utils/toast';
 
 const AddProductPage = () => {
     const navigate = useNavigate();
-    const { createProduct, isLoading, error, clearError } = useProductStore();
-
-    // Watch for errors and show toast
-    useEffect(() => {
-        if (error) {
-            toast.error(error);
-            clearError();
-        }
-    }, [error, clearError]);
+    const { mutateAsync: createProduct, isPending } = useCreateProductMutation();
 
     const handleSubmit = async (data) => {
         // Validate at least one image
@@ -29,7 +21,8 @@ const AddProductPage = () => {
             toast.success('Product created successfully!');
             navigate('/admin/products');
         } catch (err) {
-            // Error is already set in store
+            const errorMessage = err?.response?.data?.message || err?.message || 'Failed to create product';
+            toast.error(errorMessage);
             console.error('Error creating product:', err);
         }
     };
@@ -59,7 +52,7 @@ const AddProductPage = () => {
             </div>
 
             {/* Main Form */}
-            <ProductForm onSubmit={handleSubmit} isLoading={isLoading} />
+            <ProductForm onSubmit={handleSubmit} isLoading={isPending} />
         </div>
     );
 };

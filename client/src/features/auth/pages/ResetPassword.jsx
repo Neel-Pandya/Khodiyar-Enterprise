@@ -5,14 +5,15 @@ import * as toast from '@/utils/toast';
 import AuthLayout from '../components/AuthLayout';
 import Input from '@common/Input';
 import Button from '@common/Button';
-import useAuthStore from '../../../store/useAuthStore';
+import { useVerifyResetOTPMutation, useResetPasswordMutation } from '@/hooks/useAuthQueries';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const navigate = useNavigate();
   const [step, setStep] = useState('otp'); // 'otp' or 'password'
-  const { verifyResetOTP, resetPassword, isLoading } = useAuthStore();
+  const { mutateAsync: verifyResetOTP, isPending: isVerifyPending } = useVerifyResetOTPMutation();
+  const { mutateAsync: resetPassword, isPending: isResetPending } = useResetPasswordMutation();
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
 
   useEffect(() => {
@@ -70,7 +71,7 @@ const ResetPassword = () => {
           </div>
 
           <div>
-            <Button type="submit" loading={isLoading} disabled={isLoading} className="shadow-lg shadow-primary/20">
+            <Button type="submit" loading={isVerifyPending} disabled={isVerifyPending} className="shadow-lg shadow-primary/20">
               Verify OTP
             </Button>
           </div>
@@ -122,7 +123,7 @@ const ResetPassword = () => {
           </div>
 
           <div>
-            <Button type="submit" loading={isLoading} disabled={isLoading} className="shadow-lg shadow-primary/20">
+            <Button type="submit" loading={isResetPending} disabled={isResetPending} className="shadow-lg shadow-primary/20">
               Reset Password
             </Button>
           </div>

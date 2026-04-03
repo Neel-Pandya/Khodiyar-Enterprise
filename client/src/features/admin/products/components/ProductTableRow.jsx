@@ -2,11 +2,11 @@ import { Link } from 'react-router';
 import { Edit2, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import * as toast from '@/utils/toast';
-import useProductStore from '@/store/useProductStore';
+import { useDeleteProductMutation } from '@/hooks/useProductQueries';
 import ConfirmationModal from '@/components/ConfirmationModal';
 
 const ProductTableRow = ({ product }) => {
-    const { deleteProduct } = useProductStore();
+    const { mutateAsync: deleteProduct, isPending } = useDeleteProductMutation();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleDelete = () => {
@@ -68,7 +68,8 @@ const ProductTableRow = ({ product }) => {
                         </Link>
                         <button 
                             onClick={handleDelete}
-                            className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all hover:scale-110 active:scale-95"
+                            disabled={isPending}
+                            className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all hover:scale-110 active:scale-95 disabled:opacity-50"
                         >
                             <Trash2 size={16} />
                         </button>

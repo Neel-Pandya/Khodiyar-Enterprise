@@ -3,13 +3,14 @@ import Input from '@common/Input';
 import Button from '@common/Button';
 import AuthLayout from '../components/AuthLayout';
 import { Link, useNavigate } from 'react-router';
+import { useLoginMutation } from '@/hooks/useAuthQueries';
 import useAuthStore from '@/store/useAuthStore';
 import * as toast from '@/utils/toast';
 
 const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { login, isLoading } = useAuthStore();
+  const { mutateAsync: login, isPending } = useLoginMutation();
 
   const onSubmit = async (data) => {
     try {
@@ -73,7 +74,7 @@ const Login = () => {
         </div>
 
         <div>
-          <Button type="submit" className="shadow-lg shadow-primary/20" loading={isLoading} disabled={isLoading}>
+          <Button type="submit" className="shadow-lg shadow-primary/20" loading={isPending} disabled={isPending}>
             Log In
           </Button>
         </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, X, ArrowUpDown } from 'lucide-react';
 import useCategoryStore from '../../../store/useCategoryStore';
+import { useCategoriesQuery } from '@/hooks/useCategoryQueries';
 
 const ProductFilters = ({ filters, onApplyFilters, onResetFilters }) => {
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
@@ -11,14 +12,10 @@ const ProductFilters = ({ filters, onApplyFilters, onResetFilters }) => {
   const [localSortBy, setLocalSortBy] = useState(filters.sortBy || 'created_at');
   const [localSortOrder, setLocalSortOrder] = useState(filters.sortOrder || 'desc');
   
-  const { categories, hasFetched, fetchCategories } = useCategoryStore();
-
-  // Fetch categories on mount
-  useEffect(() => {
-    if (!hasFetched) {
-      fetchCategories({ status: 'active' });
-    }
-  }, [hasFetched, fetchCategories]);
+  const { categories } = useCategoryStore();
+  
+  // Fetch categories via TanStack Query
+  useCategoriesQuery({ status: 'active' });
 
   // Sync local state when parent filters change (e.g., on reset)
   useEffect(() => {

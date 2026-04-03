@@ -1,49 +1,30 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import ProductForm from '../components/ProductForm';
-import useProductStore from '@/store/useProductStore';
+import { useProductQuery, useUpdateProductMutation } from '@/hooks/useProductQueries';
 import * as toast from '@/utils/toast';
 
 const EditProductPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const { 
-        product, 
-        fetchProduct, 
-        updateProduct, 
-        isLoading, 
-        error, 
-        clearError 
-    } = useProductStore();
-
-    // Watch for errors and show toast
-    useEffect(() => {
-        if (error) {
-            toast.error(error);
-            clearError();
-        }
-    }, [error, clearError]);
-
-    // Fetch product data on mount
-    useEffect(() => {
-        if (id) {
-            fetchProduct(id);
-        }
-    }, [id, fetchProduct]);
+    const { data: product, isLoading: isFetching } = useProductQuery(id);
+    const { mutateAsync: updateProduct, isPending: isUpdating } = useUpdateProductMutation();
+    const isLoading = isFetching || isUpdating;
 
     const handleSubmit = async (data) => {
         try {
-            await updateProduct(id, data);
+            await updateProduct({ id, productData: data });
             toast.success('Product updated successfully!');
             navigate('/admin/products');
         } catch (err) {
-            // Error is already set in store
+            const errorMessage = err?.response?.data?.message || err?.message || 'Failed to update product';
+            toast.error(errorMessage);
             console.error('Error updating product:', err);
         }
     };
 
-    if (isLoading && !product) {
+    if (isFetching && !product) {
         return (
             <div className="flex items-center justify-center p-20">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#fbc02d]"></div>
@@ -51,11 +32,11 @@ const EditProductPage = () => {
         );
     }
 
-    if (!product || error) {
+    if (!product) {
         return (
             <div className="flex flex-col items-center justify-center p-20 space-y-4">
                 <p className="text-gray-500 font-medium">
-                    {error || 'Product not found.'}
+                    Product not found.
                 </p>
                 <button 
                   onClick={() => navigate('/admin/products')}

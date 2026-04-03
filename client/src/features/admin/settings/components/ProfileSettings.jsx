@@ -2,11 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { User, Mail, Save, Camera, Loader2, X } from 'lucide-react';
 import FormField from '@admin/shared/components/FormField';
+import { useUpdateProfileMutation } from '@/hooks/useAuthQueries';
 import useAuthStore from '../../../../store/useAuthStore';
 import * as toast from '@/utils/toast';
 
 const ProfileSettings = () => {
-    const { user, updateProfile, isLoading } = useAuthStore();
+    const { user } = useAuthStore();
+    const { mutateAsync: updateProfile, isPending } = useUpdateProfileMutation();
     const fileInputRef = useRef(null);
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarPreview, setAvatarPreview] = useState(null);
@@ -222,18 +224,18 @@ const ProfileSettings = () => {
                         <div className="pt-8 border-t border-gray-50 flex justify-end">
                             <button
                                 type="submit"
-                                disabled={!hasChanges || isLoading}
+                                disabled={!hasChanges || isPending}
                                 className={`
                                     flex items-center justify-center gap-2 px-8 py-3 rounded-xl text-sm font-semibold
                                     transition-all hover:scale-105 active:scale-95 shadow-lg
                                     w-full sm:w-auto
-                                    ${hasChanges && !isLoading
+                                    ${hasChanges && !isPending
                                         ? 'bg-[#1e3a5f] text-white shadow-[#1e3a5f]/20 hover:bg-[#152943]'
                                         : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
                                     }
                                 `}
                             >
-                                {isLoading ? (
+                                {isPending ? (
                                     <>
                                         <Loader2 size={18} className="animate-spin" />
                                         Saving...

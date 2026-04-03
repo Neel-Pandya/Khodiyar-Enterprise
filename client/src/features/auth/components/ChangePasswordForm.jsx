@@ -3,12 +3,14 @@ import { Shield, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import Input from '@common/Input';
 import Button from '@common/Button';
+import { useChangePasswordMutation } from '@/hooks/useAuthQueries';
 import useAuthStore from '../../../store/useAuthStore';
 import * as toast from '@/utils/toast';
 
 const ChangePasswordForm = () => {
   const navigate = useNavigate();
-  const { changePassword, logout, isLoading } = useAuthStore();
+  const { logout } = useAuthStore();
+  const { mutateAsync: changePassword, isPending } = useChangePasswordMutation();
 
   const {
     register,
@@ -110,8 +112,8 @@ const ChangePasswordForm = () => {
         <div className="pt-2">
           <Button
             type="submit"
-            loading={isLoading}
-            disabled={isLoading}
+            loading={isPending}
+            disabled={isPending}
             className="w-full h-12 shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
           >
             Update Password

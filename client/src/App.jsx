@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { Loader } from 'lucide-react'
 
@@ -8,26 +8,15 @@ import PublicRoutes from './routes/PublicRoutes'
 import AuthRoutes from './routes/AuthRoutes'
 import AdminRoutes from './routes/AdminRoutes'
 import UserRoutes from './routes/UserRoutes'
+import { useCurrentUserQuery } from './hooks/useAuthQueries'
 import useAuthStore from './store/useAuthStore'
 
 const AppContent = () => {
-  const { getCurrentUser, user } = useAuthStore();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
   const initialRedirectDone = useRef(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Check for existing token and restore user state on app load
-    const token = localStorage.getItem('token');
-    if (token) {
-      getCurrentUser()
-        .then(() => setLoading(false))
-        .catch(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
-  }, [getCurrentUser]);
+  const { isLoading } = useCurrentUserQuery();
 
   useEffect(() => {
     // Redirect admin users to dashboard on initial load, but not during admin navigation
@@ -37,7 +26,7 @@ const AppContent = () => {
     }
   }, [user, navigate, location.pathname]);
 
-  if (loading || (user === undefined)) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-bg-light">
         <Loader className="animate-spin text-[#fbc02d]" size={48} />

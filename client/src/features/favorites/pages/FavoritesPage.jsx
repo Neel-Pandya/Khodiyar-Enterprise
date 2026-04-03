@@ -4,7 +4,8 @@ import { Link } from 'react-router';
 import Button from '@common/Button';
 import FavoriteCard from '../components/FavoriteCard';
 import useFavoriteStore from '@/store/useFavoriteStore';
-
+import { useFavoritesQuery, useRemoveFavoriteMutation } from '@/hooks/useFavoriteQueries';
+import * as toast from "@/utils/toast"
 const FavoritesHeader = ({ count }) => (
   <div className="mb-12">
     <Link
@@ -52,16 +53,19 @@ const EmptyFavorites = () => (
 );
 
 const FavoritesPage = () => {
-  const { favorites, pagination, isLoading, fetchFavorites, removeFavorite } = useFavoriteStore();
-
-  useEffect(() => {
-    fetchFavorites({ limit: 12 });
-  }, [fetchFavorites]);
+  const { favorites, pagination, optimisticRemove, rollbackRemove } = useFavoriteStore();
+  const { isLoading } = useFavoritesQuery({ limit: 12 });
+  const { mutateAsync: removeFavorite } = useRemoveFavoriteMutation();
 
   const handleRemove = async (productId) => {
+    // Optimistic update first
+    const previousState = optimisticRemove(productId);
     try {
       await removeFavorite(productId);
     } catch (error) {
+      // Rollback on error
+      rollbackRemove(previousState);
+      toast.error(error.message);
       console.error('Failed to remove favorite:', error);
     }
   };

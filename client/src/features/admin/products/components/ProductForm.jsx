@@ -4,11 +4,12 @@ import { Package, Tag, Layers, IndianRupee, RotateCcw, Loader2 } from 'lucide-re
 import FormSectionCard from '@admin/shared/components/FormSectionCard';
 import ImageUploadArea from './ImageUploadArea';
 import RichTextEditor from './RichTextEditor';
-import useCategoryStore from '@/store/useCategoryStore';
+import { useCategoriesQuery } from '@/hooks/useCategoryQueries';
 
 const ProductForm = ({ initialData, onSubmit, onCancel, isLoading = false }) => {
-  const { categories, hasFetched, fetchCategories, isLoading: categoriesLoading, error: categoriesError } = useCategoryStore();
-  
+  const { data: categoriesData, isLoading: categoriesLoading, error: categoriesError } = useCategoriesQuery({ status: 'active', limit: 100 });
+  const categories = categoriesData?.categories || [];
+
   const isEdit = !!initialData;
 
   const {
@@ -29,13 +30,6 @@ const ProductForm = ({ initialData, onSubmit, onCancel, isLoading = false }) => 
       specification: initialData?.specification || '',
     },
   });
-
-  // Fetch active categories on mount
-  useEffect(() => {
-    if (!hasFetched) {
-      fetchCategories({ status: 'active', limit: 100 });
-    }
-  }, [hasFetched, fetchCategories]);
 
   // Reset form when initialData changes
   useEffect(() => {

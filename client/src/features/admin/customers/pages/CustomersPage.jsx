@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import useCustomerStore from '@/store/useCustomerStore';
+import { useCustomersQuery } from '@/hooks/useCustomerQueries';
 import CustomerHeader from '../components/CustomerHeader';
 import CustomerStatCard from '../components/CustomerStatCard';
 import CustomerTable from '../components/CustomerTable';
@@ -7,18 +8,8 @@ import CustomerTable from '../components/CustomerTable';
 const CustomersPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
 
-    const customers = useCustomerStore((state) => state.customers);
-    const pagination = useCustomerStore((state) => state.pagination);
-    const isLoading = useCustomerStore((state) => state.isLoading);
-    const error = useCustomerStore((state) => state.error);
-    const hasFetched = useCustomerStore((state) => state.hasFetched);
-    const fetchCustomers = useCustomerStore((state) => state.fetchCustomers);
-
-    useEffect(() => {
-        if (!hasFetched) {
-            fetchCustomers({ page: currentPage, limit: pagination.limit || 10 });
-        }
-    }, [currentPage, pagination.limit, hasFetched, fetchCustomers]);
+    const { customers, pagination } = useCustomerStore();
+    const { isLoading, error } = useCustomersQuery({ page: currentPage, limit: 10 });
 
     const normalizedCustomers = useMemo(() => {
         const toDisplayStatus = (status) => {

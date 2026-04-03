@@ -73,7 +73,7 @@ router.post('/register', validate(registerSchema), authController.register);
  */
 router.post(
   '/login',
-  loginLimiter,
+  // loginLimiter,
   validate(loginSchema),
   authController.login
 );

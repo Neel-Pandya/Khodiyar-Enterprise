@@ -1,12 +1,13 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import useProductStore from '../../../store/useProductStore';
+import { useProductsQuery } from '@/hooks/useProductQueries';
 import ProductCard from '../components/ProductCard';
 import ProductFilters from '../components/ProductFilters';
 import Pagination from '../components/Pagination';
 
 const ProductPage = () => {
-  const { products, pagination, isLoading, fetchProducts } = useProductStore();
+  const { products, pagination, setPagination } = useProductStore();
   const [filters, setFilters] = useState({
     search: '',
     category_id: '',
@@ -14,37 +15,20 @@ const ProductPage = () => {
     sortOrder: 'desc',
   });
 
-  const loadProducts = useCallback(() => {
-    const params = {
-      page: pagination.page,
-      limit: 12,
-      is_active: true,
-      ...filters,
-    };
-    fetchProducts(params);
-  }, [pagination.page, filters, fetchProducts]);
-
-  useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
+  const { isLoading } = useProductsQuery({
+    page: pagination.page,
+    limit: 12,
+    is_active: true,
+    ...filters,
+  });
 
   const handlePageChange = (page) => {
-    fetchProducts({
-      page,
-      limit: 12,
-      is_active: true,
-      ...filters,
-    });
+    setPagination({ ...pagination, page });
   };
 
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
-    fetchProducts({
-      page: 1,
-      limit: 12,
-      is_active: true,
-      ...newFilters,
-    });
+    setPagination({ ...pagination, page: 1 });
   };
 
   const handleResetFilters = () => {
@@ -55,12 +39,7 @@ const ProductPage = () => {
       sortOrder: 'desc',
     };
     setFilters(resetFilters);
-    fetchProducts({
-      page: 1,
-      limit: 12,
-      is_active: true,
-      ...resetFilters,
-    });
+    setPagination({ ...pagination, page: 1 });
   };
   return (
     <div className="min-h-screen pt-0 pb-20 bg-gray-50/50">

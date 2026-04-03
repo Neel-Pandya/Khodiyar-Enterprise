@@ -2,14 +2,12 @@ import { useEffect } from 'react';
 import ProductHeader from '../components/ProductHeader';
 import ProductStatCard from '../components/ProductStatCard';
 import ProductTable from '../components/ProductTable';
+import { useProductsQuery } from '@/hooks/useProductQueries';
 import useProductStore from '@/store/useProductStore';
 
 const ProductsPage = () => {
-    const { products, pagination, fetchProducts, isLoading } = useProductStore();
-
-    useEffect(() => {
-        fetchProducts({ limit: 10 });
-    }, [fetchProducts]);
+    const { products, pagination } = useProductStore();
+    const { isLoading } = useProductsQuery({ limit: 10 });
 
     // Calculate stats from real data
     const totalProducts = pagination.total;

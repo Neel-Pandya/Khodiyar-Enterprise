@@ -2,7 +2,7 @@ import { Link, NavLink } from 'react-router';
 import { Heart, ShoppingCart, ShoppingBag, User, ChevronDown, LogOut, Settings, Lock } from 'lucide-react';
 import useAuthStore from '../../store/useAuthStore';
 import useFavoriteStore from '../../store/useFavoriteStore';
-import { useEffect } from 'react';
+import { useFavoritesQuery } from '@/hooks/useFavoriteQueries';
 
 const Navbar = ({ 
   logo, 
@@ -14,13 +14,10 @@ const Navbar = ({
   toggleMenu
 }) => {
   const { user } = useAuthStore();
-  const { pagination, fetchFavorites } = useFavoriteStore();
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchFavorites({ limit: 100 });
-    }
-  }, [isLoggedIn, fetchFavorites]);
+  const { pagination } = useFavoriteStore();
+  
+  // Fetch favorites when user is logged in
+  useFavoritesQuery({ limit: 100 }, { enabled: isLoggedIn });
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 py-4">
       <div className="container mx-auto px-6 flex justify-between items-center">

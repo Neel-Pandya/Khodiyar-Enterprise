@@ -1,19 +1,21 @@
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import useCategoryStore from '@/store/useCategoryStore';
+import { useCreateCategoryMutation } from '@/hooks/useCategoryQueries';
 import CategoryForm from '../components/CategoryForm';
 import * as toast from '@/utils/toast';
 
 const AddCategoryPage = () => {
     const navigate = useNavigate();
-    const { createCategory, isLoading, error } = useCategoryStore();
+    const { mutateAsync: createCategory, isPending } = useCreateCategoryMutation();
 
     const handleSubmit = async (data) => {
         try {
             await createCategory(data);
             toast.success('Category created successfully!');
+            navigate('/admin/categories');
         } catch (err) {
-            toast.error(err?.message || 'Failed to create category');
+            const errorMessage = err?.response?.data?.message || err?.message || 'Failed to create category';
+            toast.error(errorMessage);
         }
     };
 
@@ -41,20 +43,8 @@ const AddCategoryPage = () => {
                 </div>
             </div>
 
-            {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium rounded-xl px-4 py-3">
-                    {error}
-                </div>
-            )}
-
-            {isLoading && (
-                <div className="bg-blue-50 border border-blue-200 text-blue-600 text-sm font-medium rounded-xl px-4 py-3">
-                    Creating category...
-                </div>
-            )}
-
             {/* Form */}
-            <CategoryForm onSubmit={handleSubmit} />
+            <CategoryForm onSubmit={handleSubmit} isSubmitting={isPending} />
         </div>
     );
 };

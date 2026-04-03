@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import useCategoryStore from '@/store/useCategoryStore';
+import { useCategoriesQuery } from '@/hooks/useCategoryQueries';
 import CategoryHeader from '../components/CategoryHeader';
 import CategoryStatCard from '../components/CategoryStatCard';
 import CategoryTable from '../components/CategoryTable';
@@ -8,18 +9,8 @@ const CategoriesPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [statusFilter, setStatusFilter] = useState('all');
 
-    const categories = useCategoryStore((state) => state.categories);
-    const pagination = useCategoryStore((state) => state.pagination);
-    const isLoading = useCategoryStore((state) => state.isLoading);
-    const error = useCategoryStore((state) => state.error);
-    const hasFetched = useCategoryStore((state) => state.hasFetched);
-    const fetchCategories = useCategoryStore((state) => state.fetchCategories);
-
-    useEffect(() => {
-        if (!hasFetched) {
-            fetchCategories({ page: currentPage, limit: pagination.limit || 10 });
-        }
-    }, [currentPage, pagination.limit, hasFetched, fetchCategories]);
+    const { categories, pagination } = useCategoryStore();
+    const { isLoading, error } = useCategoriesQuery({ page: currentPage, limit: 10 });
 
     const filteredCategories = useMemo(() => {
         if (statusFilter === 'all') return categories;

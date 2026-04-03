@@ -1,23 +1,21 @@
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import useCustomerStore from '@/store/useCustomerStore';
+import { useCreateCustomerMutation } from '@/hooks/useCustomerQueries';
 import CustomerForm from '../components/CustomerForm';
 import * as toast from '@/utils/toast';
 
 const AddCustomerPage = () => {
     const navigate = useNavigate();
-    const { createCustomer, isLoading, error } = useCustomerStore();
+    const { mutateAsync: createCustomer, isPending } = useCreateCustomerMutation();
 
     const handleSubmit = async (data) => {
         try {
             await createCustomer(data);
             toast.success('Customer created successfully!');
-            // Wait 1.5 seconds before navigating to show the success message
-            setTimeout(() => {
-                navigate('/admin/customers');
-            }, 1500);
+            navigate('/admin/customers');
         } catch (err) {
-            toast.error(err?.message || 'Failed to create customer');
+            const errorMessage = err?.response?.data?.message || err?.message || 'Failed to create customer';
+            toast.error(errorMessage);
         }
     };
 
@@ -50,20 +48,8 @@ const AddCustomerPage = () => {
 
             </div>
 
-            {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium rounded-xl px-4 py-3">
-                    {error}
-                </div>
-            )}
-
-            {isLoading && (
-                <div className="bg-blue-50 border border-blue-200 text-blue-600 text-sm font-medium rounded-xl px-4 py-3">
-                    Creating customer...
-                </div>
-            )}
-
             {/* ─── Form ─────────────────────────────────────────────────── */}
-            <CustomerForm onSubmit={handleSubmit} />
+            <CustomerForm onSubmit={handleSubmit} isSubmitting={isPending} />
         </div>
     );
 };

@@ -3,12 +3,12 @@ import Input from '@common/Input';
 import Button from '@common/Button';
 import AuthLayout from '../components/AuthLayout';
 import { Link } from 'react-router';
-import useAuthStore from '@/store/useAuthStore';
+import { useForgotPasswordMutation } from '@/hooks/useAuthQueries';
 import * as toast from '@/utils/toast';
 
 const ForgotPassword = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { forgotPassword, isLoading } = useAuthStore();
+  const { mutateAsync: forgotPassword, isPending } = useForgotPasswordMutation();
 
   const onSubmit = async (data) => {
     try {
@@ -46,7 +46,7 @@ const ForgotPassword = () => {
         </div>
 
         <div>
-          <Button type="submit" className="shadow-lg shadow-primary/20" loading={isLoading} disabled={isLoading}>
+          <Button type="submit" className="shadow-lg shadow-primary/20" loading={isPending} disabled={isPending}>
             Send Reset Link
           </Button>
         </div>

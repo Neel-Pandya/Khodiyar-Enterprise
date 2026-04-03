@@ -2,11 +2,11 @@ import { Link } from 'react-router';
 import { Edit2, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import * as toast from '@/utils/toast';
-import useCategoryStore from '@/store/useCategoryStore';
+import { useDeleteCategoryMutation } from '@/hooks/useCategoryQueries';
 import ConfirmationModal from '@/components/ConfirmationModal';
 
 const CategoryTableRow = ({ category }) => {
-    const { deleteCategory } = useCategoryStore();
+    const { mutateAsync: deleteCategory, isPending } = useDeleteCategoryMutation();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleDelete = () => {
@@ -59,8 +59,8 @@ const CategoryTableRow = ({ category }) => {
                         </Link>
                         <button 
                             onClick={handleDelete}
-                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all hover:scale-110 active:scale-95"
-                            disabled={status === 'inactive'}
+                            disabled={isPending || status === 'inactive'}
+                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all hover:scale-110 active:scale-95 disabled:opacity-50"
                         >
                             <Trash2 size={16} />
                         </button>
