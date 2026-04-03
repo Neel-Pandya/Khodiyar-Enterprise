@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useParams, useLocation, Navigate } from 'react-router';
+import { useParams, useLocation } from 'react-router';
 import ProductImages from '../components/ProductImages';
 import ProductInfo from '../components/ProductInfo';
 import ProductTabs from '../components/ProductTabs';
 import DeliveryInfoCard from '../components/DeliveryInfoCard';
 import useProductStore from '../../../store/useProductStore';
+import useFavoriteStore from '../../../store/useFavoriteStore';
+import useAuthStore from '../../../store/useAuthStore';
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const location = useLocation();
   const { fetchProduct, isLoading, error } = useProductStore();
-  
+  const { checkFavorite } = useFavoriteStore();
+  const { user } = useAuthStore();
+
   const [product, setProduct] = useState(location.state?.product || null);
   const [loading, setLoading] = useState(!location.state?.product);
 
@@ -31,6 +35,13 @@ const ProductDetailsPage = () => {
       loadProduct();
     }
   }, [id, product, fetchProduct]);
+
+  // Check favorite status when product is loaded and user is logged in
+  useEffect(() => {
+    if (product?.id && user) {
+      checkFavorite(product.id);
+    }
+  }, [product?.id, user, checkFavorite]);
 
   // Show loading skeleton
   if (loading || isLoading) {
@@ -121,7 +132,8 @@ const ProductDetailsPage = () => {
 
             {/* RIGHT SIDE: Info */}
             <div className="flex flex-col">
-              <ProductInfo 
+              <ProductInfo
+                productId={productData.id}
                 category={productData.Category}
                 name={productData.Name}
                 price={productData.Price}

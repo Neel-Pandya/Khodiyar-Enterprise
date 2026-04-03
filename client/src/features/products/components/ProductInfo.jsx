@@ -1,10 +1,35 @@
 import { useNavigate } from 'react-router';
 import Button from '@common/Button';
 import { Heart, ShieldCheck, CreditCard, Zap } from 'lucide-react';
+import useFavoriteStore from '@/store/useFavoriteStore';
+import useAuthStore from '@/store/useAuthStore';
 
-const ProductInfo = ({ category, name, price, stockStatus }) => {
+const ProductInfo = ({ productId, category, name, price, stockStatus, isFavorite: initialIsFavorite = false }) => {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const { toggleFavorite, isToggling } = useFavoriteStore();
   const isInStock = stockStatus === 'In Stock';
+
+  const handleFavoriteClick = async () => {
+    if (!user) {
+      navigate('/login?redirect=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+
+    if (!productId || isToggling(productId)) return;
+
+    try {
+      await toggleFavorite(productId, { id: productId, name, price, category: { name: category } });
+    } catch (error) {
+      // Error is handled in store with rollback
+      console.error('Failed to toggle favorite:', error);
+    }
+  };
+
+  // Get current favorite state from store (for optimistic updates)
+  const { isFavorite: checkIsFavorite } = useFavoriteStore();
+  const currentIsFavorite = productId ? checkIsFavorite(productId) : initialIsFavorite;
+  const isLoading = productId ? isToggling(productId) : false;
 
   return (
     <div className="flex flex-col">
@@ -48,11 +73,23 @@ const ProductInfo = ({ category, name, price, stockStatus }) => {
             Add to Cart
           </Button>
         </div>
-        <button 
-          className="group h-[60px] w-full sm:w-[72px] flex items-center justify-center bg-white border-2 border-gray-200 rounded-2xl hover:border-red-500 hover:bg-red-50 transition-all cursor-pointer shadow-sm"
-          title="Add to Wishlist"
+        <button
+          onClick={handleFavoriteClick}
+          disabled={isLoading}
+          className={`group h-[60px] w-full sm:w-[72px] flex items-center justify-center bg-white border-2 rounded-2xl transition-all cursor-pointer shadow-sm disabled:opacity-50 ${
+            currentIsFavorite
+              ? 'border-red-500 bg-red-50'
+              : 'border-gray-200 hover:border-red-500 hover:bg-red-50'
+          }`}
+          title={currentIsFavorite ? 'Remove from Wishlist' : 'Add to Wishlist'}
         >
-          <Heart className="w-7 h-7 text-gray-400 group-hover:text-red-500 group-hover:fill-red-500 transition-all" />
+          <Heart
+            className={`w-7 h-7 transition-all ${
+              currentIsFavorite
+                ? 'text-red-500 fill-red-500'
+                : 'text-gray-400 group-hover:text-red-500 group-hover:fill-red-500'
+            }`}
+          />
         </button>
       </div>
 

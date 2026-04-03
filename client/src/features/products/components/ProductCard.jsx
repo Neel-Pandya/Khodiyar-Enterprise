@@ -19,6 +19,13 @@ const ProductCard = ({ product }) => {
             {product.category?.name}
           </span>
         </div>
+        <div className="absolute bottom-4 right-4">
+          {product.price && (
+            <span className="px-4 py-1.5 bg-primary text-white rounded-full text-sm font-black shadow-sm">
+              ₹{typeof product.price === 'number' ? product.price.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : product.price}
+            </span>
+          )}
+        </div>
       </div>
       <div className="p-8 flex flex-col flex-grow">
         <h3 className="text-xl font-black text-primary mb-6 transition-colors line-clamp-1">

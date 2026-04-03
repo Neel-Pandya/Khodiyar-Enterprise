@@ -1,15 +1,14 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Heart, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router';
 import Button from '@common/Button';
 import FavoriteCard from '../components/FavoriteCard';
-
-import { MOCK_FAVORITES } from '@data/mockFavorites';
+import useFavoriteStore from '@/store/useFavoriteStore';
 
 const FavoritesHeader = ({ count }) => (
   <div className="mb-12">
-    <Link 
-      to="/products" 
+    <Link
+      to="/products"
       className="inline-flex items-center gap-2 text-slate-500 hover:text-[#1e3a5f] transition-colors mb-6 font-semibold group"
     >
       <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
@@ -41,7 +40,7 @@ const EmptyFavorites = () => (
     </div>
     <h2 className="text-3xl font-black text-[#1e3a5f] mb-4">Your list is empty</h2>
     <p className="text-slate-500 max-w-md mb-10 font-medium leading-relaxed">
-      Looks like you haven't added any items to your favorites yet. Start exploring our premium collection of industrial components.
+      Looks like you haven&apos;t added any items to your favorites yet. Start exploring our premium collection of industrial components.
     </p>
     <Link to="/products">
       <Button variant="primary" className="px-12 py-4 rounded-2xl flex items-center gap-3 shadow-xl shadow-[#1e3a5f]/20">
@@ -53,28 +52,56 @@ const EmptyFavorites = () => (
 );
 
 const FavoritesPage = () => {
-  const [favorites, setFavorites] = useState(MOCK_FAVORITES);
+  const { favorites, pagination, isLoading, fetchFavorites, removeFavorite } = useFavoriteStore();
 
-  const handleRemove = (id) => {
-    setFavorites(prev => prev.filter(item => item.id !== id));
+  useEffect(() => {
+    fetchFavorites({ limit: 12 });
+  }, [fetchFavorites]);
+
+  const handleRemove = async (productId) => {
+    try {
+      await removeFavorite(productId);
+    } catch (error) {
+      console.error('Failed to remove favorite:', error);
+    }
   };
 
   const handleAddToCart = (product) => {
+    if (!product.is_active) return;
     // Logic for adding to cart
     console.log('Adding to cart:', product);
   };
 
+  // Extract product data from favorites (favorites contain product relation)
+  const products = favorites.map((f) => ({
+    ...f.product,
+    favoriteId: f.id,
+  }));
+
   return (
     <div className="min-h-screen bg-[#f8fafc] py-12 md:py-12">
       <div className="container mx-auto px-6">
-        <FavoritesHeader count={favorites.length} />
-        
-        {favorites.length > 0 ? (
+        <FavoritesHeader count={pagination.total} />
+
+        {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {favorites.map(product => (
-              <FavoriteCard 
-                key={product.id} 
-                product={product} 
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-white rounded-[2rem] overflow-hidden shadow-xl shadow-gray-200/50 border border-gray-50 h-[400px] animate-pulse">
+                <div className="h-48 bg-gray-200" />
+                <div className="p-6 space-y-4">
+                  <div className="h-6 bg-gray-200 rounded w-3/4" />
+                  <div className="h-4 bg-gray-200 rounded w-full" />
+                  <div className="h-10 bg-gray-200 rounded w-1/2 mt-8" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : products.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {products.map((product) => (
+              <FavoriteCard
+                key={product.id}
+                product={product}
                 onRemove={handleRemove}
                 onAddToCart={handleAddToCart}
               />

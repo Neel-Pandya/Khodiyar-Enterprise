@@ -28,7 +28,8 @@ const Products = () => {
               >
                 <div className="h-48 bg-gray-200 animate-pulse" />
                 <div className="p-6 flex flex-col flex-grow">
-                  <div className="h-6 bg-gray-200 rounded animate-pulse mb-6" />
+                  <div className="h-6 bg-gray-200 rounded animate-pulse mb-3" />
+                  <div className="h-5 bg-gray-200 rounded animate-pulse mb-6 w-1/2" />
                   <div className="h-12 bg-gray-200 rounded-xl animate-pulse" />
                 </div>
               </div>
@@ -82,7 +83,12 @@ const Products = () => {
                 <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold text-primary mb-6">{product.name}</h3>
+                <h3 className="text-xl font-bold text-primary mb-3">{product.name}</h3>
+                {product.price && (
+                  <p className="text-lg font-bold text-[#1e3a5f] mb-4">
+                    ₹{typeof product.price === 'number' ? product.price.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : product.price}
+                  </p>
+                )}
                 <button
                   onClick={() => navigate('/products')}
                   className="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-accent hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/10 cursor-pointer"
