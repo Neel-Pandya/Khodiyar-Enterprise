@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Filter, Search, Download, Eye, MoreHorizontal } from 'lucide-react';
+import { Search, X, Download, Eye, MoreHorizontal } from 'lucide-react';
 import ExportButton from '@admin/shared/components/ExportButton';
 import FilterButton from '@admin/shared/components/FilterButton';
-import FormField from '@admin/shared/components/FormField';
 import OrderActionsDropdown from './OrderActionsDropdown';
 
 const orderStatusConfig = {
@@ -42,6 +41,12 @@ const orderStatusConfig = {
         text: 'text-rose-600',
         dot: 'bg-rose-500',
         ring: 'ring-rose-200',
+    },
+    refunded: {
+        bg: 'bg-slate-50',
+        text: 'text-slate-600',
+        dot: 'bg-slate-400',
+        ring: 'ring-slate-200',
     },
 };
 
@@ -147,34 +152,52 @@ const OrdersTable = ({
 
     return (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-full">
-            {/* Table Controls */}
-            <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-end justify-between gap-4 bg-slate-50/30">
-                <div className="w-full md:w-80">
-                    <FormField
-                        icon={Search}
+            {/* Table Header and Search */}
+            <div className="px-6 py-5 border-b border-slate-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <h2 className="text-lg font-bold text-[#111827]">Order History</h2>
+                    <div className="flex items-center gap-3">
+                        {/*
+                        <FilterButton 
+                            options={[
+                                { label: 'All', value: 'all' },
+                                { label: 'Pending', value: 'pending' },
+                                { label: 'Confirmed', value: 'confirmed' },
+                                { label: 'Processing', value: 'processing' },
+                                { label: 'Shipped', value: 'shipped' },
+                                { label: 'Delivered', value: 'delivered' },
+                                { label: 'Cancelled', value: 'cancelled' },
+                                { label: 'Refunded', value: 'refunded' },
+                            ]} 
+                            onFilter={(value) => onFilterChange?.('status', value === 'all' ? '' : value)}
+                            className="flex-1 sm:flex-none"
+                        />
+                        <ExportButton 
+                            onExport={() => {}}
+                            className="flex-1 sm:flex-none"
+                        />
+                        */}
+                    </div>
+                </div>
+
+                {/* Search Bar */}
+                <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input
+                        type="text"
                         placeholder="Search by ID, customer or city..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="!gap-0"
+                        className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-[#fbbf24] transition-all placeholder:text-slate-400"
                     />
-                </div>
-                <div className="flex items-center gap-3">
-                    <FilterButton 
-                        options={[
-                            { label: 'All', value: '' },
-                            { label: 'Pending', value: 'pending' },
-                            { label: 'Confirmed', value: 'confirmed' },
-                            { label: 'Processing', value: 'processing' },
-                            { label: 'Shipped', value: 'shipped' },
-                            { label: 'Delivered', value: 'delivered' },
-                            { label: 'Cancelled', value: 'cancelled' },
-                        ]} 
-                        onSelect={(option) => onFilterChange?.('status', option.value)}
-                        selectedValue={activeFilters.status}
-                    />
-                    <ExportButton 
-                        onExport={() => {}}
-                    />
+                    {searchTerm && (
+                        <button
+                            onClick={() => setSearchTerm('')}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                            <X size={18} />
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -253,11 +276,13 @@ const OrdersTable = ({
                                             >
                                                 <Eye size={18} />
                                             </button>
+                                            {/*
                                             <OrderActionsDropdown
                                                 order={order}
                                                 onUpdateStatus={onUpdateStatus}
                                                 isUpdating={isUpdating}
                                             />
+                                            */}
                                         </div>
                                     </td>
                                 </tr>

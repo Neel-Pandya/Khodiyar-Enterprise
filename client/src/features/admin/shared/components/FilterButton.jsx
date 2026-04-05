@@ -4,6 +4,18 @@ import { Filter } from 'lucide-react';
 const FilterButton = ({ options = [], onFilter, className = "" }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeFilterValue, setActiveFilterValue] = useState('all');
+    const buttonRef = React.useRef(null);
+    const [dropdownStyle, setDropdownStyle] = React.useState({ top: 0, left: 0 });
+
+    React.useEffect(() => {
+        if (isOpen && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setDropdownStyle({
+                top: rect.bottom + 8,
+                left: rect.right - 192,
+            });
+        }
+    }, [isOpen]);
 
     const handleFilterClick = (opt) => {
         setActiveFilterValue(opt.value);
@@ -14,7 +26,7 @@ const FilterButton = ({ options = [], onFilter, className = "" }) => {
     const activeFilterLabel = options.find(opt => opt.value === activeFilterValue)?.label || 'All';
 
     return (
-        <div className={`relative ${className}`}>
+        <div className={`relative ${className}`} ref={buttonRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
@@ -31,11 +43,12 @@ const FilterButton = ({ options = [], onFilter, className = "" }) => {
             {isOpen && (
                 <>
                     <div
-                        className="fixed inset-0 z-10"
+                        className="fixed inset-0 z-40"
                         onClick={() => setIsOpen(false)}
                     />
                     <div
-                        className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-20"
+                        className="fixed w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50"
+                        style={dropdownStyle}
                     >
                         <p className="px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Filter By</p>
                         {options.map((opt) => (
