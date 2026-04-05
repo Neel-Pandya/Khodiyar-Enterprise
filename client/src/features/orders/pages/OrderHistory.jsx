@@ -1,25 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import OrderCard from '../components/OrderCard';
 import EmptyOrders from '../components/EmptyOrders';
-import { Filter, ChevronRight } from 'lucide-react';
-
-import { MOCK_ORDERS } from '@data/mockOrders';
+import { Filter, ChevronRight, Loader2, ArrowUpDown } from 'lucide-react';
+import { useOrdersQuery } from '@/hooks/useOrderQueries';
 
 const OrderHistoryPage = () => {
   const [filter, setFilter] = useState('all');
-  
-  // Using centralized mock orders data
-  const orders = MOCK_ORDERS;
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState('created_at');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const limit = 10;
 
-  const filteredOrders = filter === 'all' 
-    ? orders 
-    : orders.filter(o => o.status.toLowerCase() === filter);
+  const statusParam = filter === 'all' ? undefined : filter;
+  
+  const { data, isLoading, error } = useOrdersQuery({
+    page,
+    limit,
+    status: statusParam,
+    sort_by: sortBy,
+    sort_order: sortOrder,
+  });
+
+  const orders = data?.orders || [];
+  const pagination = data?.pagination;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const filterTabs = ['all', 'delivered', 'processing', 'cancelled'];
+  // Reset page when filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [filter]);
+
+  const filterTabs = ['all', 'pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+
+  const handleSort = (field) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(field);
+      setSortOrder('desc');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#fcfdfe] py-10 md:py-20">
@@ -60,16 +83,85 @@ const OrderHistoryPage = () => {
           </div>
         </header>
 
+        {/* Sort Controls */}
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <span className="text-sm font-semibold text-slate-500">Sort by:</span>
+          <button
+            onClick={() => handleSort('created_at')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+              sortBy === 'created_at' ? 'bg-primary text-white' : 'bg-white text-slate-600 border border-slate-200'
+            }`}
+          >
+            Date {sortBy === 'created_at' && (sortOrder === 'asc' ? '↑' : '↓')}
+          </button>
+          <button
+            onClick={() => handleSort('total_amount')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+              sortBy === 'total_amount' ? 'bg-primary text-white' : 'bg-white text-slate-600 border border-slate-200'
+            }`}
+          >
+            Amount {sortBy === 'total_amount' && (sortOrder === 'asc' ? '↑' : '↓')}
+          </button>
+          <button
+            onClick={() => handleSort('status')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+              sortBy === 'status' ? 'bg-primary text-white' : 'bg-white text-slate-600 border border-slate-200'
+            }`}
+          >
+            Status {sortBy === 'status' && (sortOrder === 'asc' ? '↑' : '↓')}
+          </button>
+        </div>
+
         {/* List */}
         <div className="grid gap-6 md:gap-10">
-          {filteredOrders.length > 0 ? (
-            filteredOrders.map(order => (
-              <OrderCard key={order.id} order={order} />
-            ))
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
+              <p className="text-slate-500 font-medium">Loading orders...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-20">
+              <p className="text-red-500 font-medium mb-2">Failed to load orders</p>
+              <p className="text-slate-400 text-sm">{error.message}</p>
+            </div>
+          ) : orders.length > 0 ? (
+            <>
+              {orders.map(order => (
+                <OrderCard key={order.id} order={order} />
+              ))}
+            </>
           ) : (
             <EmptyOrders />
           )}
         </div>
+
+        {/* Pagination */}
+        {!isLoading && !error && pagination && pagination.totalPages > 1 && (
+          <div className="flex items-center justify-between mt-8">
+            <p className="text-sm text-slate-500">
+              Showing {orders.length} of {pagination.total} orders
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={!pagination.hasPrev}
+                className="px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-colors"
+              >
+                Previous
+              </button>
+              <span className="px-4 py-2 text-sm font-semibold text-slate-700">
+                Page {pagination.page} of {pagination.totalPages}
+              </span>
+              <button
+                onClick={() => setPage(p => p + 1)}
+                disabled={!pagination.hasNext}
+                className="px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Support Section */}
         <div className="mt-16 md:mt-20 p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] bg-gradient-to-br from-primary to-blue-900 text-white relative overflow-hidden group">

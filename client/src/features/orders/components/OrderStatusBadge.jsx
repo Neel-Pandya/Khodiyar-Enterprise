@@ -7,8 +7,12 @@ import { CheckCircle2, Clock, Truck, XCircle } from 'lucide-react';
  */
 const OrderStatusBadge = ({ status }) => {
   const statusConfig = {
-    delivered: {
-      style: "bg-green-50 text-green-700 border-green-100",
+    pending: {
+      style: "bg-slate-50 text-slate-600 border-slate-100",
+      icon: <Clock size={12} className="mr-1.5" />
+    },
+    confirmed: {
+      style: "bg-indigo-50 text-indigo-700 border-indigo-100",
       icon: <CheckCircle2 size={12} className="mr-1.5" />
     },
     processing: {
@@ -18,6 +22,10 @@ const OrderStatusBadge = ({ status }) => {
     shipped: {
       style: "bg-blue-50 text-blue-700 border-blue-100",
       icon: <Truck size={12} className="mr-1.5" />
+    },
+    delivered: {
+      style: "bg-green-50 text-green-700 border-green-100",
+      icon: <CheckCircle2 size={12} className="mr-1.5" />
     },
     cancelled: {
       style: "bg-rose-50 text-rose-700 border-rose-100",

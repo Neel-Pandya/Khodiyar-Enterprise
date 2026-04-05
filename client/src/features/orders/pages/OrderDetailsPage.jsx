@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router';
 import OrderStatusBadge from '../components/OrderStatusBadge';
 import OrderItem from '../components/OrderItem';
-import { Download, ArrowLeft, Package, MapPin, CreditCard } from 'lucide-react';
+import { Download, ArrowLeft, Package, MapPin, CreditCard, Loader2 } from 'lucide-react';
 import Button from '@common/Button';
+import { useOrderByIdQuery } from '@/hooks/useOrderQueries';
+import { exportOrderInvoice } from '@/utils/orderInvoice';
 
 /**
  * Detailed Order Page.
@@ -11,45 +13,77 @@ import Button from '@common/Button';
  */
 const OrderDetailsPage = () => {
   const { id } = useParams();
+  const { data, isLoading, error } = useOrderByIdQuery(id);
+  const [isExporting, setIsExporting] = useState(false);
 
-  // Mocked data for demonstration
-  const orderDetails = {
-    id: "ORD-2024-1245",
-    date: "February 12, 2026",
-    status: "Delivered",
-    shipping: {
-      name: "Neel Pandya",
-      address: "123 Main Street",
-      city: "Mumbai, Maharashtra - 400001",
-      country: "India",
-      phone: "1234567801"
-    },
-    items: [
-      {
-        name: "Solar Panel - High Efficiency Module",
-        quantity: 2,
-        price: 29000,
-        image:
-          "https://images.unsplash.com/photo-1509391366360-fe5bb58583bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-      },
-      {
-        name: "Earthing Cable - 10mm",
-        quantity: 3,
-        price: 200,
-        image:
-          "https://images.unsplash.com/photo-1558449028-b53a39d100fc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-      }
-    ],
-    summary: {
-      subtotal: 58600,
-      shipping: 0
+  // Extract order from response
+  const order = data?.order;
+
+  // Format date
+  const formattedDate = order?.created_at 
+    ? new Date(order.created_at).toLocaleDateString('en-IN', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+      })
+    : '';
+
+  // Map order items for OrderItem component
+  const orderItems = order?.order_items?.map(item => ({
+    name: item.product?.name || 'Unknown Product',
+    quantity: item.quantity,
+    price: Number(item.price),
+    image: item.product?.images?.[0] || '/placeholder.jpg'
+  })) || [];
+
+  // Calculate totals
+  const subtotal = orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const shipping = 0;
+  const total = subtotal + shipping;
+
+  const handleDownloadInvoice = async () => {
+    if (!order || orderItems.length === 0) return;
+    setIsExporting(true);
+    try {
+      await exportOrderInvoice({ order, orderItems });
+    } catch (err) {
+      console.error('Failed to export invoice:', err);
+    } finally {
+      setIsExporting(false);
     }
   };
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = `Order Details #${id} | Khodiyar Enterprise`;
-  }, [id]);
+    if (order?.id) {
+      document.title = `Order #${order.id.slice(0, 8).toUpperCase()} | Khodiyar Enterprise`;
+    }
+  }, [order?.id]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#fcfdfe] flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
+          <p className="text-slate-500 font-medium">Loading order details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !order) {
+    return (
+      <div className="min-h-screen bg-[#fcfdfe] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 font-medium mb-2">Failed to load order</p>
+          <p className="text-slate-400 text-sm">{error?.message || 'Order not found'}</p>
+          <Link to="/orders" className="mt-4 inline-block text-primary font-bold hover:underline">
+            Back to Orders
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#fcfdfe] py-10 md:py-20">
@@ -68,26 +102,41 @@ const OrderDetailsPage = () => {
 
             <div>
               <h1 className="text-3xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-3 md:mb-4">
-                Order <span className="text-primary">#{orderDetails.id}</span>
+                Order <span className="text-primary">#{order.id.slice(0, 8).toUpperCase()}</span>
               </h1>
 
               <div className="flex flex-wrap items-center gap-2 md:gap-3">
-                <OrderStatusBadge status={orderDetails.status} />
+                <OrderStatusBadge status={order.status} />
                 <span className="hidden sm:block w-1 h-1 rounded-full bg-slate-200"></span>
 
                 <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
-                  Placed on {orderDetails.date}
+                  Placed on {formattedDate}
                 </p>
               </div>
             </div>
           </div>
 
           <div className="flex flex-col items-stretch md:items-end gap-3">
-            <Button className="!py-3.5 md:!py-4 !px-8 md:!px-10 !rounded-xl md:!rounded-2xl shadow-xl shadow-primary/10 flex items-center justify-center gap-3 group/dl">
-              <Download size={18} className="group-hover/dl:translate-y-0.5 transition-transform" />
-              <span className="text-[10px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap">
-                Download Invoice
-              </span>
+            <Button 
+              onClick={handleDownloadInvoice}
+              disabled={isExporting}
+              className="!py-3.5 md:!py-4 !px-8 md:!px-10 !rounded-xl md:!rounded-2xl shadow-xl shadow-primary/10 flex items-center justify-center gap-3 group/dl"
+            >
+              {isExporting ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  <span className="text-[10px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap">
+                    Generating...
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Download size={18} className="group-hover/dl:translate-y-0.5 transition-transform" />
+                  <span className="text-[10px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap">
+                    Download Invoice
+                  </span>
+                </>
+              )}
             </Button>
 
             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest px-1 text-center md:text-right">
@@ -114,13 +163,13 @@ const OrderDetailsPage = () => {
                   </h3>
 
                   <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mt-1">
-                    {orderDetails.items.length} Products
+                    {orderItems.length} Products
                   </p>
                 </div>
               </div>
 
               <div className="space-y-2">
-                {orderDetails.items.map((item, index) => (
+                {orderItems.map((item, index) => (
                   <OrderItem key={index} item={item} />
                 ))}
               </div>
@@ -147,15 +196,12 @@ const OrderDetailsPage = () => {
                   </p>
 
                   <p className="text-primary font-black text-base md:text-lg mb-2">
-                    {orderDetails.shipping.name}
+                    {order.full_name}
                   </p>
 
                   <div className="space-y-1 text-slate-500 text-xs md:text-sm font-bold">
-                    <p>{orderDetails.shipping.address}</p>
-                    <p>{orderDetails.shipping.city}</p>
-                    <p className="uppercase tracking-tight">
-                      {orderDetails.shipping.country}
-                    </p>
+                    <p>{order.address}</p>
+                    <p>{order.city}, {order.state} - {order.pincode}</p>
                   </div>
                 </div>
 
@@ -167,7 +213,7 @@ const OrderDetailsPage = () => {
                     </p>
 
                     <p className="text-lg md:text-xl font-black text-primary">
-                      {orderDetails.shipping.phone}
+                      {order.phone}
                     </p>
                   </div>
 
@@ -179,7 +225,7 @@ const OrderDetailsPage = () => {
                     </p>
 
                     <p className="text-xs md:text-sm font-black text-slate-600">
-                      Standard Delivery
+                      {order.payment_type === 'cod' ? 'Cash on Delivery' : 'Online Payment'}
                     </p>
                   </div>
 
@@ -212,7 +258,7 @@ const OrderDetailsPage = () => {
                   </span>
 
                   <span className="text-primary">
-                    ₹{orderDetails.summary.subtotal.toLocaleString()}
+                    ₹{subtotal.toLocaleString('en-IN')}
                   </span>
                 </div>
 
@@ -222,9 +268,7 @@ const OrderDetailsPage = () => {
                   </span>
 
                   <span className="text-green-600 font-black">
-                    {orderDetails.summary.shipping === 0
-                      ? "FREE"
-                      : `₹${orderDetails.summary.shipping.toLocaleString()}`}
+                    FREE
                   </span>
                 </div>
 
@@ -238,16 +282,17 @@ const OrderDetailsPage = () => {
                     </span>
 
                     <span className="text-4xl md:text-5xl font-black text-primary tracking-tighter">
-                      ₹{(
-                        orderDetails.summary.subtotal +
-                        orderDetails.summary.shipping
-                      ).toLocaleString()}
+                      ₹{total.toLocaleString('en-IN')}
                     </span>
                   </div>
 
-                  <div className="w-full inline-flex items-center justify-center gap-2 bg-green-50 text-green-600 px-4 md:px-5 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest border border-green-100 shadow-sm">
+                  <div className={`w-full inline-flex items-center justify-center gap-2 px-4 md:px-5 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest border shadow-sm ${
+                    order.payment_status === 'completed' 
+                      ? 'bg-green-50 text-green-600 border-green-100' 
+                      : 'bg-amber-50 text-amber-600 border-amber-100'
+                  }`}>
                     <CheckCircle2 size={16} />
-                    Transaction Secure
+                    {order.payment_status === 'completed' ? 'Payment Completed' : 'Payment Pending'}
                   </div>
                 </div>
               </div>

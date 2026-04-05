@@ -24,9 +24,13 @@ const validate =
     if (source === 'body') {
       req.body = result.data;
     } else {
-      // For query and params, we update properties to avoid "only a getter" error
-      // while still benefiting from Zod's coercion (e.g., string to number)
-      Object.assign(req[source], result.data);
+      // For query and params, we need to delete existing properties first
+      // then assign the validated data to ensure type coercion works
+      const sourceObj = req[source];
+      for (const key of Object.keys(sourceObj)) {
+        delete sourceObj[key];
+      }
+      Object.assign(sourceObj, result.data);
     }
     next();
   };
