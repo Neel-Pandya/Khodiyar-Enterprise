@@ -1,5 +1,5 @@
-import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { Search, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import ProductTableRow from './ProductTableRow';
 import FilterButton from '@admin/shared/components/FilterButton';
 import ExportButton from '@admin/shared/components/ExportButton';
@@ -8,8 +8,48 @@ import * as toast from '@/utils/toast';
 import { exportToPDF, exportToExcel, exportToCSV } from '@/utils/exportUtils';
 import logoSrc from '@/assets/Khodiyar_Enterprise.svg?raw';
 
-const ProductTable = ({ products }) => {
+const ProductTable = ({ products, status = 'all', isActive = 'all', search = '', onFilterChange, isLoading }) => {
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [searchInput, setSearchInput] = useState(search);
+
+    // Debounced search update
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchInput !== search) {
+                onFilterChange({ search: searchInput || null });
+            }
+        }, 400);
+        return () => clearTimeout(timer);
+    }, [searchInput, search, onFilterChange]);
+
+    // Sync searchInput with prop changes
+    useEffect(() => {
+        setSearchInput(search);
+    }, [search]);
+
+    const filterOptions = [
+        { label: 'All', value: 'all' },
+        { label: 'Available', value: 'available' },
+        { label: 'Out of Stock', value: 'out_of_stock' },
+        { label: 'Active', value: 'active' },
+        { label: 'Inactive', value: 'inactive' },
+    ];
+
+    const handleFilter = (value) => {
+        // Handle both stock status and active status in one filter
+        if (value === 'available' || value === 'out_of_stock') {
+            onFilterChange({ status: value, isActive: 'all' });
+        } else if (value === 'active' || value === 'inactive') {
+            onFilterChange({ status: 'all', isActive: value === 'active' ? 'true' : 'false' });
+        } else {
+            onFilterChange({ status: 'all', isActive: 'all' });
+        }
+    };
+
+    const clearSearch = () => {
+        setSearchInput('');
+        onFilterChange({ search: null });
+    };
     const handleExport = (format) => {
         const timestamp = new Date().toISOString().split('T')[0];
         const filename = `products-${timestamp}`;
@@ -41,10 +81,16 @@ const ProductTable = ({ products }) => {
                 p.status === 'available' ? 'Available' : 'Out of Stock'
             ]);
 
+            const filterDescription = [
+                search && `Search: "${search}"`,
+                status !== 'all' && `Status: ${status}`,
+                isActive !== 'all' && `Active: ${isActive === 'true' ? 'Yes' : 'No'}`
+            ].filter(Boolean).join(' | ') || 'All products';
+
             await exportToPDF({
                 filename,
                 title: 'Products Report',
-                subtitle: `Total Records: ${products.length}`,
+                subtitle: `Total Records: ${products.length} | ${filterDescription}`,
                 headers,
                 data,
                 logoSrc,
@@ -95,7 +141,21 @@ const ProductTable = ({ products }) => {
                 'Stock Status': p.status === 'available' ? 'Available' : 'Out of Stock',
             }));
 
-            exportToExcel({ filename, sheetName: 'Products', data });
+            const filterDescription = [
+                search && `Search: "${search}"`,
+                status !== 'all' && `Status: ${status}`,
+                isActive !== 'all' && `Active: ${isActive === 'true' ? 'Yes' : 'No'}`
+            ].filter(Boolean).join(' | ') || 'All products';
+
+            exportToExcel({
+                filename,
+                sheetName: 'Products',
+                data,
+                metadata: {
+                    title: 'Products Report',
+                    filterDescription
+                }
+            });
             toast.success('Excel exported successfully!');
         } catch (error) {
             console.error('Excel Export Error:', error);
@@ -114,7 +174,13 @@ const ProductTable = ({ products }) => {
                 'Stock Status': p.status === 'available' ? 'Available' : 'Out of Stock',
             }));
 
-            exportToCSV({ filename, data });
+            const filterDescription = [
+                search && `Search: "${search}"`,
+                status !== 'all' && `Status: ${status}`,
+                isActive !== 'all' && `Active: ${isActive === 'true' ? 'Yes' : 'No'}`
+            ].filter(Boolean).join(' | ') || 'All products';
+
+            exportToCSV({ filename, data, metadata: { filterDescription } });
             toast.success('CSV exported successfully!');
         } catch (error) {
             console.error('CSV Export Error:', error);
@@ -126,13 +192,6 @@ const ProductTable = ({ products }) => {
         setIsExportModalOpen(true);
     };
 
-    const filterOptions = [
-        { label: 'By Name' },
-        { label: 'By Category' },
-        { label: 'By Status' },
-        { label: 'Low Stock' },
-    ];
-
     return (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-8">
             {/* Table Header and Search */}
@@ -140,7 +199,7 @@ const ProductTable = ({ products }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <h2 className="text-lg font-bold text-[#111827]">All Products</h2>
                     <div className="flex items-center gap-3">
-                        <FilterButton options={filterOptions} className="flex-1 sm:flex-none" />
+                        <FilterButton options={filterOptions} onFilter={handleFilter} className="flex-1 sm:flex-none" />
                         <ExportButton onExport={openExportModal} className="flex-1 sm:flex-none" />
                     </div>
                 </div>
@@ -151,8 +210,18 @@ const ProductTable = ({ products }) => {
                     <input
                         type="text"
                         placeholder="Search products by name or category..."
-                        className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-[#fbbf24] transition-all placeholder:text-slate-400"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-[#fbbf24] transition-all placeholder:text-slate-400"
                     />
+                    {searchInput && (
+                        <button
+                            onClick={clearSearch}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                            <X size={18} />
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -170,10 +239,23 @@ const ProductTable = ({ products }) => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {products.length === 0 ? (
+                        {isLoading ? (
                             <tr>
                                 <td colSpan={6} className="px-6 py-16 text-center">
-                                    <p className="text-sm font-medium text-slate-400">No Products Available</p>
+                                    <div className="flex items-center justify-center gap-3">
+                                        <div className="w-5 h-5 border-2 border-slate-200 border-t-[#fbc02d] rounded-full animate-spin" />
+                                        <p className="text-sm font-medium text-slate-500">Loading products...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : products.length === 0 ? (
+                            <tr>
+                                <td colSpan={6} className="px-6 py-16 text-center">
+                                    <p className="text-sm font-medium text-slate-400">
+                                        {search || status !== 'all' || isActive !== 'all'
+                                            ? `No products found${search ? ` matching "${search}"` : ''}${status !== 'all' ? ` with status "${status}"` : ''}${isActive !== 'all' ? ` with active "${isActive === 'true' ? 'Yes' : 'No'}"` : ''}`
+                                            : 'No products available'}
+                                    </p>
                                 </td>
                             </tr>
                         ) : (
