@@ -104,8 +104,8 @@ class UserService {
   }
 
   /**
-   * Get all users (Admin only) with pagination
-   * @param {Object} query - Query parameters {page, limit}
+   * Get all users (Admin only) with pagination, search, and status filter
+   * @param {Object} query - Query parameters {page, limit, role, status, search}
    * @returns {Promise<Object>} Users and pagination metadata
    */
   async getAllUsers(query = {}) {
@@ -114,9 +114,26 @@ class UserService {
     const skip = (page - 1) * limit;
 
     try {
+      // Build dynamic where clause
       const where = {};
+
+      // Role filter
       if (query.role) {
         where.role = query.role;
+      }
+
+      // Status filter (ignore 'all' or undefined)
+      if (query.status && query.status !== 'all') {
+        where.status = query.status;
+      }
+
+      // Search by name or email (case-insensitive)
+      if (query.search && query.search.trim()) {
+        const searchTerm = query.search.trim();
+        where.OR = [
+          { name: { contains: searchTerm, mode: 'insensitive' } },
+          { email: { contains: searchTerm, mode: 'insensitive' } },
+        ];
       }
 
       const [users, total] = await prisma.$transaction([

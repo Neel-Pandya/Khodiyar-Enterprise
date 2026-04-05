@@ -1,5 +1,5 @@
-import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { Search, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import CustomerTableRow from './CustomerTableRow';
 import FilterButton from '@admin/shared/components/FilterButton';
 import ExportButton from '@admin/shared/components/ExportButton';
@@ -8,13 +8,40 @@ import * as toast from '@/utils/toast';
 import { exportToPDF, exportToExcel, exportToCSV } from '@/utils/exportUtils';
 import logoSrc from '@/assets/Khodiyar_Enterprise.svg?raw';
 
-const CustomerTable = ({ customers }) => {
+const CustomerTable = ({ customers, status = 'all', search = '', onFilterChange, isLoading }) => {
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [searchInput, setSearchInput] = useState(search);
+
+    // Debounced search update
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchInput !== search) {
+                onFilterChange({ search: searchInput || null });
+            }
+        }, 400);
+        return () => clearTimeout(timer);
+    }, [searchInput, search, onFilterChange]);
+
+    // Sync searchInput with prop changes (e.g., from URL)
+    useEffect(() => {
+        setSearchInput(search);
+    }, [search]);
+
     const filterOptions = [
-        { label: 'By Name' },
-        { label: 'By Email' },
-        { label: 'By Status' },
+        { label: 'All', value: 'all' },
+        { label: 'Active', value: 'active' },
+        { label: 'Inactive', value: 'inactive' },
+        { label: 'Suspended', value: 'suspended' },
     ];
+
+    const handleFilter = (value) => {
+        onFilterChange({ status: value });
+    };
+
+    const clearSearch = () => {
+        setSearchInput('');
+        onFilterChange({ search: null });
+    };
 
     const handleExport = (format) => {
         const timestamp = new Date().toISOString().split('T')[0];
@@ -44,10 +71,15 @@ const CustomerTable = ({ customers }) => {
                 c.status?.toUpperCase() || ''
             ]);
 
+            const filterDescription = [
+                search && `Search: "${search}"`,
+                status !== 'all' && `Status: ${status}`
+            ].filter(Boolean).join(' | ') || 'All customers';
+
             await exportToPDF({
                 filename,
                 title: 'Customers Report',
-                subtitle: `Total Records: ${customers.length}`,
+                subtitle: `Total Records: ${customers.length} | ${filterDescription}`,
                 headers,
                 data,
                 logoSrc,
@@ -84,10 +116,24 @@ const CustomerTable = ({ customers }) => {
                 Email: c.email,
                 Status: c.status,
             }));
+
+            const filterDescription = [
+                search && `Search: "${search}"`,
+                status !== 'all' && `Status: ${status}`
+            ].filter(Boolean).join(' | ') || 'All customers';
             
-            exportToExcel({ filename, sheetName: 'Customers', data });
+            exportToExcel({ 
+                filename, 
+                sheetName: 'Customers', 
+                data,
+                metadata: {
+                    title: 'Customers Report',
+                    filterDescription
+                }
+            });
             toast.success('Excel exported successfully!');
         } catch (error) {
+            console.error('Excel Export Error:', error);
             toast.error('Failed to export Excel');
         }
     };
@@ -99,10 +145,16 @@ const CustomerTable = ({ customers }) => {
                 Email: c.email,
                 Status: c.status,
             }));
+
+            const filterDescription = [
+                search && `Search: "${search}"`,
+                status !== 'all' && `Status: ${status}`
+            ].filter(Boolean).join(' | ') || 'All customers';
             
-            exportToCSV({ filename, data });
+            exportToCSV({ filename, data, metadata: { filterDescription } });
             toast.success('CSV exported successfully!');
         } catch (error) {
+            console.error('CSV Export Error:', error);
             toast.error('Failed to export CSV');
         }
     };
@@ -118,7 +170,7 @@ const CustomerTable = ({ customers }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <h2 className="text-lg font-semibold text-[#111827]">All Customers</h2>
                     <div className="flex items-center gap-3">
-                        <FilterButton options={filterOptions} className="flex-1 sm:flex-none" />
+                        <FilterButton options={filterOptions} onFilter={handleFilter} className="flex-1 sm:flex-none" />
                         <ExportButton onExport={openExportModal} className="flex-1 sm:flex-none" />
                     </div>
                 </div>
@@ -129,8 +181,18 @@ const CustomerTable = ({ customers }) => {
                     <input
                         type="text"
                         placeholder="Search customers by name or email..."
-                        className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-[#fbbf24] transition-all placeholder:text-slate-400"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-[#fbbf24] transition-all placeholder:text-slate-400"
                     />
+                    {searchInput && (
+                        <button
+                            onClick={clearSearch}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                            <X size={18} />
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -146,9 +208,30 @@ const CustomerTable = ({ customers }) => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {customers.map((customer, i) => (
-                            <CustomerTableRow key={customer.id} customer={customer} index={i} />
-                        ))}
+                        {isLoading ? (
+                            <tr>
+                                <td colSpan={4} className="px-6 py-16 text-center">
+                                    <div className="flex items-center justify-center gap-3">
+                                        <div className="w-5 h-5 border-2 border-slate-200 border-t-[#fbc02d] rounded-full animate-spin" />
+                                        <p className="text-sm font-medium text-slate-500">Loading customers...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : customers.length === 0 ? (
+                            <tr>
+                                <td colSpan={4} className="px-6 py-16 text-center">
+                                    <p className="text-sm font-medium text-slate-400">
+                                        {search || status !== 'all'
+                                            ? `No customers found${search ? ` matching "${search}"` : ''}${status !== 'all' ? ` with status "${status}"` : ''}`
+                                            : 'No customers available'}
+                                    </p>
+                                </td>
+                            </tr>
+                        ) : (
+                            customers.map((customer, i) => (
+                                <CustomerTableRow key={customer.id} customer={customer} index={i} />
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>

@@ -7,9 +7,27 @@ import CustomerTable from '../components/CustomerTable';
 
 const CustomersPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const { customers, pagination } = useCustomerStore();
-    const { isLoading, error } = useCustomersQuery({ page: currentPage, limit: 10 });
+    const { isLoading, error } = useCustomersQuery({ 
+        page: currentPage, 
+        limit: 10,
+        status: statusFilter === 'all' ? undefined : statusFilter,
+        search: searchQuery || undefined,
+    });
+
+    // Handle filter changes and reset to page 1
+    const handleFilterChange = (updates) => {
+        if (updates.status !== undefined) {
+            setStatusFilter(updates.status || 'all');
+        }
+        if (updates.search !== undefined) {
+            setSearchQuery(updates.search || '');
+        }
+        setCurrentPage(1); // Reset to first page on filter change
+    };
 
     const normalizedCustomers = useMemo(() => {
         const toDisplayStatus = (status) => {
@@ -104,38 +122,36 @@ const CustomersPage = () => {
 
             {/* Customer List Section */}
             <div>
-                {isLoading ? (
-                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mt-8 px-6 py-8 text-sm font-medium text-slate-500">
-                        Loading customers...
-                    </div>
-                ) : (
-                    <>
-                        <CustomerTable customers={normalizedCustomers} />
+                <CustomerTable 
+                    customers={normalizedCustomers} 
+                    status={statusFilter}
+                    search={searchQuery}
+                    onFilterChange={handleFilterChange}
+                    isLoading={isLoading}
+                />
 
-                        {(pagination.totalPages || 1) > 1 && (
-                            <div className="mt-4 px-1 flex flex-col sm:flex-row items-center justify-between gap-4">
-                                <p className="text-xs font-medium text-slate-400">
-                                    Page <span className="text-slate-800 font-bold">{pagination.page || currentPage}</span> of <span className="text-slate-800 font-bold">{pagination.totalPages}</span>
-                                </p>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => canGoPrev && setCurrentPage((prev) => prev - 1)}
-                                        disabled={!canGoPrev}
-                                        className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        Previous
-                                    </button>
-                                    <button
-                                        onClick={() => canGoNext && setCurrentPage((prev) => prev + 1)}
-                                        disabled={!canGoNext}
-                                        className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        Next
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </>
+                {!isLoading && (pagination.totalPages || 1) > 1 && (
+                    <div className="mt-4 px-1 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <p className="text-xs font-medium text-slate-400">
+                            Page <span className="text-slate-800 font-bold">{pagination.page || currentPage}</span> of <span className="text-slate-800 font-bold">{pagination.totalPages}</span>
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => canGoPrev && setCurrentPage((prev) => prev - 1)}
+                                disabled={!canGoPrev}
+                                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Previous
+                            </button>
+                            <button
+                                onClick={() => canGoNext && setCurrentPage((prev) => prev + 1)}
+                                disabled={!canGoNext}
+                                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
                 )}
             </div>
         </div>
