@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import authenticate from '../middlewares/jwt.middleware.js';
+import authorize from '../middlewares/authorize.middleware.js';
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import categoryRoutes from './category.routes.js';
@@ -7,6 +9,7 @@ import favoriteRoutes from './favorite.routes.js';
 import cartRoutes from './cart.routes.js';
 import orderRoutes from './order.routes.js';
 import paymentRoutes from './payment.routes.js';
+import adminOrderRoutes from './adminOrder.routes.js';
 
 const router = Router();
 
@@ -19,5 +22,8 @@ router.use('/favorites', favoriteRoutes);
 router.use('/cart', cartRoutes);
 router.use('/orders', orderRoutes);
 router.use('/payments', paymentRoutes);
+
+// Admin routes - protected with authenticate + authorize middleware
+router.use('/admin/orders', authenticate, authorize('admin'), adminOrderRoutes);
 
 export default router;

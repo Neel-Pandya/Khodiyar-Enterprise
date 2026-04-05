@@ -15,6 +15,7 @@ import ProductsPage from '@admin/products/pages/ProductsPage';
 import AddProductPage from '@admin/products/pages/AddProductPage';
 import EditProductPage from '@admin/products/pages/EditProductPage';
 import OrdersPage from '@admin/orders/pages/OrdersPage';
+import OrderDetailsPage from '@admin/orders/pages/OrderDetailsPage';
 import SettingsPage from '@admin/settings/pages/SettingsPage';
 import AdminProtectedRoute from './AdminProtectedRoute';
 
@@ -34,6 +35,7 @@ const AdminRoutes = () => {
                 <Route path="products/add" element={<AddProductPage />} />
                 <Route path="products/edit/:id" element={<EditProductPage />} />
                 <Route path="orders" element={<OrdersPage />} />
+                <Route path="orders/:orderId" element={<OrderDetailsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
             </Route>
