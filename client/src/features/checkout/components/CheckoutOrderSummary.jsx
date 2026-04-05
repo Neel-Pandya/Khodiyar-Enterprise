@@ -3,7 +3,7 @@ import { ShieldCheck, ArrowRight, Loader2 } from 'lucide-react';
 import Button from '@common/Button';
 import useCartStore from '@/store/useCartStore';
 
-const CheckoutOrderSummary = ({ onPlaceOrder, isSubmitting }) => {
+const CheckoutOrderSummary = ({ onPlaceOrder, isSubmitting, paymentType }) => {
   const { cartItems } = useCartStore();
 
   const subtotal = cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
@@ -62,11 +62,11 @@ const CheckoutOrderSummary = ({ onPlaceOrder, isSubmitting }) => {
         {isSubmitting ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
-            Processing...
+            {paymentType === 'online' ? 'Processing Payment...' : 'Placing Order...'}
           </>
         ) : (
           <>
-            Place Order 
+            {paymentType === 'online' ? 'Pay & Place Order' : 'Place Order'}
             <ArrowRight size={20} />
           </>
         )}

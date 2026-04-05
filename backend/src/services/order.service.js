@@ -228,7 +228,20 @@ class OrderService {
    */
   async sendOrderConfirmation(order, orderItems) {
     try {
-      await emailService.sendOrderConfirmationEmail(order.email, order.full_name, order, orderItems);
+      // Fetch product names for order items
+      const productIds = orderItems.map(item => item.product_id);
+      const products = await prisma.product.findMany({
+        where: { id: { in: productIds } },
+        select: { id: true, name: true }
+      });
+      
+      // Attach product names to order items
+      const orderItemsWithProduct = orderItems.map(item => ({
+        ...item,
+        product: products.find(p => p.id === item.product_id)
+      }));
+      
+      await emailService.sendOrderConfirmationEmail(order.email, order.full_name, order, orderItemsWithProduct);
     } catch (emailError) {
       logger.error('Failed to send order confirmation email', { error: emailError.message });
     }

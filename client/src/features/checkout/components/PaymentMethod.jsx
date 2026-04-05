@@ -14,9 +14,9 @@ const PaymentMethod = ({ selectedMethod, setSelectedMethod }) => {
     {
       id: 'online',
       title: 'Online Payment',
-      description: 'Coming Soon - UPI, Credit/Debit Card, Net Banking',
+      description: 'Secure payment via UPI, Credit/Debit Card, Net Banking',
       icon: <CreditCard className="w-6 h-6 text-blue-500" />,
-      disabled: true
+      disabled: false
     }
   ];
 
@@ -60,9 +60,6 @@ const PaymentMethod = ({ selectedMethod, setSelectedMethod }) => {
                   {method.title}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">{method.description}</p>
-                {method.disabled && (
-                  <span className="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-gray-200 text-gray-600 rounded">Coming Soon</span>
-                )}
               </div>
             </div>
           </label>

@@ -27,9 +27,9 @@ export const useCreateOrderMutation = () => {
     onError: (error) => {
       // Handle 409 stock conflict specifically
       if (error.response?.status === 409) {
-        toastError(error.response?.data?.message || 'Some items are out of stock');
+        toastError(error?.message || 'Some items are out of stock');
       } else {
-        const message = error.response?.data?.message || 'Failed to place order';
+        const message = error?.message || 'Failed to place order';
         toastError(message);
       }
     },
@@ -73,7 +73,7 @@ export const useCancelOrderMutation = () => {
       queryClient.invalidateQueries({ queryKey: orderKeys.all });
     },
     onError: (error) => {
-      const message = error.response?.data?.message || 'Failed to cancel order';
+      const message = error?.message || 'Failed to cancel order';
       toastError(message);
     },
   });

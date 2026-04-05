@@ -5,32 +5,90 @@ import DeliveryAddress from '../components/DeliveryAddress';
 import PaymentMethod from '../components/PaymentMethod';
 import CheckoutOrderSummary from '../components/CheckoutOrderSummary';
 import { useCreateOrderMutation } from '@/hooks/useOrderQueries';
+import { useCreateRazorpayOrderMutation, useVerifyPaymentMutation } from '@/hooks/usePaymentQueries';
+import { useRazorpay } from '@/hooks/useRazorpay';
 import useCartStore from '@/store/useCartStore';
+import useAuthStore from '@/store/useAuthStore';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cartItems } = useCartStore();
+  const { user } = useAuthStore();
   const createOrderMutation = useCreateOrderMutation();
+  const createRazorpayOrderMutation = useCreateRazorpayOrderMutation();
+  const verifyPaymentMutation = useVerifyPaymentMutation();
+  const { openRazorpayModal } = useRazorpay();
 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [paymentType, setPaymentType] = useState('cod');
 
-  const onSubmit = (formData) => {
+  const onSubmit = async (formData) => {
     if (cartItems.length === 0) {
       return;
     }
 
-    const orderData = {
-      ...formData,
-      payment_type: paymentType,
-    };
+    if (paymentType === 'online') {
+      try {
+        // 1. Create Razorpay order
+        const response = await createRazorpayOrderMutation.mutateAsync();
+        const { order_id, amount, currency, key_id } = response.data;
 
-    createOrderMutation.mutate(orderData, {
-      onSuccess: () => {
-        navigate('/orders');
-      },
-    });
+        // 2. Open Razorpay checkout modal
+        const razorpayResponse = await openRazorpayModal({
+          key: key_id,
+          amount: amount,
+          currency: currency,
+          order_id: order_id,
+          name: 'Khodiyar Enterprise',
+          description: 'Order Payment',
+          prefill: {
+            name: formData.full_name,
+            email: user?.email || '',
+            contact: formData.phone,
+          },
+          theme: {
+            color: '#1e3a5f',
+          },
+        });
+
+        // 3. Verify payment and create order
+        await verifyPaymentMutation.mutateAsync({
+          razorpay_order_id: razorpayResponse.razorpay_order_id,
+          razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+          razorpay_signature: razorpayResponse.razorpay_signature,
+          full_name: formData.full_name,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+        }, {
+          onSuccess: () => {
+            navigate('/orders');
+          },
+        });
+      } catch (error) {
+        // Error is handled by mutation onError callbacks
+        console.error('Payment flow error:', error);
+      }
+    } else {
+      // COD flow - existing behavior
+      const orderData = {
+        ...formData,
+        payment_type: 'cod',
+      };
+
+      createOrderMutation.mutate(orderData, {
+        onSuccess: () => {
+          navigate('/orders');
+        },
+      });
+    }
   };
+
+  const isSubmitting = createOrderMutation.isPending || 
+                       createRazorpayOrderMutation.isPending || 
+                       verifyPaymentMutation.isPending;
   return (
     <div className="min-h-screen pt-12 pb-24 bg-[#FAFBFC]">
       <div className="container px-6 mx-auto">
@@ -63,7 +121,8 @@ const CheckoutPage = () => {
           <div className="lg:col-span-4 relative">
             <CheckoutOrderSummary 
               onPlaceOrder={handleSubmit(onSubmit)}
-              isSubmitting={createOrderMutation.isPending}
+              isSubmitting={isSubmitting}
+              paymentType={paymentType}
             />
           </div>
 
