@@ -20,6 +20,7 @@ model User {
   passwordReset PasswordReset?
   verification  Verification?
   favorites     Favorite[]
+  carts         Cart[]
 
   @@map("users")
 }
@@ -81,6 +82,7 @@ model Product {
   is_active      Boolean       @default(true)
   category       Category      @relation(fields: [category_id], references: [id])
   favorites      Favorite[]
+  carts          Cart[]
 
   @@map("products")
 }
@@ -116,4 +118,19 @@ model Favorite {
 
   @@unique([user_id, product_id])
   @@map("favorites")
+}
+
+model Cart {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.Uuid
+  product_id String   @db.Uuid
+  quantity   Int      @default(1)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, product_id])
+  @@map("carts")
 }

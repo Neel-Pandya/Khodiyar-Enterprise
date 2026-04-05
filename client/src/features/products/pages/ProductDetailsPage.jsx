@@ -73,6 +73,7 @@ const ProductDetailsPage = () => {
     Specifications: product.specification || '<p>No specifications available.</p>',
     Included: product.included || '',
     StockStatus: product.stock_quantity > 0 ? 'In Stock' : 'Out of Stock',
+    StockQuantity: product.stock_quantity || 0,
   };
 
   return (
@@ -120,6 +121,7 @@ const ProductDetailsPage = () => {
                 name={productData.Name}
                 price={productData.Price}
                 stockStatus={productData.StockStatus}
+                stockQuantity={productData.StockQuantity}
               />
             </div>
           </div>

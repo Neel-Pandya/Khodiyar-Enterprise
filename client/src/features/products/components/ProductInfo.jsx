@@ -1,20 +1,33 @@
 import { useNavigate } from 'react-router';
 import Button from '@common/Button';
-import { Heart, ShieldCheck, CreditCard, Zap } from 'lucide-react';
+import { Heart, ShieldCheck, CreditCard, Zap, Loader2 } from 'lucide-react';
 import useFavoriteStore from '@/store/useFavoriteStore';
 import { useToggleFavoriteMutation } from '@/hooks/useFavoriteQueries';
+import { useAddToCartMutation } from '@/hooks/useCartQueries';
 import useAuthStore from '@/store/useAuthStore';
 
-const ProductInfo = ({ productId, category, name, price, stockStatus, isFavorite: initialIsFavorite = false }) => {
+const ProductInfo = ({ productId, category, name, price, stockStatus, stockQuantity, isFavorite: initialIsFavorite = false }) => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { optimisticToggle, completeToggle, rollbackToggle, isFavorite, isToggling } = useFavoriteStore();
   const { mutateAsync: toggleFavoriteApi } = useToggleFavoriteMutation();
-  const isInStock = stockStatus === 'In Stock';
+  const { mutate: addToCart, isPending: isAddingToCart } = useAddToCartMutation();
+  const isInStock = stockStatus === 'In Stock' && stockQuantity > 0;
+
+  const handleAddToCart = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    if (!isInStock) return;
+
+    addToCart(productId);
+  };
 
   const handleFavoriteClick = async () => {
     if (!user) {
-      navigate('/login?redirect=' + encodeURIComponent(window.location.pathname));
+      navigate('/login');
       return;
     }
 
@@ -73,12 +86,22 @@ const ProductInfo = ({ productId, category, name, price, stockStatus, isFavorite
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-4 w-full border-t border-gray-100 pt-8 mt-4">
         <div className="flex-1">
-          <Button 
-            variant="primary" 
-            className="w-full shadow-xl shadow-blue-500/30 rounded-2xl text-lg h-[60px] font-bold tracking-wide hover:-translate-y-0.5 transition-transform"
-            onClick={() => navigate('/cart')}
+          <Button
+            variant="primary"
+            className="w-full shadow-xl shadow-blue-500/30 rounded-2xl text-lg h-[60px] font-bold tracking-wide hover:-translate-y-0.5 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+            onClick={handleAddToCart}
+            disabled={!isInStock || isAddingToCart}
           >
-            Add to Cart
+            {isAddingToCart ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Adding...
+              </span>
+            ) : !isInStock ? (
+              'Out of Stock'
+            ) : (
+              'Add to Cart'
+            )}
           </Button>
         </div>
         <button

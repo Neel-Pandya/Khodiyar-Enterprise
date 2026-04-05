@@ -66,14 +66,12 @@ const FavoritesPage = () => {
       // Rollback on error
       rollbackRemove(previousState);
       toast.error(error.message);
-      console.error('Failed to remove favorite:', error);
     }
   };
 
   const handleAddToCart = (product) => {
     if (!product.is_active) return;
     // Logic for adding to cart
-    console.log('Adding to cart:', product);
   };
 
   // Extract product data from favorites (favorites contain product relation)

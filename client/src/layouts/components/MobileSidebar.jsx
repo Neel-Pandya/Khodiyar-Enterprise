@@ -1,6 +1,7 @@
 import { NavLink, Link } from 'react-router';
 import { X, ChevronRight, Heart, ShoppingCart, User, Lock, LogOut, ArrowRight, Mail, Phone, MapPin } from 'lucide-react';
 import useAuthStore from '../../store/useAuthStore';
+import useCartStore from '../../store/useCartStore';
 
 const MobileSidebar = ({ 
   isOpen, 
@@ -11,6 +12,7 @@ const MobileSidebar = ({
   handleLogout
 }) => {
   const { user } = useAuthStore();
+  const { cartCount } = useCartStore();
   return (
     <>
       {/* Backdrop */}
@@ -78,7 +80,12 @@ const MobileSidebar = ({
                   <div className="p-2 bg-slate-100 rounded-xl"><Heart size={20} /></div> Favorites
                 </Link>
                 <Link to="/cart" onClick={onClose} className="flex items-center gap-4 p-4 rounded-2xl text-slate-800 hover:bg-slate-50 hover:text-primary transition-all font-semibold">
-                  <div className="p-2 bg-slate-100 rounded-xl"><ShoppingCart size={20} /></div> Cart
+                  <div className="p-2 bg-slate-100 rounded-xl relative">
+                    <ShoppingCart size={20} />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-secondary text-primary text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full border-2 border-white">{cartCount}</span>
+                    )}
+                  </div> Cart
                 </Link>
                 <Link to="/profile" onClick={onClose} className="flex items-center gap-4 p-4 rounded-2xl text-slate-800 hover:bg-slate-50 hover:text-primary transition-all font-semibold">
                   <div className="p-2 bg-slate-100 rounded-xl"><User size={20} /></div> Edit Profile
