@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminOrderApi } from '@/api/adminOrderApi';
+import { dashboardKeys } from './useDashboardQueries';
 
 // Query keys
 export const adminOrderKeys = {
@@ -57,6 +58,9 @@ export const useUpdateOrderStatusMutation = () => {
       queryClient.invalidateQueries({
         queryKey: adminOrderKeys.detail(variables.orderId),
       });
+      // Invalidate dashboard queries to refresh stats (monthly revenue, etc.)
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.stats() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.recentOrders() });
     },
   });
 };
