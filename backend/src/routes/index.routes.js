@@ -9,6 +9,7 @@ import cartRoutes from './cart.routes.js';
 import orderRoutes from './order.routes.js';
 import paymentRoutes from './payment.routes.js';
 import adminOrderRoutes from './adminOrder.routes.js';
+import dashboardRoutes from './dashboard.routes.js';
 
 const router = Router();
 
@@ -23,5 +24,6 @@ router.use('/payments', paymentRoutes);
 
 // Admin routes - protected with authenticate + authorize middleware
 router.use('/admin/orders', authenticate, authorize('admin'), adminOrderRoutes);
+router.use('/admin/dashboard', authenticate, authorize('admin'), dashboardRoutes);
 
 export default router;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { ArrowLeft, User, Mail, Phone, MapPin, Package, CreditCard, Calendar } from 'lucide-react';
 import FormSectionCard from '@admin/shared/components/FormSectionCard';
@@ -41,6 +41,11 @@ const OrderDetailsPage = () => {
 
     const order = data?.order;
 
+    const subtotal = useMemo(() => {
+        if (!order?.order_items) return 0;
+        return order.order_items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }, [order?.order_items]);
+
     const handleUpdateStatus = async ({ orderId, data }) => {
         try {
             await updateStatusMutation.mutateAsync({ orderId, data });
@@ -71,6 +76,11 @@ const OrderDetailsPage = () => {
             .join('')
             .toUpperCase()
             .slice(0, 2);
+    };
+
+    const isAvatarUrl = (avatar) => {
+        if (!avatar) return false;
+        return avatar.startsWith('http') || avatar.startsWith('data:');
     };
 
     if (isLoading) {
@@ -142,9 +152,17 @@ const OrderDetailsPage = () => {
                     {/* Customer Information */}
                     <FormSectionCard title="Customer Information" icon={User}>
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="w-14 h-14 rounded-full bg-[#1e3a5f] flex items-center justify-center text-white font-bold text-lg">
-                                {getInitials(order.full_name)}
-                            </div>
+                            {isAvatarUrl(order.user?.avatar) ? (
+                                <img
+                                    src={order.user.avatar}
+                                    alt={order.full_name}
+                                    className="w-14 h-14 rounded-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-14 h-14 rounded-full bg-[#1e3a5f] flex items-center justify-center text-white font-bold text-lg">
+                                    {getInitials(order.full_name)}
+                                </div>
+                            )}
                             <div>
                                 <h3 className="font-semibold text-[#111827]">{order.full_name}</h3>
                                 <p className="text-sm text-gray-500">{order.user?.email || order.email}</p>
@@ -239,13 +257,7 @@ const OrderDetailsPage = () => {
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-500">Subtotal</span>
                                 <span className="font-medium text-[#111827]">
-                                    ₹{Number(order.total_amount * 0.9).toLocaleString('en-IN')}
-                                </span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">Tax (10%)</span>
-                                <span className="font-medium text-[#111827]">
-                                    ₹{Number(order.total_amount * 0.1).toLocaleString('en-IN')}
+                                    ₹{Number(subtotal).toLocaleString('en-IN')}
                                 </span>
                             </div>
                             <div className="pt-3 border-t border-gray-200">

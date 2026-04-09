@@ -86,6 +86,14 @@ const avatarColors = [
     'bg-amber-500',
 ];
 
+const capitalizeName = (name) => {
+    if (!name) return '';
+    return name
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+};
+
 const StatusBadge = ({ status, config }) => {
     const cfg = config[status] || config.pending;
     return (
@@ -148,6 +156,16 @@ const OrdersTable = ({
             .join('')
             .toUpperCase()
             .slice(0, 2);
+    };
+
+    const getAvatar = (order) => {
+        if (order.user?.avatar) return order.user.avatar;
+        return getInitials(order.full_name);
+    };
+
+    const isAvatarUrl = (avatar) => {
+        if (!avatar) return false;
+        return avatar.startsWith('http') || avatar.startsWith('data:');
     };
 
     return (
@@ -241,11 +259,19 @@ const OrdersTable = ({
                                                     ${avatarColors[i % avatarColors.length]}
                                                 `}
                                             >
-                                                {getInitials(order.full_name)}
+                                                {isAvatarUrl(getAvatar(order)) ? (
+                                                    <img
+                                                        src={getAvatar(order)}
+                                                        alt="avatar"
+                                                        className="w-full h-full rounded-full object-cover"
+                                                    />
+                                                ) : (
+                                                    getAvatar(order)
+                                                )}
                                             </div>
                                             <div>
                                                 <p className="text-sm font-semibold text-slate-800">
-                                                    {order.full_name}
+                                                    {capitalizeName(order.full_name)}
                                                 </p>
                                                 <p className="text-xs text-slate-400">{order.city}</p>
                                             </div>
