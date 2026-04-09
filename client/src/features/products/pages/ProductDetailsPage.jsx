@@ -5,7 +5,6 @@ import ProductInfo from '../components/ProductInfo';
 import ProductTabs from '../components/ProductTabs';
 import DeliveryInfoCard from '../components/DeliveryInfoCard';
 import { useProductQuery } from '@/hooks/useProductQueries';
-import { useCheckFavoriteQuery } from '@/hooks/useFavoriteQueries';
 import useAuthStore from '../../../store/useAuthStore';
 
 const ProductDetailsPage = () => {
@@ -15,9 +14,6 @@ const ProductDetailsPage = () => {
   const [product, setProduct] = useState(location.state?.product || null);
 
   const { data: fetchedProduct, isLoading, error } = useProductQuery(id);
-  
-  // Check favorite status when product is loaded and user is logged in
-  useCheckFavoriteQuery(product?.id);
 
   useEffect(() => {
     if (fetchedProduct) {

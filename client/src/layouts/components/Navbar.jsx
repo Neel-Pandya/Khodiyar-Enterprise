@@ -1,9 +1,7 @@
 import { Link, NavLink } from 'react-router';
-import { Heart, ShoppingCart, ShoppingBag, User, ChevronDown, LogOut, Settings, Lock } from 'lucide-react';
+import { ShoppingCart, ShoppingBag, User, ChevronDown, LogOut, Settings, Lock } from 'lucide-react';
 import useAuthStore from '../../store/useAuthStore';
-import useFavoriteStore from '../../store/useFavoriteStore';
 import useCartStore from '../../store/useCartStore';
-import { useFavoritesQuery } from '@/hooks/useFavoriteQueries';
 import { useCartCountQuery } from '@/hooks/useCartQueries';
 
 const Navbar = ({
@@ -16,11 +14,8 @@ const Navbar = ({
   toggleMenu
 }) => {
   const { user } = useAuthStore();
-  const { pagination } = useFavoriteStore();
   const { cartCount } = useCartStore();
 
-  // Fetch favorites when user is logged in
-  useFavoritesQuery({ limit: 100 }, { enabled: isLoggedIn });
   // Fetch cart count when user is logged in
   useCartCountQuery({ enabled: isLoggedIn });
 
@@ -58,12 +53,6 @@ const Navbar = ({
           {isLoggedIn ? (
             <div className="flex items-center gap-6 ml-4">
               <div className="flex items-center gap-5 border-r border-slate-200 pr-6">
-                <Link to="/favorites" className="relative text-slate-600 hover:text-primary transition-colors p-2 hover:bg-slate-50 rounded-full">
-                  <Heart size={22} />
-                  {pagination.total > 0 && (
-                    <span className="absolute top-0 right-0 bg-secondary text-primary text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full border-2 border-white">{pagination.total}</span>
-                  )}
-                </Link>
                 <Link to="/cart" className="relative text-slate-600 hover:text-primary transition-colors p-2 hover:bg-slate-50 rounded-full">
                   <ShoppingCart size={22} />
                   {cartCount > 0 && (

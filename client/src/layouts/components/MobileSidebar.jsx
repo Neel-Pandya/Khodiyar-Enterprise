@@ -1,5 +1,5 @@
 import { NavLink, Link } from 'react-router';
-import { X, ChevronRight, Heart, ShoppingCart, User, Lock, LogOut, ArrowRight, Mail, Phone, MapPin } from 'lucide-react';
+import { X, ChevronRight, ShoppingCart, User, Lock, LogOut, ArrowRight, Mail, Phone, MapPin } from 'lucide-react';
 import useAuthStore from '../../store/useAuthStore';
 import useCartStore from '../../store/useCartStore';
 
@@ -76,9 +76,6 @@ const MobileSidebar = ({
                     <p className="text-lg font-bold text-slate-800">{user?.name || user?.email || "User"}</p>
                   </div>
                 </div>
-                <Link to="/favorites" onClick={onClose} className="flex items-center gap-4 p-4 rounded-2xl text-slate-800 hover:bg-slate-50 hover:text-primary transition-all font-semibold">
-                  <div className="p-2 bg-slate-100 rounded-xl"><Heart size={20} /></div> Favorites
-                </Link>
                 <Link to="/cart" onClick={onClose} className="flex items-center gap-4 p-4 rounded-2xl text-slate-800 hover:bg-slate-50 hover:text-primary transition-all font-semibold">
                   <div className="p-2 bg-slate-100 rounded-xl relative">
                     <ShoppingCart size={20} />

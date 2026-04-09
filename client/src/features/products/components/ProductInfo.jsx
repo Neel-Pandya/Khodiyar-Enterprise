@@ -1,16 +1,12 @@
 import { useNavigate } from 'react-router';
 import Button from '@common/Button';
-import { Heart, ShieldCheck, CreditCard, Zap, Loader2 } from 'lucide-react';
-import useFavoriteStore from '@/store/useFavoriteStore';
-import { useToggleFavoriteMutation } from '@/hooks/useFavoriteQueries';
+import { ShieldCheck, CreditCard, Zap, Loader2 } from 'lucide-react';
 import { useAddToCartMutation } from '@/hooks/useCartQueries';
 import useAuthStore from '@/store/useAuthStore';
 
-const ProductInfo = ({ productId, category, name, price, stockStatus, stockQuantity, isFavorite: initialIsFavorite = false }) => {
+const ProductInfo = ({ productId, category, name, price, stockStatus, stockQuantity }) => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { optimisticToggle, completeToggle, rollbackToggle, isFavorite, isToggling } = useFavoriteStore();
-  const { mutateAsync: toggleFavoriteApi } = useToggleFavoriteMutation();
   const { mutate: addToCart, isPending: isAddingToCart } = useAddToCartMutation();
   const isInStock = stockStatus === 'In Stock' && stockQuantity > 0;
 
@@ -24,33 +20,6 @@ const ProductInfo = ({ productId, category, name, price, stockStatus, stockQuant
 
     addToCart(productId);
   };
-
-  const handleFavoriteClick = async () => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
-    if (!productId || isToggling(productId)) return;
-
-    // Optimistic update
-    const previousState = optimisticToggle(productId);
-    if (!previousState) return; // Already toggling
-
-    try {
-      const result = await toggleFavoriteApi(productId);
-      // Complete the toggle with server result
-      completeToggle(productId, result.isFavorite, { id: productId, name, price, category: { name: category } });
-    } catch (error) {
-      // Rollback on error
-      rollbackToggle(productId, previousState.wasFavorited);
-      console.error('Failed to toggle favorite:', error);
-    }
-  };
-
-  // Get current favorite state from store (for optimistic updates)
-  const currentIsFavorite = productId ? isFavorite(productId) : initialIsFavorite;
-  const isLoading = productId ? isToggling(productId) : false;
 
   return (
     <div className="flex flex-col">
@@ -104,24 +73,6 @@ const ProductInfo = ({ productId, category, name, price, stockStatus, stockQuant
             )}
           </Button>
         </div>
-        <button
-          onClick={handleFavoriteClick}
-          disabled={isLoading}
-          className={`group h-[60px] w-full sm:w-[72px] flex items-center justify-center bg-white border-2 rounded-2xl transition-all cursor-pointer shadow-sm disabled:opacity-50 ${
-            currentIsFavorite
-              ? 'border-red-500 bg-red-50'
-              : 'border-gray-200 hover:border-red-500 hover:bg-red-50'
-          }`}
-          title={currentIsFavorite ? 'Remove from Wishlist' : 'Add to Wishlist'}
-        >
-          <Heart
-            className={`w-7 h-7 transition-all ${
-              currentIsFavorite
-                ? 'text-red-500 fill-red-500'
-                : 'text-gray-400 group-hover:text-red-500 group-hover:fill-red-500'
-            }`}
-          />
-        </button>
       </div>
 
       {/* Trust Badges */}
