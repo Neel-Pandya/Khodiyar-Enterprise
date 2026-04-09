@@ -67,15 +67,16 @@ const CustomersPage = () => {
             return createdAt.getMonth() === now.getMonth() && createdAt.getFullYear() === now.getFullYear();
         }).length;
 
-        const totalRevenue = customers.reduce((sum, customer) => {
-            return sum + Number(customer.totalRevenue ?? customer.total_revenue ?? customer.totalSpent ?? 0);
-        }, 0);
+        const inactive = customers.filter((customer) => {
+            const status = String(customer.status || '').toLowerCase();
+            return status === 'inactive' || status === 'suspended';
+        }).length;
 
         return {
             total: pagination.total || customers.length,
             active,
             newThisMonth,
-            totalRevenue,
+            inactive,
         };
     }, [customers, pagination.total]);
 
@@ -113,10 +114,9 @@ const CustomersPage = () => {
                     icon="UserPlus"
                 />
                 <CustomerStatCard
-                    label="Total Revenue"
-                    value={customerStats.totalRevenue / 1000}
-                    icon="DollarSign"
-                    prefix="$"
+                    label="Inactive Accounts"
+                    value={customerStats.inactive}
+                    icon="UserX"
                 />
             </div>
 

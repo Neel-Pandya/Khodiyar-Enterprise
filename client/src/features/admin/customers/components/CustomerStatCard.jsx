@@ -1,10 +1,11 @@
-import { Users, UserCheck, UserPlus, DollarSign } from 'lucide-react';
+import { Users, UserCheck, UserPlus, DollarSign, UserX } from 'lucide-react';
 
 const iconMap = {
     Users: { icon: Users, color: 'text-[#1e3a5f]', bg: 'bg-[#f0f4f8]' },
     UserCheck: { icon: UserCheck, color: 'text-[#059669]', bg: 'bg-[#ecfdf5]' },
     UserPlus: { icon: UserPlus, color: 'text-[#d97706]', bg: 'bg-[#fffbeb]' },
     DollarSign: { icon: DollarSign, color: 'text-[#7c3aed]', bg: 'bg-[#f5f3ff]' },
+    UserX: { icon: UserX, color: 'text-[#dc2626]', bg: 'bg-[#fef2f2]' },
 };
 
 const CustomerStatCard = ({ label, value, icon, prefix = '' }) => {
@@ -22,7 +23,7 @@ const CustomerStatCard = ({ label, value, icon, prefix = '' }) => {
                 <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
                     {label}
                 </p>
-                <p className="text-2xl font-bold text-[#111827]">
+                <p className={`text-2xl font-bold ${icon === 'UserX' ? 'text-red-600' : 'text-[#111827]'}`}>
                     {prefix}{value.toLocaleString()}{icon === 'DollarSign' ? 'K' : ''}
                 </p>
             </div>
