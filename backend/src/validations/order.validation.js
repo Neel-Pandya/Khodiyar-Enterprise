@@ -16,14 +16,30 @@ export const orderIdParamSchema = z.object({
 });
 
 export const getOrdersQuerySchema = z.object({
-  page: z.string().optional().transform((val) => (val ? parseInt(val) : 1)),
-  limit: z.string()
+  page: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val) : 1)),
+  limit: z
+    .string()
     .optional()
     .transform((val) => {
       const parsed = val ? parseInt(val) : 10;
       return Math.min(Math.max(parsed, 1), 100); // Bounds: 1-100
     }),
-  status: z.enum(['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled']).optional(),
-  sort_by: z.enum(['created_at', 'total_amount', 'status']).optional().default('created_at'),
+  status: z
+    .enum([
+      'pending',
+      'confirmed',
+      'processing',
+      'shipped',
+      'delivered',
+      'cancelled',
+    ])
+    .optional(),
+  sort_by: z
+    .enum(['created_at', 'total_amount', 'status'])
+    .optional()
+    .default('created_at'),
   sort_order: z.enum(['asc', 'desc']).optional().default('desc'),
 });

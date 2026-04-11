@@ -21,6 +21,10 @@ router.post('/create-order', paymentController.createOrder);
  * @desc Verify Razorpay payment and create order
  * @access Private
  */
-router.post('/verify-payment', validate(verifyPaymentSchema), paymentController.verifyPayment);
+router.post(
+  '/verify-payment',
+  validate(verifyPaymentSchema),
+  paymentController.verifyPayment
+);
 
 export default router;

@@ -43,7 +43,12 @@ router.get('/:id', userController.getUser);
  * @desc Update user details
  * @access Admin
  */
-router.patch('/:id', uploadAvatar, validate(updateUserSchema), userController.updateUser);
+router.patch(
+  '/:id',
+  uploadAvatar,
+  validate(updateUserSchema),
+  userController.updateUser
+);
 
 /**
  * @route DELETE /api/users/:id

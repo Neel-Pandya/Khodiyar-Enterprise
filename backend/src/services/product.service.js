@@ -92,7 +92,7 @@ class ProductService {
     // Admin can explicitly pass is_active=false to see all
     if (is_active !== undefined) {
       where.is_active = is_active === 'true' || is_active === true;
-    } 
+    }
 
     if (status) where.status = status;
     if (category_id) where.category_id = category_id;
@@ -228,7 +228,7 @@ class ProductService {
         }
       }
       delete updatePayload.existing_images; // Remove from payload before DB update
-      
+
       let newImageUrls = [];
       if (files && files.length > 0) {
         const { imageUrls } = await imageService.uploadImages(
@@ -237,7 +237,7 @@ class ProductService {
         );
         newImageUrls = imageUrls;
       }
-      
+
       // Merge existing + new images (only if there are any images)
       const totalImages = [...existingImages, ...newImageUrls];
       if (totalImages.length > 0) {

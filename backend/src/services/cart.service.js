@@ -12,14 +12,17 @@ class CartService {
       // Check for existing cart item within transaction
       const existingItem = await tx.cart.findUnique({
         where: {
-          user_id_product_id: { user_id: userId, product_id: productId }
+          user_id_product_id: { user_id: userId, product_id: productId },
         },
-        include: { product: true }
+        include: { product: true },
       });
 
       if (existingItem) {
         // Edge case: Check if product is still active
-        if (!existingItem.product.is_active || existingItem.product.deleted_at) {
+        if (
+          !existingItem.product.is_active ||
+          existingItem.product.deleted_at
+        ) {
           await tx.cart.delete({ where: { id: existingItem.id } });
           return { isRemoved: true, reason: 'Product is no longer available' };
         }
@@ -32,7 +35,10 @@ class CartService {
 
         // Check if we can increment (stock check)
         if (existingItem.quantity >= existingItem.product.stock_quantity) {
-          throw new ApiError(400, `Only ${existingItem.product.stock_quantity} items available`);
+          throw new ApiError(
+            400,
+            `Only ${existingItem.product.stock_quantity} items available`
+          );
         }
 
         // Increment quantity
@@ -40,8 +46,8 @@ class CartService {
           where: { id: existingItem.id },
           data: { quantity: { increment: 1 } },
           include: {
-            product: { include: { category: true } }
-          }
+            product: { include: { category: true } },
+          },
         });
         return { isNewItem: false, cartItem: updated };
       } else {
@@ -49,8 +55,8 @@ class CartService {
         const created = await tx.cart.create({
           data: { user_id: userId, product_id: productId, quantity: 1 },
           include: {
-            product: { include: { category: true } }
-          }
+            product: { include: { category: true } },
+          },
         });
         return { isNewItem: true, cartItem: created };
       }
@@ -64,20 +70,23 @@ class CartService {
       // First, get all cart items with products
       const allCartItems = await tx.cart.findMany({
         where: { user_id: userId },
-        include: { product: true }
+        include: { product: true },
       });
 
       // Find items to remove (inactive or out of stock)
       const itemsToRemove = allCartItems.filter(
-        item => !item.product.is_active || item.product.deleted_at || item.product.stock_quantity <= 0
+        (item) =>
+          !item.product.is_active ||
+          item.product.deleted_at ||
+          item.product.stock_quantity <= 0
       );
 
       // Remove unavailable items
       if (itemsToRemove.length > 0) {
         await tx.cart.deleteMany({
           where: {
-            id: { in: itemsToRemove.map(item => item.id) }
-          }
+            id: { in: itemsToRemove.map((item) => item.id) },
+          },
         });
       }
 
@@ -91,18 +100,23 @@ class CartService {
           include: {
             product: {
               include: {
-                category: { select: { id: true, name: true } }
-              }
-            }
-          }
+                category: { select: { id: true, name: true } },
+              },
+            },
+          },
         }),
-        tx.cart.count({ where: { user_id: userId } })
+        tx.cart.count({ where: { user_id: userId } }),
       ]);
 
       return {
         cartItems,
         removedCount: itemsToRemove.length,
-        pagination: { total, totalPages: Math.ceil(total / limit), page, limit }
+        pagination: {
+          total,
+          totalPages: Math.ceil(total / limit),
+          page,
+          limit,
+        },
       };
     });
   }
@@ -111,7 +125,7 @@ class CartService {
     return await prisma.$transaction(async (tx) => {
       const cartItem = await tx.cart.findFirst({
         where: { id: cartId, user_id: userId },
-        include: { product: true }
+        include: { product: true },
       });
       if (!cartItem) throw new ApiError(404, 'Cart item not found');
 
@@ -128,13 +142,16 @@ class CartService {
       }
 
       if (quantity > cartItem.product.stock_quantity) {
-        throw new ApiError(400, `Only ${cartItem.product.stock_quantity} items available`);
+        throw new ApiError(
+          400,
+          `Only ${cartItem.product.stock_quantity} items available`
+        );
       }
 
       return await tx.cart.update({
         where: { id: cartId },
         data: { quantity },
-        include: { product: { include: { category: true } } }
+        include: { product: { include: { category: true } } },
       });
     });
   }
@@ -142,7 +159,7 @@ class CartService {
   async removeFromCart(userId, cartId) {
     return await prisma.$transaction(async (tx) => {
       const cartItem = await tx.cart.findFirst({
-        where: { id: cartId, user_id: userId }
+        where: { id: cartId, user_id: userId },
       });
       if (!cartItem) throw new ApiError(404, 'Cart item not found');
 

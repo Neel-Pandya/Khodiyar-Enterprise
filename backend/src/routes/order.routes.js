@@ -25,20 +25,32 @@ router.post('/', validate(createOrderSchema), orderController.createOrder);
  * @desc Get user's orders (paginated, sortable)
  * @access Private
  */
-router.get('/', validate(getOrdersQuerySchema, 'query'), orderController.getOrders);
+router.get(
+  '/',
+  validate(getOrdersQuerySchema, 'query'),
+  orderController.getOrders
+);
 
 /**
  * @route GET /api/orders/:orderId
  * @desc Get single order details
  * @access Private
  */
-router.get('/:orderId', validate(orderIdParamSchema, 'params'), orderController.getOrderById);
+router.get(
+  '/:orderId',
+  validate(orderIdParamSchema, 'params'),
+  orderController.getOrderById
+);
 
 /**
  * @route PATCH /api/orders/:orderId/cancel
  * @desc Cancel order (only pending orders)
  * @access Private
  */
-router.patch('/:orderId/cancel', validate(orderIdParamSchema, 'params'), orderController.cancelOrder);
+router.patch(
+  '/:orderId/cancel',
+  validate(orderIdParamSchema, 'params'),
+  orderController.cancelOrder
+);
 
 export default router;

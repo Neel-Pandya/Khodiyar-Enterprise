@@ -116,17 +116,21 @@ class EmailService {
       const orderDate = new Date(order.created_at).toLocaleDateString('en-IN', {
         day: 'numeric',
         month: 'long',
-        year: 'numeric'
+        year: 'numeric',
       });
 
-      const itemsHtml = orderItems.map(item => `
+      const itemsHtml = orderItems
+        .map(
+          (item) => `
         <tr style="border-bottom: 1px solid #eeeeee;">
           <td style="padding: 12px; text-align: left;">${item.product?.name || 'Product'}</td>
           <td style="padding: 12px; text-align: center;">${item.quantity}</td>
           <td style="padding: 12px; text-align: right;">₹${Number(item.price).toFixed(2)}</td>
           <td style="padding: 12px; text-align: right;">₹${(Number(item.price) * item.quantity).toFixed(2)}</td>
         </tr>
-      `).join('');
+      `
+        )
+        .join('');
 
       const mailOptions = {
         from: `"Khodiyar Enterprise" <${process.env.SMTP_FROM}>`,
@@ -202,7 +206,7 @@ class EmailService {
       const orderDate = new Date(order.created_at).toLocaleDateString('en-IN', {
         day: 'numeric',
         month: 'long',
-        year: 'numeric'
+        year: 'numeric',
       });
 
       const mailOptions = {

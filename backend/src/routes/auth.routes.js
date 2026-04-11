@@ -150,13 +150,24 @@ router.get('/me', authenticate, authController.getCurrentUser);
  * @desc Update current user profile
  * @access Private
  */
-router.patch('/me', authenticate, uploadAvatar, validate(updateProfileSchema), authController.updateProfile);
+router.patch(
+  '/me',
+  authenticate,
+  uploadAvatar,
+  validate(updateProfileSchema),
+  authController.updateProfile
+);
 
 /**
  * @route POST /api/auth/change-password
  * @desc Change current user password
  * @access Private
  */
-router.post('/change-password', authenticate, validate(changePasswordSchema), authController.changePassword);
+router.post(
+  '/change-password',
+  authenticate,
+  validate(changePasswordSchema),
+  authController.changePassword
+);
 
 export default router;

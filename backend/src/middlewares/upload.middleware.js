@@ -66,7 +66,7 @@ export const uploadAny = (req, res, next) => {
     if (err) {
       return next(err);
     }
-    
+
     // Normalize req.files to always be an array
     if (!req.files) {
       req.files = [];
@@ -88,10 +88,10 @@ export const validateImageCount = (req, _res, next) => {
       return next(new ApiError(400, 'Invalid existing_images format'));
     }
   }
-  
+
   const newFiles = req.files || [];
   const totalImages = existingImages.length + newFiles.length;
-  
+
   if (totalImages === 0) {
     return next(new ApiError(400, 'Minimum 1 product image is required'));
   }

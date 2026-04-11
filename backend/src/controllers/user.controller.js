@@ -21,7 +21,10 @@ const updateUser = asyncHandler(async (req, res) => {
 
   // Handle avatar upload if file is present
   if (req.file) {
-    const uploadResult = await imageService.uploadFile(req.file.path, 'avatars');
+    const uploadResult = await imageService.uploadFile(
+      req.file.path,
+      'avatars'
+    );
     updateData.avatar = uploadResult.secure_url;
   }
 

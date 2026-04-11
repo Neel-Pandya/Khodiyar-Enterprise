@@ -14,7 +14,10 @@ export const createProductSchema = z.object({
     .int('Stock quantity must be an integer')
     .min(0, 'Stock quantity cannot be negative'),
   category_id: z.string().uuid({ message: 'Invalid category ID format' }),
-  is_active: z.enum(['true', 'false']).optional().transform((val) => val === 'true'),
+  is_active: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((val) => val === 'true'),
   description: z
     .string({ required_error: 'Description is required' })
     .trim()
@@ -63,14 +66,20 @@ export const updateProductSchema = z.object({
     .optional(),
   images: z.array(z.string().url()).min(1).max(4).optional(),
   existing_images: z.string().optional(), // JSON string of existing image URLs
-  is_active: z.enum(['true', 'false']).optional().transform((val) => val === 'true'),
+  is_active: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((val) => val === 'true'),
 });
 
 export const getProductsSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(10),
   status: z.enum(['available', 'out_of_stock']).optional(),
-  is_active: z.enum(['true', 'false']).optional().transform((val) => val === 'true'),
+  is_active: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((val) => val === 'true'),
   category_id: z.string().uuid('Invalid category ID format').optional(),
   search: z.string().trim().optional(),
   sortBy: z

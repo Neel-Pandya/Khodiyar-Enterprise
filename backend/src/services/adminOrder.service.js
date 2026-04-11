@@ -7,7 +7,13 @@ class AdminOrderService {
    * Get all orders with pagination, filtering, and sorting
    * Includes user info and order items with products
    */
-  async getAllOrders(page = 1, limit = 10, filters = {}, sortBy = 'created_at', sortOrder = 'desc') {
+  async getAllOrders(
+    page = 1,
+    limit = 10,
+    filters = {},
+    sortBy = 'created_at',
+    sortOrder = 'desc'
+  ) {
     const pageNum = parseInt(page, 10) || 1;
     const limitNum = parseInt(limit, 10) || 10;
     const skip = (pageNum - 1) * limitNum;
@@ -182,7 +188,8 @@ class AdminOrderService {
         logger.info('Stock quantities restored for order', {
           orderId,
           adminId,
-          reason: newStatus === 'cancelled' ? 'order_cancelled' : 'payment_refunded',
+          reason:
+            newStatus === 'cancelled' ? 'order_cancelled' : 'payment_refunded',
         });
       }
 

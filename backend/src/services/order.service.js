@@ -13,7 +13,7 @@ class OrderService {
       // 1. Fetch cart items with product details
       const cartItems = await tx.cart.findMany({
         where: { user_id: userId },
-        include: { product: true }
+        include: { product: true },
       });
 
       if (cartItems.length === 0) {
@@ -30,13 +30,16 @@ class OrderService {
         }
         // Check if product is active
         if (!item.product.is_active || item.product.deleted_at) {
-          throw new ApiError(409, `Product ${item.product.name} is no longer available`);
+          throw new ApiError(
+            409,
+            `Product ${item.product.name} is no longer available`
+          );
         }
       }
 
       // 3. Calculate total using current product prices (snapshot)
       const totalAmount = cartItems.reduce((sum, item) => {
-        return sum + (item.product.price * item.quantity);
+        return sum + item.product.price * item.quantity;
       }, 0);
 
       // 4. Create order record (email from auth, NOT from body)
@@ -54,29 +57,29 @@ class OrderService {
           city: orderData.city,
           state: orderData.state,
           pincode: orderData.pincode,
-        }
+        },
       });
 
       // 5. Create order items with SNAPSHOT pricing
       const orderItems = await Promise.all(
-        cartItems.map(item =>
+        cartItems.map((item) =>
           tx.orderItem.create({
             data: {
               order_id: order.id,
               product_id: item.product_id,
               quantity: item.quantity,
-              price: item.product.price // SNAPSHOT: Price at time of order
-            }
+              price: item.product.price, // SNAPSHOT: Price at time of order
+            },
           })
         )
       );
 
       // 6. Update product stock quantities
       await Promise.all(
-        cartItems.map(item =>
+        cartItems.map((item) =>
           tx.product.update({
             where: { id: item.product_id },
-            data: { stock_quantity: { decrement: item.quantity } }
+            data: { stock_quantity: { decrement: item.quantity } },
           })
         )
       );
@@ -88,8 +91,8 @@ class OrderService {
       return {
         order: {
           ...order,
-          order_items: orderItems
-        }
+          order_items: orderItems,
+        },
       };
     });
   }
@@ -97,7 +100,14 @@ class OrderService {
   /**
    * Get user's orders with pagination and sorting
    */
-  async getUserOrders(userId, page = 1, limit = 10, status, sortBy = 'created_at', sortOrder = 'desc') {
+  async getUserOrders(
+    userId,
+    page = 1,
+    limit = 10,
+    status,
+    sortBy = 'created_at',
+    sortOrder = 'desc'
+  ) {
     // Ensure page and limit are integers
     const pageNum = parseInt(page, 10) || 1;
     const limitNum = parseInt(limit, 10) || 10;
@@ -124,14 +134,14 @@ class OrderService {
                 select: {
                   id: true,
                   name: true,
-                  images: true
-                }
-              }
-            }
-          }
-        }
+                  images: true,
+                },
+              },
+            },
+          },
+        },
       }),
-      prisma.order.count({ where })
+      prisma.order.count({ where }),
     ]);
 
     return {
@@ -142,8 +152,8 @@ class OrderService {
         total,
         totalPages: Math.ceil(total / limitNum),
         hasNext: pageNum < Math.ceil(total / limitNum),
-        hasPrev: pageNum > 1
-      }
+        hasPrev: pageNum > 1,
+      },
     };
   }
 
@@ -161,12 +171,12 @@ class OrderService {
                 id: true,
                 name: true,
                 images: true,
-                price: true // Current price for reference
-              }
-            }
-          }
-        }
-      }
+                price: true, // Current price for reference
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!order) {
@@ -183,7 +193,7 @@ class OrderService {
     return await prisma.$transaction(async (tx) => {
       const order = await tx.order.findFirst({
         where: { id: orderId, user_id: userId },
-        include: { order_items: true }
+        include: { order_items: true },
       });
 
       if (!order) {
@@ -199,24 +209,30 @@ class OrderService {
       const updatedOrder = await tx.order.update({
         where: { id: orderId },
         data: { status: 'cancelled' },
-        include: { order_items: true }
+        include: { order_items: true },
       });
 
       // Restore stock quantities
       await Promise.all(
-        order.order_items.map(item =>
+        order.order_items.map((item) =>
           tx.product.update({
             where: { id: item.product_id },
-            data: { stock_quantity: { increment: item.quantity } }
+            data: { stock_quantity: { increment: item.quantity } },
           })
         )
       );
 
       // Send cancellation email (outside transaction - best effort)
       try {
-        await emailService.sendOrderCancellationEmail(order.email, order.full_name, updatedOrder);
+        await emailService.sendOrderCancellationEmail(
+          order.email,
+          order.full_name,
+          updatedOrder
+        );
       } catch (emailError) {
-        logger.error('Failed to send cancellation email', { error: emailError.message });
+        logger.error('Failed to send cancellation email', {
+          error: emailError.message,
+        });
       }
 
       return { order: updatedOrder };
@@ -229,21 +245,28 @@ class OrderService {
   async sendOrderConfirmation(order, orderItems) {
     try {
       // Fetch product names for order items
-      const productIds = orderItems.map(item => item.product_id);
+      const productIds = orderItems.map((item) => item.product_id);
       const products = await prisma.product.findMany({
         where: { id: { in: productIds } },
-        select: { id: true, name: true }
+        select: { id: true, name: true },
       });
-      
+
       // Attach product names to order items
-      const orderItemsWithProduct = orderItems.map(item => ({
+      const orderItemsWithProduct = orderItems.map((item) => ({
         ...item,
-        product: products.find(p => p.id === item.product_id)
+        product: products.find((p) => p.id === item.product_id),
       }));
-      
-      await emailService.sendOrderConfirmationEmail(order.email, order.full_name, order, orderItemsWithProduct);
+
+      await emailService.sendOrderConfirmationEmail(
+        order.email,
+        order.full_name,
+        order,
+        orderItemsWithProduct
+      );
     } catch (emailError) {
-      logger.error('Failed to send order confirmation email', { error: emailError.message });
+      logger.error('Failed to send order confirmation email', {
+        error: emailError.message,
+      });
     }
   }
 }

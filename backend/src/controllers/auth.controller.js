@@ -117,14 +117,18 @@ const updateProfile = asyncHandler(async (req, res) => {
 
   // Handle avatar upload if file is present
   if (req.file) {
-    const uploadResult = await imageService.uploadFile(req.file.path, 'avatars');
+    const uploadResult = await imageService.uploadFile(
+      req.file.path,
+      'avatars'
+    );
     updateData.avatar = uploadResult.secure_url;
   }
 
   // Only allow updating name and avatar
   const allowedUpdates = {};
   if (updateData.name !== undefined) allowedUpdates.name = updateData.name;
-  if (updateData.avatar !== undefined) allowedUpdates.avatar = updateData.avatar;
+  if (updateData.avatar !== undefined)
+    allowedUpdates.avatar = updateData.avatar;
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
@@ -140,14 +144,22 @@ const updateProfile = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, 'Profile updated successfully', { user: updatedUser }));
+    .json(
+      new ApiResponse(200, 'Profile updated successfully', {
+        user: updatedUser,
+      })
+    );
 });
 
 const changePassword = asyncHandler(async (req, res) => {
   const userId = req.user.id;
   const { currentPassword, newPassword } = req.body;
 
-  const result = await authService.changePassword(userId, currentPassword, newPassword);
+  const result = await authService.changePassword(
+    userId,
+    currentPassword,
+    newPassword
+  );
 
   res.status(200).json(new ApiResponse(200, result.message));
 });

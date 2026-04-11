@@ -24,6 +24,11 @@ router.use('/payments', paymentRoutes);
 
 // Admin routes - protected with authenticate + authorize middleware
 router.use('/admin/orders', authenticate, authorize('admin'), adminOrderRoutes);
-router.use('/admin/dashboard', authenticate, authorize('admin'), dashboardRoutes);
+router.use(
+  '/admin/dashboard',
+  authenticate,
+  authorize('admin'),
+  dashboardRoutes
+);
 
 export default router;

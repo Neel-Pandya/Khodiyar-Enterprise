@@ -14,7 +14,7 @@ class PaymentService {
     // 1. Fetch cart items with product details
     const cartItems = await prisma.cart.findMany({
       where: { user_id: userId },
-      include: { product: true }
+      include: { product: true },
     });
 
     if (cartItems.length === 0) {
@@ -30,13 +30,16 @@ class PaymentService {
         );
       }
       if (!item.product.is_active || item.product.deleted_at) {
-        throw new ApiError(409, `Product ${item.product.name} is no longer available`);
+        throw new ApiError(
+          409,
+          `Product ${item.product.name} is no longer available`
+        );
       }
     }
 
     // 3. Calculate total amount in paisa (multiply by 100)
     const totalAmountInr = cartItems.reduce((sum, item) => {
-      return sum + (item.product.price * item.quantity);
+      return sum + item.product.price * item.quantity;
     }, 0);
     const amountInPaisa = Math.round(totalAmountInr * 100);
 
@@ -49,8 +52,8 @@ class PaymentService {
         receipt: `receipt_${Date.now()}_${userId.slice(0, 8)}`,
         notes: {
           user_id: userId,
-          cart_item_count: cartItems.length.toString()
-        }
+          cart_item_count: cartItems.length.toString(),
+        },
       });
     } catch (razorpayError) {
       const statusCode = razorpayError.statusCode;
@@ -61,26 +64,32 @@ class PaymentService {
         description: razorpayError.description,
         fullError: JSON.stringify(razorpayError),
         userId,
-        amount: amountInPaisa
+        amount: amountInPaisa,
       });
-      
+
       if (statusCode === 401) {
-        throw new ApiError(500, 'Payment configuration error. Please contact support.');
+        throw new ApiError(
+          500,
+          'Payment configuration error. Please contact support.'
+        );
       }
-      throw new ApiError(502, 'Payment service temporarily unavailable. Please try again.');
+      throw new ApiError(
+        502,
+        'Payment service temporarily unavailable. Please try again.'
+      );
     }
 
     logger.info('Razorpay order created', {
       razorpayOrderId: razorpayOrder.id,
       userId,
-      amount: amountInPaisa
+      amount: amountInPaisa,
     });
 
     return {
       order_id: razorpayOrder.id,
       amount: amountInPaisa,
       currency: razorpayOrder.currency,
-      key_id: process.env.RAZORPAY_KEY_ID
+      key_id: process.env.RAZORPAY_KEY_ID,
     };
   }
 
@@ -100,7 +109,7 @@ class PaymentService {
     if (!isValid) {
       logger.error('Payment signature verification failed', {
         razorpayOrderId,
-        razorpayPaymentId
+        razorpayPaymentId,
       });
     }
 
@@ -111,12 +120,18 @@ class PaymentService {
    * Create actual Order record after successful payment verification
    * Uses transaction for atomic operations
    */
-  async createOrderAfterPayment(userId, userEmail, orderData, razorpayPaymentId, razorpayOrderId) {
+  async createOrderAfterPayment(
+    userId,
+    userEmail,
+    orderData,
+    razorpayPaymentId,
+    razorpayOrderId
+  ) {
     return await prisma.$transaction(async (tx) => {
       // 1. Fetch cart items with product details
       const cartItems = await tx.cart.findMany({
         where: { user_id: userId },
-        include: { product: true }
+        include: { product: true },
       });
 
       if (cartItems.length === 0) {
@@ -135,7 +150,7 @@ class PaymentService {
 
       // 3. Calculate total
       const totalAmount = cartItems.reduce((sum, item) => {
-        return sum + (item.product.price * item.quantity);
+        return sum + item.product.price * item.quantity;
       }, 0);
 
       // 4. Create order record with completed payment status
@@ -153,29 +168,29 @@ class PaymentService {
           city: orderData.city,
           state: orderData.state,
           pincode: orderData.pincode,
-        }
+        },
       });
 
       // 5. Create order items with snapshot pricing
       const orderItems = await Promise.all(
-        cartItems.map(item =>
+        cartItems.map((item) =>
           tx.orderItem.create({
             data: {
               order_id: order.id,
               product_id: item.product_id,
               quantity: item.quantity,
-              price: item.product.price
-            }
+              price: item.product.price,
+            },
           })
         )
       );
 
       // 6. Update product stock
       await Promise.all(
-        cartItems.map(item =>
+        cartItems.map((item) =>
           tx.product.update({
             where: { id: item.product_id },
-            data: { stock_quantity: { decrement: item.quantity } }
+            data: { stock_quantity: { decrement: item.quantity } },
           })
         )
       );
@@ -188,14 +203,14 @@ class PaymentService {
         userId,
         razorpayPaymentId,
         razorpayOrderId,
-        totalAmount
+        totalAmount,
       });
 
       return {
         order: {
           ...order,
-          order_items: orderItems
-        }
+          order_items: orderItems,
+        },
       };
     });
   }
@@ -206,21 +221,28 @@ class PaymentService {
   async sendOrderConfirmation(order, orderItems) {
     try {
       // Fetch product names for order items
-      const productIds = orderItems.map(item => item.product_id);
+      const productIds = orderItems.map((item) => item.product_id);
       const products = await prisma.product.findMany({
         where: { id: { in: productIds } },
-        select: { id: true, name: true }
+        select: { id: true, name: true },
       });
-      
+
       // Attach product names to order items
-      const orderItemsWithProduct = orderItems.map(item => ({
+      const orderItemsWithProduct = orderItems.map((item) => ({
         ...item,
-        product: products.find(p => p.id === item.product_id)
+        product: products.find((p) => p.id === item.product_id),
       }));
-      
-      await emailService.sendOrderConfirmationEmail(order.email, order.full_name, order, orderItemsWithProduct);
+
+      await emailService.sendOrderConfirmationEmail(
+        order.email,
+        order.full_name,
+        order,
+        orderItemsWithProduct
+      );
     } catch (emailError) {
-      logger.error('Failed to send order confirmation email', { error: emailError.message });
+      logger.error('Failed to send order confirmation email', {
+        error: emailError.message,
+      });
     }
   }
 }
