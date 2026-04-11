@@ -1,16 +1,16 @@
+import { lazy } from 'react';
 import { Route } from 'react-router';
 
 // Layout
-import MainLayout from '../layouts/MainLayout';
+const MainLayout = lazy(() => import('../layouts/MainLayout'));
 
-// Pages
-import LandingPage from '../features/landing/pages/LandingPage';
-import ProductPage from '../features/products/pages/ProductPage';
-import ProductDetailsPage from '../features/products/pages/ProductDetailsPage';
-import AboutPage from '../features/about/pages/AboutPage';
-import ContactPage from '../features/contact/pages/ContactPage';
-import CartPage from '../features/cart/pages/CartPage';
-import CheckoutPage from '../features/checkout/pages/CheckoutPage';
+const LandingPage = lazy(() => import('../features/landing/pages/LandingPage'));
+const ProductPage = lazy(() => import('../features/products/pages/ProductPage'));
+const ProductDetailsPage = lazy(() => import('../features/products/pages/ProductDetailsPage'));
+const AboutPage = lazy(() => import('../features/about/pages/AboutPage'));
+const ContactPage = lazy(() => import('../features/contact/pages/ContactPage'));
+const CartPage = lazy(() => import('../features/cart/pages/CartPage'));
+const CheckoutPage = lazy(() => import('../features/checkout/pages/CheckoutPage'));
 
 const PublicRoutes = () => {
     return (

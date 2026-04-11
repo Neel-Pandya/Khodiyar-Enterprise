@@ -1,19 +1,21 @@
+import { lazy } from 'react';
 import { Route } from 'react-router';
 
 // Layout
-import MainLayout from '../layouts/MainLayout';
+const MainLayout = lazy(() => import('../layouts/MainLayout'));
 
 // Guard
 import ProtectedRoute from './ProtectedRoute';
 
-// Pages
-import { ChangePasswordPage } from '../features/auth/pages';
-import { EditProfilePage } from '../features/profile/pages';
-import { OrderHistoryPage, OrderDetailsPage } from '../features/orders/pages';
-import { CheckoutPage } from '../features/checkout/pages';
+const ChangePasswordPage = lazy(() => import('../features/auth/pages/ChangePasswordPage'));
+const EditProfilePage = lazy(() => import('../features/profile/pages/EditProfilePage'));
+const OrderHistoryPage = lazy(() => import('../features/orders/pages/OrderHistory'));
+const OrderDetailsPage = lazy(() => import('../features/orders/pages/OrderDetailsPage'));
+const CheckoutPage = lazy(() => import('../features/checkout/pages/CheckoutPage'));
 
 const UserRoutes = () => {
     return (
+        
         <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
                 <Route path="/change-password" element={<ChangePasswordPage />} />

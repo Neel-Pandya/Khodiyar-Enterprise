@@ -1,10 +1,14 @@
+import { lazy } from 'react';
 import { Route } from 'react-router';
 
 // Guard
 import UnauthenticatedRoute from './UnauthenticatedRoute';
 
-// Pages
-import { ForgotPassword, Login, ResetPassword, Signup, VerifyEmail } from '../features/auth/pages';
+const Login = lazy(() => import('../features/auth/pages/Login'));
+const ForgotPassword = lazy(() => import('../features/auth/pages/ForgotPassword'));
+const Signup = lazy(() => import('../features/auth/pages/Signup'));
+const ResetPassword = lazy(() => import('../features/auth/pages/ResetPassword'));
+const VerifyEmail = lazy(() => import('../features/auth/pages/VerifyEmail'));
 
 const AuthRoutes = () => {
     return (

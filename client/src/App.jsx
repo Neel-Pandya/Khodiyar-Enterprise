@@ -1,13 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router'
-import { useEffect, useRef } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { Loader } from 'lucide-react'
 
-// Routes
 import PublicRoutes from './routes/PublicRoutes'
 import AuthRoutes from './routes/AuthRoutes'
-import AdminRoutes from './routes/AdminRoutes'
 import UserRoutes from './routes/UserRoutes'
+import AdminRoutes  from './routes/AdminRoutes'
 import { useCurrentUserQuery } from './hooks/useAuthQueries'
 import useAuthStore from './store/useAuthStore'
 
@@ -35,23 +34,30 @@ const AppContent = () => {
   }
 
   return (
-    <Routes>
-      {/* Public Routes */}
-      {PublicRoutes()}
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen bg-bg-light">
+          <Loader className="animate-spin text-[#fbc02d]" size={48} />
+        </div>
+      }
+    >
+      <Routes>
+        {/* Public Routes */}
+        {PublicRoutes()}
 
-      {/* Auth Routes */}
-      {AuthRoutes()}
+        {/* Auth Routes */}
+        {AuthRoutes()}
 
+        {/* User Routes */}
+        {UserRoutes()}
 
-      {/* User Routes */}
-      {UserRoutes()}
+        {/* Admin Routes */}
+        {AdminRoutes()}
 
-      {/* Admin Routes */}
-      {AdminRoutes()}
-
-      {/* Catch-all */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 };
 
