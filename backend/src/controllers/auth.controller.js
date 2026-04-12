@@ -142,13 +142,11 @@ const updateProfile = asyncHandler(async (req, res) => {
     },
   });
 
-  res
-    .status(200)
-    .json(
-      new ApiResponse(200, 'Profile updated successfully', {
-        user: updatedUser,
-      })
-    );
+  res.status(200).json(
+    new ApiResponse(200, 'Profile updated successfully', {
+      user: updatedUser,
+    })
+  );
 });
 
 const changePassword = asyncHandler(async (req, res) => {
@@ -164,6 +162,60 @@ const changePassword = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, result.message));
 });
 
+const checkVerificationStatus = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    throw new ApiError(400, 'Email is required');
+  }
+
+  const status = await verificationService.getVerificationStatus(email);
+
+  res.status(200).json(
+    new ApiResponse(200, 'Verification status retrieved', status)
+  );
+});
+
+const initiateLoginVerification = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    throw new ApiError(400, 'Email is required');
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true, name: true, email: true, status: true },
+  });
+
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  if (user.status === 'active') {
+    throw new ApiError(400, 'User email is already verified');
+  }
+
+  const verification = await prisma.verification.findUnique({
+    where: { user_id: user.id },
+  });
+
+  // Check if verification link exists and is not expired
+  if (verification && new Date() <= new Date(verification.token_expires_at)) {
+    throw new ApiError(
+      429,
+      'Verification link already sent and is still valid'
+    );
+  }
+
+  // Create/resend verification email
+  await verificationService.createVerification(user);
+
+  res.status(200).json(
+    new ApiResponse(200, 'Verification email sent successfully')
+  );
+});
+
 export default {
   login,
   register,
@@ -175,4 +227,6 @@ export default {
   getCurrentUser,
   updateProfile,
   changePassword,
+  checkVerificationStatus,
+  initiateLoginVerification,
 };

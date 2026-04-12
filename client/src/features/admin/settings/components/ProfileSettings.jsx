@@ -75,7 +75,7 @@ const ProfileSettings = () => {
             setAvatarFile(null);
             toast.success('Profile updated successfully!');
         } catch (error) {
-            const errorMessage = error.response?.data?.message || 'Failed to update profile';
+            const errorMessage = error.response?.data || error?.message || 'Failed to update profile';
             toast.error(errorMessage);
         }
     };

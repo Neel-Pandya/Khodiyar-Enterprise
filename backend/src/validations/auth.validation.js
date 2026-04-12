@@ -103,3 +103,17 @@ export const changePasswordSchema = z.strictObject(
   },
   { error: 'Invalid password change data' }
 );
+
+export const checkVerificationStatusSchema = z.strictObject(
+  {
+    email: z.string().trim().email('Invalid email format'),
+  },
+  { error: 'Invalid verification status check credentials' }
+);
+
+export const initiateLoginVerificationSchema = z.strictObject(
+  {
+    email: z.string().trim().email('Invalid email format'),
+  },
+  { error: 'Invalid login verification credentials' }
+);

@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import rateLimit from 'express-rate-limit';
 import authController from '../controllers/auth.controller.js';
 import authenticate from '../middlewares/jwt.middleware.js';
 import validate from '../middlewares/validate.middleware.js';
@@ -14,50 +13,11 @@ import {
   resetPasswordSchema,
   updateProfileSchema,
   changePasswordSchema,
+  checkVerificationStatusSchema,
+  initiateLoginVerificationSchema,
 } from '../validations/auth.validation.js';
 
 const router = Router();
-
-// Rate limiters for different auth endpoints
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 login attempts per windowMs
-  message: 'Too many login attempts from this IP, please try again later.',
-});
-
-const verifyOTPLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 OTP verification attempts per windowMs
-  message:
-    'Too many OTP verification attempts from this IP, please try again later.',
-});
-
-const resendOTPLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 3, // limit each IP to 3 OTP resend requests per windowMs
-  message: 'Too many OTP resend requests from this IP, please try again later.',
-});
-
-const forgotPasswordLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 3, // limit each IP to 3 forgot password requests per windowMs
-  message:
-    'Too many password reset requests from this IP, please try again later.',
-});
-
-const verifyResetOTPLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // limit each IP to 10 OTP verification attempts per windowMs
-  message:
-    'Too many OTP verification attempts from this IP, please try again later.',
-});
-
-const resetPasswordLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 password reset attempts per windowMs
-  message:
-    'Too many password reset attempts from this IP, please try again later.',
-});
 
 /**
  * @route POST /api/auth/register
@@ -73,7 +33,6 @@ router.post('/register', validate(registerSchema), authController.register);
  */
 router.post(
   '/login',
-  // loginLimiter,
   validate(loginSchema),
   authController.login
 );
@@ -85,7 +44,6 @@ router.post(
  */
 router.post(
   '/verify-otp',
-  verifyOTPLimiter,
   validate(verifyOTPSchema),
   authController.verifyOTP
 );
@@ -97,7 +55,6 @@ router.post(
  */
 router.post(
   '/resend-otp',
-  resendOTPLimiter,
   validate(resendOTPSchema),
   authController.resendOTP
 );
@@ -109,7 +66,6 @@ router.post(
  */
 router.post(
   '/forgot-password',
-  forgotPasswordLimiter,
   validate(forgotPasswordSchema),
   authController.forgotPassword
 );
@@ -121,7 +77,6 @@ router.post(
  */
 router.post(
   '/verify-reset-otp',
-  verifyResetOTPLimiter,
   validate(verifyResetOTPSchema),
   authController.verifyResetOTP
 );
@@ -133,7 +88,6 @@ router.post(
  */
 router.post(
   '/reset-password',
-  resetPasswordLimiter,
   validate(resetPasswordSchema),
   authController.resetPassword
 );
@@ -168,6 +122,28 @@ router.post(
   authenticate,
   validate(changePasswordSchema),
   authController.changePassword
+);
+
+/**
+ * @route POST /api/auth/check-verification-status
+ * @desc Check verification link status for inactive user
+ * @access Public
+ */
+router.post(
+  '/check-verification-status',
+  validate(checkVerificationStatusSchema),
+  authController.checkVerificationStatus
+);
+
+/**
+ * @route POST /api/auth/initiate-login-verification
+ * @desc Send verification email when user tries to login with inactive email
+ * @access Public
+ */
+router.post(
+  '/initiate-login-verification',
+  validate(initiateLoginVerificationSchema),
+  authController.initiateLoginVerification
 );
 
 export default router;

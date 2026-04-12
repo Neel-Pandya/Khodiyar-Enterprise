@@ -13,4 +13,8 @@ export const authApi = {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
   changePassword: (data) => apiClient.post('/auth/change-password', data),
+  checkVerificationStatus: (email) =>
+    apiClient.post('/auth/check-verification-status', { email }),
+  initiateLoginVerification: (email) =>
+    apiClient.post('/auth/initiate-login-verification', { email }),
 };

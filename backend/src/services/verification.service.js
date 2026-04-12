@@ -121,6 +121,56 @@ class VerificationService {
   }
 
   /**
+   * Get verification status for a user by email
+   * @param {string} email - User email
+   * @returns {Promise<Object>} Status object {exists, isExpired, expiresAt}
+   */
+  async getVerificationStatus(email) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: { id: true, status: true },
+      });
+
+      if (!user) {
+        throw new ApiError(404, 'User not found');
+      }
+
+      if (user.status === 'active') {
+        throw new ApiError(400, 'User email is already verified');
+      }
+
+      const verification = await prisma.verification.findUnique({
+        where: { user_id: user.id },
+      });
+
+      if (!verification) {
+        return {
+          exists: false,
+          isExpired: null,
+          expiresAt: null,
+        };
+      }
+
+      const isExpired = new Date() > new Date(verification.token_expires_at);
+
+      return {
+        exists: true,
+        isExpired,
+        expiresAt: verification.token_expires_at,
+      };
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      logger.error('Failed to get verification status', {
+        error: error.message,
+        email,
+        service: 'verification.service',
+      });
+      throw new ApiError(500, 'Failed to retrieve verification status');
+    }
+  }
+
+  /**
    * Resend verification OTP
    * @param {string} token - Verification token
    */

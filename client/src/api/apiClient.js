@@ -25,18 +25,32 @@ class ApiClient {
       (error) => {
         // Standardize error messaging
         let message = 'An error occurred.';
-        if (error.response && error.response.data) {
-          if (typeof error.response.data === 'string') {
-            message = error.response.data;
-          } else if (error.response.data.message) {
-            message = error.response.data.message;
-          } else if (error.response.data.error) {
-            message = error.response.data.error;
+        let statusCode = null;
+        let metadata = null;
+
+        if (error.response) {
+          statusCode = error.response.status;
+          const data = error.response.data;
+
+          if (typeof data === 'string') {
+            message = data;
+          } else if (data.message) {
+            message = data.message;
+          } else if (data.error) {
+            message = data.error;
+          }
+
+          // Preserve metadata if available
+          if (data.metadata) {
+            metadata = data.metadata;
           }
         } else if (error.message) {
           message = error.message;
         }
+
         const err = new Error(message);
+        err.statusCode = statusCode;
+        err.metadata = metadata;
         err.original = error;
         throw err;
       }

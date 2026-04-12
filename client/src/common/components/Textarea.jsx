@@ -7,8 +7,12 @@ const Textarea = ({
   id, 
   required = false,
   rows = 4,
-  icon: Icon
+  icon: Icon,
+  register,
+  error
 }) => {
+  const textareaProps = register ? { ...register } : { value, onChange };
+
   return (
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
@@ -20,8 +24,7 @@ const Textarea = ({
         <textarea
           id={id}
           placeholder={placeholder}
-          value={value}
-          onChange={onChange}
+          {...textareaProps}
           required={required}
           rows={rows}
           className={`w-full py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-[#1E3A5F]/5 focus:border-[#1E3A5F]/50 transition-all duration-200 resize-y ${Icon ? 'pl-11 pr-4' : 'px-4'}`}
@@ -32,6 +35,7 @@ const Textarea = ({
           </div>
         )}
       </div>
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );
 };

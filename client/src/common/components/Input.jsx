@@ -11,7 +11,8 @@ const Input = ({
   required = false,
   icon: Icon,
   register,
-  error
+  error,
+  readOnly = false
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
@@ -32,7 +33,8 @@ const Input = ({
           placeholder={placeholder}
           {...inputProps}
           required={required}
-          className={`w-full py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-[#1E3A5F]/5 focus:border-[#1E3A5F]/50 transition-all duration-200 ${Icon ? 'pl-11 pr-4' : 'px-4'}`}
+          readOnly={readOnly}
+          className={`w-full py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-[#1E3A5F]/5 focus:border-[#1E3A5F]/50 transition-all duration-200 ${Icon ? 'pl-11 pr-4' : 'px-4'} ${readOnly ? 'bg-slate-50 cursor-not-allowed' : ''}`}
         />
         {Icon && (
           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">

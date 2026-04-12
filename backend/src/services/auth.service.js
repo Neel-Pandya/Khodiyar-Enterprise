@@ -80,9 +80,22 @@ class AuthService {
       }
 
       if (user.status === 'inactive') {
-        throw new ApiError(403, 'Email not verified', [
+        const verification = await prisma.verification.findUnique({
+          where: { user_id: user.id },
+        });
+
+        const verificationMetadata = {
+          verificationExists: !!verification,
+          isExpired: verification
+            ? new Date() > new Date(verification.token_expires_at)
+            : null,
+        };
+
+        const error = new ApiError(403, 'Email not verified', [
           'Please verify your email to activate your account',
         ]);
+        error.metadata = verificationMetadata;
+        throw error;
       }
 
       if (user.status === 'suspended') {

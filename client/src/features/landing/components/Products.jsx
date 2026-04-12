@@ -91,7 +91,7 @@ const Products = () => {
                   </p>
                 )}
                 <button
-                  onClick={() => navigate('/products')}
+                  onClick={() => navigate(`/product/${product.id}`)}
                   className="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-accent hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/10 cursor-pointer"
                 >
                   View Details

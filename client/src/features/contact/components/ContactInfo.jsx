@@ -21,7 +21,7 @@ const ContactInfo = () => {
           </div>
           <div className="pt-1">
             <p className="text-sm font-semibold text-slate-400 mb-1 uppercase tracking-wider">Phone</p>
-            <p className="text-slate-900 font-medium text-lg">+91 12345 67890</p>
+            <p className="text-slate-900 font-medium text-lg">+91 88661 63085</p>
           </div>
         </div>
 
@@ -32,7 +32,7 @@ const ContactInfo = () => {
           </div>
           <div className="pt-1">
             <p className="text-sm font-semibold text-slate-400 mb-1 uppercase tracking-wider">Email</p>
-            <p className="text-slate-900 font-medium text-lg">info@khodiyarsolar.com</p>
+            <p className="text-slate-900 font-medium text-lg">neelpandya2601@gmail.com</p>
           </div>
         </div>
 

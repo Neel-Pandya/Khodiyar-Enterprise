@@ -38,6 +38,7 @@ const EditProfileForm = () => {
             await updateProfile(formData);
             toast.success('Profile updated successfully!');
         } catch (error) {
+            console.log(error)
             toast.error(error?.message || 'Failed to update profile');
         }
     };
